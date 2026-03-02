@@ -42,5 +42,12 @@
             "Read(**/.env*)",
             "Edit(**/.env*)"
         ]
-    }
+    },
+    "enableAllProjectMcpServers": true,
+    "enabledMcpjsonServers": [
+        "claude-context",
+        "context7",
+        "sequential-thinking",
+        "serena"
+    ]
 }
