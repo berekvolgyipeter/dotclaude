@@ -1,6 +1,7 @@
 ---
 paths:
   - "tests/**/*.py"
+  - "test/**/*.py"
 ---
 
 # Testing Guidelines

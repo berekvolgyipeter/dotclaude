@@ -2,7 +2,7 @@
 name: prompt-engineering
 description: Expert guidance for crafting and optimizing prompts for AI agents. Use WHENEVER the user mentions writing, improving, or debugging prompts — including system prompts, agent instructions, tool-use prompts, or multi-step task prompts. Also use when the user asks about specific techniques like chain of thought, XML tags, few-shot examples, prompt chaining, response prefilling, or long context strategies — even if they don't say "prompt engineering" explicitly.
 allowed-tools:
-  - "Bash(bash .claude/skills/prompt-engineering/scripts/fetch_prompt_engineering_urls.sh)"
+  - "Bash(bash ~/.claude/skills/prompt-engineering/scripts/fetch_prompt_engineering_urls.sh)"
   - "WebFetch(https://platform.claude.com/docs/en/build-with-claude/prompt-engineering*)"
 ---
 

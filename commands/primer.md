@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Use the command `make tree` to get an understanding of the project structure.
 
-Start with reading the CLAUDE.md file to get an understanding of the project.
+Start with reading the `.claude/CLAUDE.md` file to get an understanding of the project.
 
 Read the README.md file to get an understanding of the project.
 

@@ -1,8 +1,6 @@
 ---
 paths:
-  - "src/**/*.py"
-  - "scripts/**/*.py"
-  - "tests/**/*.py"
+  - "**/*.py"
 ---
 
 # Developer Guidelines

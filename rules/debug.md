@@ -1,7 +1,6 @@
 ---
 paths:
-  - "src/**/*.py"
-  - "scripts/**/*.py"
+  - "**/*.py"
 ---
 
 # Debugging Guidelines

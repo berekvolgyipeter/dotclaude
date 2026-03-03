@@ -2,7 +2,9 @@
 name: claude-code
 description: Expert guidance on Claude Code configuration, capabilities, and troubleshooting. Use this skill whenever the user asks about Claude Code features, configuration, best practices, or troubleshooting — even if phrased informally. Covers MCP servers, plugins, skills, subagents, hooks, permissions, keybindings, settings, terminal setup, GitHub Actions, CLAUDE.md, cost management, and common problems. Always consult this skill first for any Claude Code questions, as answers are sourced from official documentation.
 allowed-tools:
-  - "Bash(.venv/bin/python .claude/skills/claude-code/scripts/download_llms_txt.py)"
+  - "Bash(.venv/bin/python ~/.claude/skills/claude-code/scripts/download_llms_txt.py)"
+  - "Bash(python3 ~/.claude/skills/claude-code/scripts/download_llms_txt.py)"
+  - "Bash(python ~/.claude/skills/claude-code/scripts/download_llms_txt.py)"
   - "WebFetch(https://code.claude.com/docs*)"
 ---
 
@@ -25,7 +27,7 @@ Read [references/llms.txt](references/llms.txt) to find the matching doc. Each l
 Match the user's question to the most relevant entry by title or description.
 
 **If `llms.txt` is missing or outdated:**
-- Run: `python scripts/download_llms_txt.py` to fetch the latest docs index
+- Run: `python ~/.claude/skills/claude-code/scripts/download_llms_txt.py` to fetch the latest docs index
 - If the script fails, fall back to your knowledge of Claude Code and cite `https://code.claude.com/docs` as the source
 
 **If no good match is found:**
@@ -78,7 +80,7 @@ Common shortcuts — not exhaustive. Always consult `llms.txt` for the full list
 
 To refresh the docs index when it becomes stale, run:
 ```bash
-python scripts/download_llms_txt.py
+python ~/.claude/skills/claude-code/scripts/download_llms_txt.py
 ```
 
 ## Response Quality

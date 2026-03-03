@@ -1,6 +1,6 @@
-- check rules paths will work correctly
-- update relative paths in commands/skills/agents/rules
-- check paths will work in settings.json
+- test rules paths will work correctly
+- test paths in commands/skills/agents/rules
+- test paths will work in settings.json
 - implement install/uninstall scripts
 - script for pulling skill-creator
 - update README

@@ -41,9 +41,9 @@ git log origin/$BASE_BRANCH..HEAD --oneline
 
 Read the codebase standards relevant to the changed files:
 
-- `CLAUDE.md` — project-wide rules
-- `.claude/rules/code.md` — linting, typing, logging, formatting standards
-- `.claude/rules/test.md` — testing standards
+- `.claude/CLAUDE.md` — project-wide rules
+- `~/.claude/rules/code.md` — linting, typing, logging, formatting standards
+- `~/.claude/rules/test.md` — testing standards
 
 ## Step 3: Run Static Analysis
 
@@ -91,8 +91,8 @@ For each changed file or new file, analyze for:
 
 5. **Adherence to Codebase Standards**
    - Adherence to standards documented in CLAUDE.md
-   - Linting, typing, logging, and formatting standards (see .claude/rules/code.md)
-   - Testing standards (see .claude/rules/test.md)
+   - Linting, typing, logging, and formatting standards (see ~/.claude/rules/code.md)
+   - Testing standards (see ~/.claude/rules/test.md)
 
 ## Verify Issues Are Real
 
@@ -102,7 +102,7 @@ For each changed file or new file, analyze for:
 
 ## Output Format
 
-Save a new file to `.code-reviews/[current-branch-name]--yyyy-mm-dd.md`
+Save a new file to `.claude/.code-reviews/[current-branch-name]--yyyy-mm-dd.md`
 
 **Stats:**
 
