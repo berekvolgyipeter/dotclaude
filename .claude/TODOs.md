@@ -1,5 +1,4 @@
 - test rules paths will work correctly
 - test paths in commands/skills/agents/rules
 - test paths will work in settings.json
-- test install/uninstall scripts
 - update README
