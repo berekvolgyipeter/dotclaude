@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
+# Abort on any error (-e), undefined variable (-u), or failed pipe (-o pipefail)
 set -euo pipefail
 
+# Python packages needed by skills (e.g. skill-creator uses anthropic + pyyaml)
 DEPS=(anthropic pyyaml requests)
 
+# Try package managers in order of preference: uv (fastest), pip3, pip
+# "command -v" checks if a command exists; "&>/dev/null" hides the output
 if command -v uv &>/dev/null; then
     echo "Using uv..."
     uv pip install "${DEPS[@]}"
