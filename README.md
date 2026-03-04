@@ -8,55 +8,56 @@ Manage rules, skills, commands, agents, hooks, and templates in one place instea
 
 ## What's Included
 
-### Rules
+### [Rules](rules/)
 
 | File | Scope | Description |
 |------|-------|-------------|
-| `general.md` | All files | No-guessing policy, tool preferences |
-| `code.md` | `*.py` | Python style, KISS/YAGNI, error handling, data models |
-| `debug.md` | `*.py` | ipdb, memory-profiler, line-profiler, rich |
-| `test.md` | `*.py` | pytest conventions, parametrize patterns, test organization |
+| [general.md](rules/general.md) | All files | No-guessing policy, tool preferences |
+| [code.md](rules/code.md) | `*.py` | Python style, KISS/YAGNI, error handling, data models |
+| [debug.md](rules/debug.md) | `*.py` | ipdb, memory-profiler, line-profiler, rich |
+| [test.md](rules/test.md) | `tests/**/*.py` | pytest conventions, parametrize patterns, test organization |
 
-### Commands
+### [Commands](commands/)
 
 | Command | Description |
 |---------|-------------|
-| `/review` | Full technical code review |
-| `/delta-review` | Review uncommitted changes against latest commit |
-| `/fix-review` | Fix issues found in a code review |
-| `/generate-prp` | Generate a Product Requirements Prompt |
-| `/execute-prp` | Implement a PRP |
-| `/prep-parallel` | Set up worktrees for parallel Claude Code agents |
-| `/execute-parallel` | Run parallel task execution |
-| `/primer` | Prime context for a session |
+| [/review](commands/review.md) | Full technical code review |
+| [/delta-review](commands/delta-review.md) | Review uncommitted changes against latest commit |
+| [/fix-review](commands/fix-review.md) | Fix issues found in a code review |
+| [/generate-prp](commands/generate-prp.md) | Generate a Product Requirements Prompt |
+| [/execute-prp](commands/execute-prp.md) | Implement a PRP |
+| [/prep-parallel](commands/prep-parallel.md) | Set up worktrees for parallel Claude Code agents |
+| [/execute-parallel](commands/execute-parallel.md) | Run parallel task execution |
+| [/primer](commands/primer.md) | Prime context for a session |
+| [/commit](commands/commit.md) | Stage all changes and commit with a suggested conventional commit message |
 
-### Skills
+### [Skills](skills/)
 
 | Skill | Description |
 |-------|-------------|
-| `claude-code` | Claude Code configuration & troubleshooting |
-| `claude-agent-sdk` | Agent SDK implementation patterns |
-| `prompt-engineering` | Prompt crafting and optimization techniques |
-| `learn` | Self-improvement from conversation feedback |
-| `plugin-browser` | Browse community plugins from wshobson/agents |
-| `slither` | Slither static analysis for Solidity & Vyper |
-| `skill-creator` | Create & benchmark skills (vendored, gitignored) |
+| [claude-code](skills/claude-code/SKILL.md) | Claude Code configuration & troubleshooting |
+| [claude-agent-sdk](skills/claude-agent-sdk/SKILL.md) | Agent SDK implementation patterns |
+| [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
+| [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
+| [plugin-browser](skills/plugin-browser/SKILL.md) | Browse community plugins from wshobson/agents |
+| [slither](skills/slither/SKILL.md) | Slither static analysis for Solidity & Vyper |
+| [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
 
-### Agents
+### [Agents](agents/)
 
 | Agent | Description |
 |-------|-------------|
-| `validation-gates` | Runs tests and iterates on fixes until they pass |
-| `documentation-manager` | Keeps docs in sync with code changes |
+| [validation-gates](agents/validation-gates.md) | Runs tests and iterates on fixes until they pass |
+| [documentation-manager](agents/documentation-manager.md) | Keeps docs in sync with code changes |
 
 ### Other
 
 | Item | Description |
 |------|-------------|
-| `hooks/` | Event-driven shell scripts (e.g. auto-approve `.claude/` writes) |
-| `templates/` | Starter files for new projects (`CLAUDE.md`, `mcp.json`, `serena.project.yml`) |
-| `settings.json` | Shared permissions & preferences |
-| `statusline-command.sh` | Custom status line script |
+| [hooks/](hooks/) | Event-driven shell scripts (e.g. auto-approve `.claude/` writes) |
+| [templates/](templates/) | Starter files for new projects (`CLAUDE.md`, `mcp.json`, `serena.project.yml`) |
+| [settings.json](settings.json) | Shared permissions & preferences |
+| [statusline-command.sh](statusline-command.sh) | Custom status line script |
 
 ## How It Works
 
