@@ -69,6 +69,13 @@ When adding new features, implement logic in one place and pass parameters throu
   - Use double quotes for strings
   - Use trailing commas in multi-line structures
 - **Always use type hints** for function signatures and class attributes
+- **Use precise types** — never use `object`, `Any`, or overly broad types as catch-alls. Use union types to express the actual possibilities.
+  ```python
+  # ❌ BAD
+  def run(data: object) -> None: ...
+  # ✅ GOOD
+  def run(data: ModelA | ModelB | None = None) -> None: ...
+  ```
 - **Format with `make lint`**
 - **Use `pydantic` v2** for data validation and settings management
 
@@ -139,6 +146,19 @@ response = client.call(model=settings.API_MODEL, timeout=settings.API_TIMEOUT)
 
 # ❌ BAD: Hardcoded values in functions
 response = client.call(model="gpt-4.1-mini", timeout=90)
+```
+
+**Don't pass config values as function parameters** — read them directly from the settings module inside the function. This keeps function signatures clean and avoids redundant parameter threading.
+
+```python
+# ❌ BAD: Passing config as parameter
+def process(threshold: int = settings.THRESHOLD):
+    ...
+
+# ✅ GOOD: Read from settings inside the function
+def process():
+    threshold = settings.THRESHOLD
+    ...
 ```
 
 ### Import Conventions
@@ -275,6 +295,22 @@ settings = get_settings()
 ```
 
 ## 🏗️ Data Models and Validation
+
+### Prefer Dataclasses Over Complex Nested Types
+
+When a function returns structured data with multiple fields, use a `@dataclass` instead of raw dicts, tuples, or complex type aliases.
+
+```python
+# ❌ BAD: Complex nested return type
+def measure() -> tuple[int, list[tuple[str, int]]]: ...
+
+# ✅ GOOD: Named dataclass
+@dataclass
+class Measurement:
+    total: int
+    items: list[Item]
+def measure() -> Measurement: ...
+```
 
 ### Example Pydantic Models strict with pydantic v2
 
