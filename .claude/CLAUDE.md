@@ -1,39 +1,16 @@
-# dotclaude — Global Claude Code Configuration Repo
+# dotclaude
 
-This repo is symlinked into `~/.claude/` via `./install.sh`. Editing files here immediately affects all projects on this machine. It IS the user-level config layer.
+Shared Claude Code configuration repo symlinked into `~/.claude/`. See @README.md for full documentation.
 
-## Repo Structure
+## Critical: Repo Layout
 
-```
-dotclaude/              # mirrors ~/.claude/ contents (not inside .claude/)
-├── rules/              # universal + language-specific rules (path-filtered)
-├── commands/           # slash commands available in all projects
-├── agents/             # reusable subagent definitions
-├── skills/             # packaged skills (claude-code, learn, etc.)
-├── templates/          # PRP and other templates
-├── install.sh          # symlinks repo dirs into ~/.claude/
-└── uninstall.sh        # removes only symlinks, never real dirs
-```
+Content directories (`rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`) live at the **repo root**, NOT inside `.claude/`. They symlink directly into `~/.claude/`. The `setup/` directory contains install/uninstall scripts and is not symlinked.
 
-Skills, commands, rules, agents, and templates live at the **repo root** (not inside `.claude/`), because they symlink directly into `~/.claude/`.
+## Rules for Changes
 
-## Key Conventions
-
-- **No project-specific content here.** Anything referencing a specific project's paths or tools belongs in that project's `.claude/`.
+- **No project-specific content.** Anything referencing a specific project's paths or tools belongs in that project's `.claude/`.
 - **Path-filtered rules** (YAML frontmatter `paths:`) are fine for language-specific content (e.g. `**/*.py`).
-- **Templates** — reference as `~/.claude/templates/prp_template.md` (absolute path).
+- **Templates** must be referenced via absolute path: `~/.claude/templates/prp_template.md`.
 - **`skills/skill-creator/`** is gitignored (large vendored skill — fetch separately).
 - All projects use a `Makefile` — commands referencing `make lint` / `make test` are acceptable shared conventions.
-
-## How Configuration Layers Work
-
-| Level | Location | Scope |
-|-------|----------|-------|
-| User-level | `~/.claude/` (this repo) | All projects |
-| Project-level | `project/.claude/` | That project only |
-
-Array settings (e.g. `permissions.allow`) concatenate across levels. Project-level wins for same-named items.
-
-## Editing Workflow
-
-Edit files in this repo → changes are live in all projects immediately (symlinks). Commit and push from here to version-control.
+- Edits here are live in all projects immediately (symlinks). No need to touch project repos for shared config.
