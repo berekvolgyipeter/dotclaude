@@ -1,0 +1,70 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(~/.claude/agents/*)",
+      "Read(~/.claude/commands/*)",
+      "Read(~/.claude/rules/*)",
+      "Read(~/.claude/skills/*)",
+      "Bash(make lint)",
+      "Bash(make test)",
+      "Bash(make coverage)",
+      "Bash(make tree)",
+      "Bash(source .venv/bin/activate)",
+      "Bash(rg:*)",
+      "Bash(ls:*)",
+      "Bash(tree:*)",
+      "Bash(git fetch *)",
+      "Bash(git status)",
+      "Bash(git diff HEAD)",
+      "Bash(git diff --stat *)",
+      "Bash(git log *..HEAD --oneline)",
+      "Bash(git ls-files --others --exclude-standard)",
+      "Bash(ls -t .claude/.code-reviews/*.md | head -1)",
+      "Grep(**/*)",
+      "Glob(**/*)",
+      "Skill",
+      "WebSearch",
+      "mcp__claude-context__get_indexing_status",
+      "mcp__claude-context__search_code",
+      "mcp__context7__query-docs",
+      "mcp__context7__resolve-library-id",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__serena__find_symbol",
+      "mcp__serena__find_referencing_symbols",
+      "mcp__serena__get_symbols_overview",
+      "mcp__serena__search_for_pattern"
+    ],
+    "deny": [
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Read(**/.env*)",
+      "Edit(**/.env*)"
+    ]
+  },
+  "model": "sonnet",
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "claude-context",
+    "context7",
+    "sequential-thinking",
+    "serena"
+  ],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/auto-approve-claude-dir.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  }
+}
