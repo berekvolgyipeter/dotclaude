@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Clones wshobson/agents into ~/.claude/skills-references/plugin-browser/agents/ (or pulls if already present).
+# Clones wshobson/agents into ~/.claude/skills-references/plugin-browser/wshobson-agents/ (or pulls if already present).
 
 set -euo pipefail
 
-DEST="$HOME/.claude/skills-references/plugin-browser/agents"
+DEST="$HOME/.claude/skills-references/plugin-browser/wshobson-agents"
 REPO_URL="https://github.com/wshobson/agents.git"
 
 if [ -d "$DEST/.git" ]; then
@@ -26,4 +26,4 @@ EOF
     git -C "$DEST" checkout --quiet
 fi
 
-echo "Done — agents repo available at $DEST"
+echo "Done — wshobson/agents repo available at $DEST"
