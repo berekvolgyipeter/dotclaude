@@ -16,7 +16,6 @@ BLUE='\033[38;5;39m'
 YELLOW='\033[38;5;220m'
 ORANGE='\033[38;5;208m'
 GREEN='\033[38;5;76m'
-MAGENTA='\033[38;5;201m'
 RESET='\033[0m'
 
 # OAuth email: read from ~/.claude.json

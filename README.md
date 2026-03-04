@@ -109,9 +109,10 @@ Removes only symlinks created by `install.sh`. Real directories and files are le
 make fetch-skill-creator
 ```
 
-Some skills require Python dependencies (`anthropic`, `pyyaml`, `requests`):
+Some skills require Python dependencies (`anthropic`, `pyyaml`, `requests`). Activate a virtual environment first:
 
 ```bash
+python -m venv .venv && source .venv/bin/activate
 make python-deps
 ```
 

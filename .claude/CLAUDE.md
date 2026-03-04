@@ -14,3 +14,4 @@ Content directories (`rules/`, `commands/`, `agents/`, `skills/`, `templates/`, 
 - **`skills/skill-creator/`** is gitignored (large vendored skill — fetch separately).
 - All projects use a `Makefile` — commands referencing `make lint` / `make test` are acceptable shared conventions.
 - Edits here are live in all projects immediately (symlinks). No need to touch project repos for shared config.
+- **Always update `README.md`** when adding, removing, or changing any rule, command, skill, agent, hook, template, or other configuration. Keep the README in sync with the actual repo contents.
