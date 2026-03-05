@@ -2,11 +2,9 @@
 name: plugin-browser
 description: Browse and discover Claude Code skills, agents, and plugins from the wshobson/agents community repository. Use when the user wants to find existing skills, agents, commands, or plugins — e.g., "what plugins are available?", "is there a skill for code review?", "show me community agents", "find a plugin for testing". Also use when the user mentions the wshobson/agents repo or wants to adopt/install a community plugin into their project.
 allowed-tools:
-  - "Bash(bash ~/.claude/skills/plugin-browser/scripts/setup_agents_repo.sh)"
-  - "Glob(~/.claude/skills-references/plugin-browser/agents/**)"
-  - "Read(~/.claude/skills-references/plugin-browser/agents/**)"
+  - "Glob(~/.claude/skills-references/plugin-browser/**)"
+  - "Read(~/.claude/skills-references/plugin-browser/**)"
   - "mcp__claude-context__search_code"
-  - "mcp__claude-context__get_indexing_status"
 ---
 
 # Claude Code Plugin Browser
