@@ -62,6 +62,13 @@ When adding new features, implement logic in one place and pass parameters throu
 
 ## 📋 Style & Conventions
 
+### File-level Symbol Ordering
+
+**Do not interleave variables, classes, and functions** — group them into contiguous sections. Preferred order:
+1. **Variables / constants**
+2. **Classes**
+3. **Functions**
+
 ### Python Style Guide
 
 - **Follow PEP8** with these specific choices:
@@ -120,6 +127,35 @@ Documentation should be **timeless and high-level**, focusing on architecture an
    - **Rationale**: These change frequently, breaking documentation accuracy
 
 **Remember**: Outdated documentation is worse than no documentation. Keep docs high-level, architectural, and resistant to code changes.
+
+### Models and Dataclasses Separation
+
+**Define models and dataclasses in dedicated modules** (e.g., `models/`, `schemas/`) rather than inline where they are used. This keeps business logic files focused and makes models reusable across the codebase.
+
+```python
+# ❌ BAD: Model defined in the same file as business logic
+# services/payment.py
+@dataclass
+class PaymentResult:
+    success: bool
+    reason: str
+
+def process_payment(amount: Decimal) -> PaymentResult:
+    ...
+
+# ✅ GOOD: Model in a dedicated module, imported where needed
+# models/payment.py
+@dataclass
+class PaymentResult:
+    success: bool
+    reason: str
+
+# services/payment.py
+from myapp.models.payment import PaymentResult
+
+def process_payment(amount: Decimal) -> PaymentResult:
+    ...
+```
 
 ### Naming Conventions
 
