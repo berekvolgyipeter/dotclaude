@@ -39,7 +39,7 @@ Manage rules, skills, commands, agents, hooks, and templates in one place instea
 | [claude-agent-sdk](skills/claude-agent-sdk/SKILL.md) | Agent SDK implementation patterns |
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
 | [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
-| [plugin-browser](skills/plugin-browser/SKILL.md) | Browse community plugins from wshobson/agents |
+| [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
 | [slither](skills/slither/SKILL.md) | Slither static analysis for Solidity & Vyper |
 | [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
 
