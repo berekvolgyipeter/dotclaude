@@ -1,0 +1,23 @@
+{
+    "mcpServers": {
+        "claude-context": {
+            "type": "stdio",
+            "command": "sh",
+            "args": [
+                "-c",
+                "export $(grep '^OPENAI_API_KEY=' .env | xargs) && exec npx @zilliz/claude-context-mcp@latest"
+            ],
+            "env": {
+                "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+                "MILVUS_ADDRESS": "localhost:19531"
+            }
+        },
+        "sequential-thinking": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-sequential-thinking"
+            ]
+        }
+    }
+}

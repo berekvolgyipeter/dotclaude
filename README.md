@@ -55,6 +55,7 @@ Manage rules, skills, commands, agents, hooks, and templates in one place instea
 | Item | Description |
 |------|-------------|
 | [hooks/](hooks/) | Event-driven shell scripts (e.g. auto-approve `.claude/` writes) |
+| [scripts/](scripts/) | Shared utility scripts (e.g. `index-codebase.sh` for claude-context indexing) |
 | [templates/](templates/) | Starter files for new projects (`CLAUDE.md`, `mcp.json`, `serena.project.yml`) |
 | [settings.json](settings.json) | Shared permissions & preferences |
 | [statusline-command.sh](statusline-command.sh) | Custom status line script |
@@ -89,7 +90,7 @@ make install
 ```
 
 This runs `setup/install.sh`, which symlinks directories and files from this repo into `~/.claude/`:
-- **Directories**: `rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`
+- **Directories**: `rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`, `scripts/`
 - **Files**: `settings.json`, `statusline-command.sh`
 
 If a real (non-symlink) directory or file already exists at the target, the script warns and skips it. Existing files are backed up with a timestamp before being replaced. Safe to re-run.
