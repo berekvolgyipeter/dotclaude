@@ -1,76 +1,69 @@
 ---
 name: plugin-browser
-description: Browse and discover Claude Code skills, agents, and plugins from the wshobson/agents community repository. Use when the user wants to find existing skills, agents, commands, or plugins — e.g., "what plugins are available?", "is there a skill for code review?", "show me community agents", "find a plugin for testing". Also use when the user mentions the wshobson/agents repo or wants to adopt/install a community plugin into their project.
+description: Browse and discover Claude Code skills, agents, commands, and plugins from community and official repositories. Use when the user wants to find, explore, or learn about existing skills, agents, commands, or plugins — e.g., "what plugins are available?", "is there a skill for code review?", "show me community agents", "find a plugin for testing", "browse the plugin marketplace". Also use when the user wants to learn what a community plugin does.
 allowed-tools:
-  - "Bash(bash ~/.claude/skills/plugin-browser/scripts/setup_agents_repo.sh)"
-  - "Glob(~/.claude/skills-references/plugin-browser/agents/**)"
-  - "Read(~/.claude/skills-references/plugin-browser/agents/**)"
+  - "Glob(*/.claude/skills-references/plugin-browser/**)"
+  - "Grep(*/.claude/skills-references/plugin-browser/**)"
+  - "Read(*/.claude/skills-references/plugin-browser/**)"
+  - "Read(*/.claude/skills/plugin-browser/references/catalog.json)"
   - "mcp__claude-context__search_code"
-  - "mcp__claude-context__get_indexing_status"
 ---
 
-# Claude Code Plugin Browser
+# Plugin Browser
 
-Help users discover and adopt skills, agents, and plugins from [wshobson/agents](https://github.com/wshobson/agents).
+Help users discover and explore skills, agents, commands, and plugins from community and official repositories.
 
-## Repository Structure
+## Catalog
 
-Each plugin is a focused automation unit containing:
+The catalog at `~/.claude/skills/plugin-browser/references/catalog.json` lists all indexed repositories with descriptions and topics. Read it first to understand what's available and which repo is most relevant to the user's need.
 
-- `agents/` — Specialized sub-agents
-- `commands/` — Slash commands and workflows
-- `skills/` — Modular knowledge packages
+Each entry has these fields: `github` (source repo), `local_path` (where it's cloned), `description` (what it contains), `topics` (keyword tags), and `content_types` (e.g. skills, agents, commands, plugins).
 
-## Plugin Catalog
-
-The marketplace index at `~/.claude/skills-references/plugin-browser/agents/.claude-plugin/marketplace.json` contains structured metadata for all plugins (name, description, category, version). Use it as the primary entry point for browsing — it's faster than globbing directories and gives richer context for recommendations.
+All repos are cloned and indexed together under a single path:
 
 ```
-Read(~/.claude/skills-references/plugin-browser/agents/.claude-plugin/marketplace.json)
+~/.claude/skills-references/plugin-browser/
 ```
 
-Each plugin also has a `plugin.json` at `plugins/<name>/.claude-plugin/plugin.json` with its own metadata.
+Each repo lives at the `local_path` specified in the catalog (e.g., `~/.claude/skills-references/plugin-browser/wshobson-agents/`).
 
-## Browse & Search
+## Search
 
-**Catalog first** — read `marketplace.json` to get an overview of all plugins with descriptions and categories. Filter by category to narrow results for the user.
-
-**Browse** to list contents of a specific plugin:
-
-```
-Glob(~/.claude/skills-references/plugin-browser/agents/plugins/<name>/**/*.md)
-```
-
-**Search** to find components by topic or capability:
+Use semantic search across all repos at once:
 
 ```
 mcp__claude-context__search_code(
-  path="~/.claude/skills-references/plugin-browser/agents",
+  path="~/.claude/skills-references/plugin-browser",
   query="<user need>"
 )
 ```
 
-If semantic search fails (codebase not indexed), fall back to Grep:
+If semantic search returns no results or the index is unavailable, fall back to pattern-based search:
 
 ```
-Grep(pattern="<keyword>", path="~/.claude/skills-references/plugin-browser/agents/", glob="*.md")
+Grep(pattern="<keyword>", path="~/.claude/skills-references/plugin-browser/", glob="*.md")
+```
+
+## Browse
+
+To list contents of a specific plugin or repo:
+
+```
+Glob(~/.claude/skills-references/plugin-browser/<repo-dir>/**/*.md)
+```
+
+For structured plugin repos (like wshobson-agents), check for a `marketplace.json` or `plugin.json` for richer metadata:
+
+```
+Glob(~/.claude/skills-references/plugin-browser/<repo-dir>/**/*marketplace*.json)
+Glob(~/.claude/skills-references/plugin-browser/<repo-dir>/**/*plugin*.json)
 ```
 
 ## Workflow
 
-1. **Catalog** — read `marketplace.json` to understand what's available, then filter by category or search by need.
-2. Present matches with name, description, and category from the catalog.
-3. **Read** the component's SKILL.md or README before recommending — understand what it actually does.
-4. **Install** selected components by copying the relevant files into the user's project:
-   - Skills → `cp -r ~/.claude/skills-references/plugin-browser/agents/plugins/<plugin>/skills/<name>/ .claude/skills/<name>/`
-   - Agents → `cp ~/.claude/skills-references/plugin-browser/agents/plugins/<plugin>/agents/<name>.md .claude/agents/<name>.md`
-   - Commands → `cp ~/.claude/skills-references/plugin-browser/agents/plugins/<plugin>/commands/<name>.md .claude/commands/<name>.md`
-   - Entire plugin → copy all its skills, agents, and commands into the respective directories
-
-   Always confirm with the user before copying. If destination files already exist, warn before overwriting.
-
-## Setup and Troubleshooting
-
-If `~/.claude/skills-references/plugin-browser/agents/` is missing, run `bash ~/.claude/skills/plugin-browser/scripts/setup_agents_repo.sh`.
-Then check if the codebase is indexed (`mcp__claude-context__get_indexing_status`);
-if not, index it with `mcp__claude-context__index_codebase(path="~/.claude/skills-references/plugin-browser/agents", splitter="ast")`.
+1. **Understand the need** — ask clarifying questions if the user's request is vague (e.g., "security" could mean AppSec scanning, smart contract auditing, or secrets detection).
+2. **Catalog** — read `~/.claude/skills/plugin-browser/references/catalog.json` to identify which repos are relevant based on descriptions and topics.
+3. **Search** — use semantic search to find matching components across all repos.
+4. **Read before recommending** — read the component's SKILL.md, README, or plugin.json before presenting it. Understand what it does, what tools it needs, and any dependencies.
+5. **Present matches** — show name, description, source repo, and category. When multiple options exist, compare them briefly.
+6. **Install** (if requested) — copy selected files into the user's `.claude/` directory (skills, agents, commands). Confirm before copying and warn if destination files already exist. Browse the repo's directory layout first to determine the correct source paths, since not all repos follow the same structure.
