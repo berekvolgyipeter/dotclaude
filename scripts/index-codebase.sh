@@ -21,8 +21,11 @@ export MILVUS_ADDRESS="${MILVUS_ADDRESS:-localhost:19531}"
 #   2. "tools/call"  – invokes index_codebase with AST splitter on our target path
 # The server runs in the background so we can poll its progress below.
 echo "Starting indexing for: $PATH_TO_INDEX"
-printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"sh","version":"1.0"}}}\n{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"index_codebase","arguments":{"path":"'"$PATH_TO_INDEX"'","splitter":"ast"}}}\n' \
-  | npx --yes @zilliz/claude-context-mcp@latest &
+INIT_MSG='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"sh","version":"1.0"}}}'
+PAYLOAD=$(jq -n \
+  --arg path "$PATH_TO_INDEX" \
+  '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"index_codebase","arguments":{"path":$path,"splitter":"ast"}}}')
+printf '%s\n%s\n' "$INIT_MSG" "$PAYLOAD" | npx --yes @zilliz/claude-context-mcp@latest &
 
 # Capture the background process PID so we can kill it when done
 MCP_PID=$!
@@ -42,9 +45,9 @@ while true; do
   fi
 
   # Parse the snapshot JSON to extract status and progress percentage
-  STATUS=$(node -e "
-    const s = JSON.parse(require('fs').readFileSync('$SNAPSHOT','utf8'));
-    const info = (s.codebases || {})['$PATH_TO_INDEX'];
+  STATUS=$(SNAPSHOT="$SNAPSHOT" TARGET="$PATH_TO_INDEX" node -e "
+    const s = JSON.parse(require('fs').readFileSync(process.env.SNAPSHOT,'utf8'));
+    const info = (s.codebases || {})[process.env.TARGET];
     console.log(info ? info.status : 'not_found');
     if (info && info.status === 'indexing') process.stdout.write(' ' + (info.indexingPercentage||0).toFixed(1) + '%\n');
     else console.log('');
