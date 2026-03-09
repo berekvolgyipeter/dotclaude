@@ -102,7 +102,7 @@ Decide whether a learning is **universal** (applies to all projects → user-lev
 When updating skill descriptions, command prompts, or agent instructions, invoke the `prompt-engineering` skill first to ensure the new content follows best practices for AI prompt design.
 
 For each learning, create a clear, actionable update:
-- **Generalize**: If the learning isn't too specific to one situation, make the rule broad enough to apply in similar future cases
+- **Match content to scope**: General rules (`~/.claude/`) must use universally applicable text and examples — no project-specific names or domain concepts. Project-specific learnings (`.claude/`) may use domain terms and reference actual code patterns. When a learning is general, extract the universal principle and craft a generic example.
 - **Be concise**: One clear point per rule
 - **Be actionable**: The next agent running this skill/command/agent should know exactly what to do differently
 - **Show examples**: Use ✅ GOOD / ❌ BAD format when helpful
