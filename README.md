@@ -5,6 +5,8 @@ Shared [Claude Code](https://docs.anthropic.com/en/docs/claude-code) configurati
 Manage rules, skills, commands, agents, hooks, and templates in one place instead of duplicating them across every project.
 
 > **Note:** This repo contains scripts that modify files on your system. Please review the contents before use.
+>
+> **Platform:** Only tested and developed on macOS. Linux may work but is untested; Windows is not supported.
 
 ## What's Included
 
@@ -39,7 +41,7 @@ Manage rules, skills, commands, agents, hooks, and templates in one place instea
 | [claude-agent-sdk](skills/claude-agent-sdk/SKILL.md) | Agent SDK implementation patterns |
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
 | [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
-| [plugin-browser](skills/plugin-browser/SKILL.md) | Browse community plugins from wshobson/agents |
+| [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
 | [slither](skills/slither/SKILL.md) | Slither static analysis for Solidity & Vyper |
 | [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
 
@@ -55,6 +57,7 @@ Manage rules, skills, commands, agents, hooks, and templates in one place instea
 | Item | Description |
 |------|-------------|
 | [hooks/](hooks/) | Event-driven shell scripts (e.g. auto-approve `.claude/` writes) |
+| [scripts/](scripts/) | Shared utility scripts (e.g. `index-codebase.sh` for claude-context indexing) |
 | [templates/](templates/) | Starter files for new projects (`CLAUDE.md`, `mcp.json`, `serena.project.yml`) |
 | [settings.json](settings.json) | Shared permissions & preferences |
 | [statusline-command.sh](statusline-command.sh) | Custom status line script |
@@ -89,7 +92,7 @@ make install
 ```
 
 This runs `setup/install.sh`, which symlinks directories and files from this repo into `~/.claude/`:
-- **Directories**: `rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`
+- **Directories**: `rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`, `scripts/`
 - **Files**: `settings.json`, `statusline-command.sh`
 
 If a real (non-symlink) directory or file already exists at the target, the script warns and skips it. Existing files are backed up with a timestamp before being replaced. Safe to re-run.

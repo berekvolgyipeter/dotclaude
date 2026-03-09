@@ -79,6 +79,8 @@ git add -A
 git commit -m "<proposed message>"
 ```
 
+**Do NOT add Co-Authored-By, Signed-off-by, or any other trailers/metadata to the commit message.** The message must contain only the conventional commit summary line — nothing else.
+
 If the commit hook fails, report the error and stop — do not retry or bypass hooks.
 
 ## Step 4: Confirm

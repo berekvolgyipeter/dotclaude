@@ -2,9 +2,7 @@
 name: slither
 description: Slither static analysis expert for Solidity & Vyper. Invoke before implementing any code that uses Slither — including Python API usage, call graph/CFG generation, custom detectors/printers, and smart contract analysis. Also use for CLI and CI/CD questions.
 allowed-tools:
-  - "Bash(bash ~/.claude/skills/slither/scripts/setup_slither_repo.sh)"
   - "mcp__claude-context__search_code"
-  - "mcp__claude-context__get_indexing_status"
 ---
 
 # Slither Expert
@@ -218,9 +216,3 @@ mcp__claude-context__search_code(
 ## External Reference
 
 - API Docs: https://crytic.github.io/slither/slither.html
-
-## Setup and Troubleshooting
-
-If `~/.claude/skills-references/slither/slither/` is missing, run `bash ~/.claude/skills/slither/scripts/setup_slither_repo.sh`.
-Then check if the codebase is indexed (`mcp__claude-context__get_indexing_status`);
-if not, index it with `mcp__claude-context__index_codebase(path="~/.claude/skills-references/slither/slither", splitter="ast")`.

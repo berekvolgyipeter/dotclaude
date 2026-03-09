@@ -2,12 +2,8 @@
 name: claude-agent-sdk
 description: "Expert implementation guidance for the Claude Agent SDK. Use WHENEVER users mention: building AI agents, using Claude in Python, working with the SDK, creating custom tools, managing agent sessions, controlling permissions, streaming responses, integrating MCP servers, adding hooks, deploying agents, or anything Agent SDK-related. Also use for: architecture questions about multi-turn vs one-shot, deciding between query() vs ClaudeSDKClient, implementing permissions/approvals workflows, building MCP-based extensions, cost/usage tracking, session persistence, structured outputs, subagents, or any SDK feature. This skill provides implementation patterns, decision trees, and working code examples—not just documentation pointers."
 allowed-tools:
-  - "Bash(bash ~/.claude/skills/claude-agent-sdk/scripts/fetch_agent_sdk_urls.sh)"
-  - "Bash(bash ~/.claude/skills/claude-agent-sdk/scripts/fetch_python_sdk_repo.sh)"
-  - "Glob(~/.claude/skills-references/claude-agent-sdk/claude-agent-sdk-python**)"
   - "WebFetch(https://platform.claude.com/docs/en/agent-sdk*)"
   - "mcp__claude-context__search_code"
-  - "mcp__claude-context__get_indexing_status"
 ---
 
 # Claude Agent SDK
@@ -216,9 +212,3 @@ Four methods:
 - **Semantic search** — Use `mcp__claude-context__search_code` on the indexed repo for any concept
 - **Browse examples**: `Glob(~/.claude/skills-references/claude-agent-sdk/claude-agent-sdk-python/examples/*.py)`
 - **Fetch latest docs**: Use `WebFetch` on URLs from [reference.md](references/reference.md) for up-to-date details
-
-## Setup and Troubleshooting
-
-If `~/.claude/skills-references/claude-agent-sdk/claude-agent-sdk-python/` doesn't exist, run `bash ~/.claude/skills/claude-agent-sdk/scripts/fetch_python_sdk_repo.sh`.
-Then check if the codebase is indexed (`mcp__claude-context__get_indexing_status`);
-if not, index it with `mcp__claude-context__index_codebase(path="~/.claude/skills-references/claude-agent-sdk/claude-agent-sdk-python", splitter="ast")`.

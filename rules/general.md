@@ -15,6 +15,10 @@ Before forming any opinion or hypothesis:
 
 If no tool can provide the answer, say so explicitly and ask the user to clarify or provide the missing information.
 
+## 🔧 Simplest Solution First
+
+Always choose the most obvious, explicit, and straightforward approach. Don't reach for clever transformations or abstractions when a direct solution exists. If the user suggests a simpler way, take it immediately.
+
 ## 🔍 Tool Preferences
 
 This project uses modern alternatives enforced via `.claude/settings.json`:

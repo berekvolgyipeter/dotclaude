@@ -114,7 +114,7 @@ Save a new file to `.claude/.code-reviews/[current-branch-name]--yyyy-mm-dd.md`
 
 **List issues ordered by severity: 🔴 CRITICAL first, then 🟠 HIGH, 🟡 MEDIUM, and 🔵 LOW last. Number them sequentially starting from 1. For each issue found, use this format:**
 
-### #1 🔴 CRITICAL | `path/to/file.py:42` — One-line description
+### #1 🔴 CRITICAL | [path/to/file.py:42](../../path/to/file.py#L42) — One-line description
 
 **Why this is a problem:** Explanation of why this is a problem and what impact it has.
 

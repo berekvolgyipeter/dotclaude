@@ -1,10 +1,9 @@
 {
+  "env": {
+    "USE_BUILTIN_RIPGREP": "0"
+  },
   "permissions": {
     "allow": [
-      "Read(~/.claude/agents/*)",
-      "Read(~/.claude/commands/*)",
-      "Read(~/.claude/rules/*)",
-      "Read(~/.claude/skills/*)",
       "Bash(make lint)",
       "Bash(make test)",
       "Bash(make coverage)",
@@ -20,8 +19,6 @@
       "Bash(git log *..HEAD --oneline)",
       "Bash(git ls-files --others --exclude-standard)",
       "Bash(ls -t .claude/.code-reviews/*.md | head -1)",
-      "Grep(**/*)",
-      "Glob(**/*)",
       "Skill",
       "WebSearch",
       "mcp__claude-context__get_indexing_status",
@@ -53,7 +50,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash|Write",
+        "matcher": "Bash|Write|Read|Grep|Glob",
         "hooks": [
           {
             "type": "command",
