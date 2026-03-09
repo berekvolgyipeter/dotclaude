@@ -1,25 +1,6 @@
 ---
 name: learn
 description: Analyze conversation and update CLAUDE.md, rule files, and/or any skills, commands, or agents that were used — based on user feedback vs agent behavior. Use this skill at the end of any conversation where corrections, misunderstandings, or new patterns emerged, especially when a skill, command, or agent underperformed or needed repeated guidance.
-allowed-tools:
-  - "Read(~/.claude/**/*)"
-  - "Grep(~/.claude/**/*)"
-  - "Glob(~/.claude/**/*)"
-  - "Edit(~/.claude/agents/**/*)"
-  - "Edit(~/.claude/commands/**/*)"
-  - "Edit(~/.claude/skills/**/*)"
-  - "Edit(~/.claude/rules/**/*)"
-  - "Edit(~/.claude/templates/**/*)"
-  - "Write(~/.claude/agents/**/*)"
-  - "Write(~/.claude/commands/**/*)"
-  - "Write(~/.claude/skills/**/*)"
-  - "Write(~/.claude/rules/**/*)"
-  - "Write(~/.claude/templates/**/*)"
-  - "Read(.claude/**/*)"
-  - "Grep(.claude/**/*)"
-  - "Glob(.claude/**/*)"
-  - "Edit(.claude/**/*)"
-  - "Write(.claude/**/*)"
 ---
 
 Analyze the current conversation to identify patterns where:
