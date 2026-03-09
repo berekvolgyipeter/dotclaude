@@ -36,6 +36,18 @@ def test_parse(self, input_val, expected):
     assert parse(input_val) == expected
 ```
 
+**Test thoroughly:** Tests must be complete in two ways:
+- **Scenario coverage** — cover all meaningful input combinations; no redundant cases, no gaps
+- **Assertion completeness** — assert the full expected outcome per scenario, not a partial slice. When the expected result is a group (e.g., multiple disabled features, multiple called services), assert the entire group.
+
+```python
+# ❌ BAD: Asserts only one item from the expected group
+("admin_disabled", "login_page"),  # but admin_api is also disabled
+
+# ✅ GOOD: Asserts the complete expected group
+("admin_disabled", ["login_page", "admin_api", "user_mgmt"]),
+```
+
 **DRY in tests:** Extract shared mock setup into `conftest.py` fixtures. If the same mock construction appears in multiple tests, it belongs in a fixture.
 
 ```python
