@@ -5,6 +5,8 @@ Shared [Claude Code](https://docs.anthropic.com/en/docs/claude-code) configurati
 Manage rules, skills, commands, agents, hooks, and templates in one place instead of duplicating them across every project.
 
 > **Note:** This repo contains scripts that modify files on your system. Please review the contents before use.
+>
+> **Platform:** Only tested and developed on macOS. Linux may work but is untested; Windows is not supported.
 
 ## What's Included
 

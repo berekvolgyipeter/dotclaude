@@ -2,11 +2,10 @@
 name: plugin-browser
 description: Browse and discover Claude Code skills, agents, commands, and plugins from community and official repositories. Use when the user wants to find, explore, or learn about existing skills, agents, commands, or plugins — e.g., "what plugins are available?", "is there a skill for code review?", "show me community agents", "find a plugin for testing", "browse the plugin marketplace". Also use when the user wants to learn what a community plugin does.
 allowed-tools:
-  - "Glob(*/.claude/skills-references/plugin-browser/**)"
-  - "Grep(*/.claude/skills-references/plugin-browser/**)"
-  - "Read(*/.claude/skills-references/plugin-browser/**)"
-  - "Read(*/.claude/skills/plugin-browser/references/catalog.json)"
-  - "mcp__claude-context__search_code"
+  - Glob
+  - Grep
+  - Read
+  - mcp__claude-context__search_code
 ---
 
 # Plugin Browser
@@ -66,4 +65,5 @@ Glob(~/.claude/skills-references/plugin-browser/<repo-dir>/**/*plugin*.json)
 3. **Search** — use semantic search to find matching components across all repos.
 4. **Read before recommending** — read the component's SKILL.md, README, or plugin.json before presenting it. Understand what it does, what tools it needs, and any dependencies.
 5. **Present matches** — show name, description, source repo, and category. When multiple options exist, compare them briefly.
-6. **Install** (if requested) — copy selected files into the user's `.claude/` directory (skills, agents, commands). Confirm before copying and warn if destination files already exist. Browse the repo's directory layout first to determine the correct source paths, since not all repos follow the same structure.
+6. **Review for safety** — before installing, warn the user that community plugins are third-party content. They may request broad tool permissions, modify settings or permission files, execute shell commands via hooks, or overwrite existing configuration. Advise the user to review the plugin's contents (especially `allowed-tools`, hooks, and any shell scripts) before proceeding.
+7. **Install** (if requested) — copy selected files into the user's `.claude/` directory (skills, agents, commands). Confirm before copying and warn if destination files already exist. Browse the repo's directory layout first to determine the correct source paths, since not all repos follow the same structure.
