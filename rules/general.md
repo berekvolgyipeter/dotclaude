@@ -1,8 +1,8 @@
 # Behavioral Rules
 
-## ⚠️ NO GUESSING — USE TOOLS TO FIND EVIDENCE
+## NO GUESSING — USE TOOLS TO FIND EVIDENCE
 
-**Never respond with "likely causes", "probably", or speculative answers when tools are available to find the real answer.**
+Never respond with "likely causes", "probably", or speculative answers when the answer can be found with a tool call.
 
 Before forming any opinion or hypothesis:
 1. Check available skills (listed in the system prompt)
@@ -15,13 +15,16 @@ Before forming any opinion or hypothesis:
 
 If no tool can provide the answer, say so explicitly and ask the user to clarify or provide the missing information.
 
-## 🔧 Simplest Solution First
+## Consistency When Editing
 
-Always choose the most obvious, explicit, and straightforward approach. Don't reach for clever transformations or abstractions when a direct solution exists. If the user suggests a simpler way, take it immediately.
+Before making any edit, read the surrounding context and match its style — formatting, naming, tone, and conventions.
 
-## 🔍 Tool Preferences
+❌ BAD: Adding a raw glob pattern (`**/*.py`) to a column that uses human-readable text ("Python files")
+✅ GOOD: Reading nearby entries first, then writing new content that matches their style
 
-This project uses modern alternatives enforced via `.claude/settings.json`:
-- `rg` (ripgrep) over `grep` - faster, respects .gitignore
-- `Glob` tool over `find` - more intuitive pattern matching
-- `Read` tool over `cat` - structured output with line numbers
+## Tool Preferences
+
+Prefer these tools in all projects:
+- `Glob` tool over `find` — more intuitive pattern matching
+- `Grep` tool over `rg`/`grep` — structured output, correct permissions
+- `Read` tool over `cat` — structured output with line numbers

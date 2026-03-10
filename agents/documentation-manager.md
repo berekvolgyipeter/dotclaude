@@ -2,12 +2,12 @@
 name: documentation-manager
 description: "Expert documentation specialist. Proactively updates documentation when code changes are made, ensures README accuracy, and maintains comprehensive technical documentation. Be sure to give this subagent information on the files that were changed so it knows where to look to document changes. Always call this agent after there are code changes."
 tools:
-  - "Read(**/*)"
-  - "Write(**/*)"
-  - "Edit(**/*)"
-  - "MultiEdit(**/*)"
-  - "Grep(**/*)"
-  - "Glob(**/*)"
+  - "Read"
+  - "Write(**/*.md)"
+  - "Edit(**/*.md)"
+  - "MultiEdit(**/*.md)"
+  - "Grep"
+  - "Glob"
   - ls
 ---
 

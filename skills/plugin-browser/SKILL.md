@@ -28,7 +28,9 @@ Each repo lives at the `local_path` specified in the catalog (e.g., `~/.claude/s
 
 ## Search
 
-Use semantic search across all repos at once:
+**Always start with semantic search** — it combines semantic understanding with BM25 keyword matching, so it surfaces conceptually relevant results even when exact keywords differ. Only fall back to Grep if semantic search returns no results or the index is unavailable.
+
+**Primary — semantic search:**
 
 ```
 mcp__claude-context__search_code(
@@ -37,7 +39,7 @@ mcp__claude-context__search_code(
 )
 ```
 
-If semantic search returns no results or the index is unavailable, fall back to pattern-based search:
+**Fallback — keyword search** (only when semantic search fails or is unavailable):
 
 ```
 Grep(pattern="<keyword>", path="~/.claude/skills-references/plugin-browser/", glob="*.md")

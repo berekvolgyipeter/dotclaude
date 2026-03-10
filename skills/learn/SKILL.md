@@ -63,11 +63,7 @@ For each one found (or expected but missing), read its current definition file, 
 
 Decide whether a learning is **universal** (applies to all projects → user-level `~/.claude/`) or **project-specific** (→ project-level `.claude/`).
 
-**Rule files (user-level `~/.claude/`):**
-- **General behaviour and philosophy** → `~/.claude/rules/general.md`
-- **Coding Standards** → `~/.claude/rules/code.md`
-- **Testing** → `~/.claude/rules/test.md`
-- **Debugging** → `~/.claude/rules/debug.md`
+**Rule files (user-level `~/.claude/`):** See `~/.claude/index/rules.md` for the full list of rule files and what each covers.
 
 **Rule files (project-level `.claude/`):**
 - **Project specific details** → `.claude/CLAUDE.md`
@@ -141,10 +137,7 @@ After presenting the analysis:
   - Complementary → Add as a new distinct rule
 - **Scope reference**:
   - **User-level (`~/.claude/`)** — universal rules, skills, commands, agents, templates shared across all projects:
-    - `~/.claude/rules/general.md` — Behavioral rules, general philosophy, tool preferences
-    - `~/.claude/rules/code.md` — Coding standards, error handling, style
-    - `~/.claude/rules/test.md` — Testing best practices, fixtures, mocking
-    - `~/.claude/rules/debug.md` — Debugging tools and techniques
+    - Rule files — see `~/.claude/index/rules.md` for the full list and what each covers
     - `~/.claude/skills/<name>/SKILL.md` — Skill instructions, steps, examples, description
     - `~/.claude/commands/<name>.md` — Command prompt template and steps
     - `~/.claude/agents/<name>.md` — Agent role, responsibilities, working process
@@ -160,7 +153,7 @@ After presenting the analysis:
 
 **Scenario 1: Agent repeatedly used wrong import pattern**
 - Learning: Agent imported from wrong module despite correction
-- Target: `~/.claude/rules/code.md`
+- Target: `~/.claude/rules/py-code.md`
 - Update: Add specific import convention with correct example
 
 **Scenario 2: Agent missed project-specific pattern**
