@@ -32,11 +32,7 @@ git ls-files --others --exclude-standard
 
 ## Step 2: Load Standards
 
-Read the codebase standards relevant to the changed files:
-
-- `.claude/CLAUDE.md` — project-wide rules
-- `~/.claude/rules/code.md` — linting, typing, logging, formatting standards
-- `~/.claude/rules/test.md` — testing standards
+Read `~/.claude/index/rules.md` and load the applicable rule files for the changed file types.
 
 ## Step 3: Run Static Analysis
 
@@ -83,9 +79,7 @@ For each changed file or new file, analyze for:
    - Unnecessary intermediate variables
 
 5. **Adherence to Codebase Standards**
-   - Adherence to standards documented in CLAUDE.md
-   - Linting, typing, logging, and formatting standards (see ~/.claude/rules/code.md)
-   - Testing standards (see ~/.claude/rules/test.md)
+   - Adherence to standards loaded in Step 2
 
 ## Verify Issues Are Real
 

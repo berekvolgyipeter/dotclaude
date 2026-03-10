@@ -15,9 +15,17 @@ Manage rules, skills, commands, agents, hooks, and templates in one place instea
 | File | Scope | Description |
 |------|-------|-------------|
 | [general.md](rules/general.md) | All files | No-guessing policy, tool preferences |
-| [code.md](rules/code.md) | `*.py` | Python style, KISS/YAGNI, error handling, data models |
-| [debug.md](rules/debug.md) | `*.py` | ipdb, memory-profiler, line-profiler, rich |
-| [test.md](rules/test.md) | `tests/**/*.py` | pytest conventions, parametrize patterns, test organization |
+| [py-code.md](rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
+| [py-test.md](rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
+| [docs.md](rules/docs.md) | Markdown files | Documentation principles, timeless writing, avoid volatile details |
+
+### [Index](index/)
+
+Reference files explicitly read by commands and skills — not auto-loaded.
+
+| File | Description |
+|------|-------------|
+| [index/rules.md](index/rules.md) | Registry of all rule files — what each covers and when to load it |
 
 ### [Commands](commands/)
 
@@ -43,6 +51,7 @@ Manage rules, skills, commands, agents, hooks, and templates in one place instea
 | [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
 | [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
 | [slither](skills/slither/SKILL.md) | Slither static analysis for Solidity & Vyper |
+| [py-debug](skills/py-debug/SKILL.md) | Python debugging |
 | [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
 
 ### [Agents](agents/)
@@ -92,7 +101,7 @@ make install
 ```
 
 This runs `setup/install.sh`, which symlinks directories and files from this repo into `~/.claude/`:
-- **Directories**: `rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`, `scripts/`
+- **Directories**: `rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`, `scripts/`, `index/`
 - **Files**: `settings.json`, `statusline-command.sh`
 
 If a real (non-symlink) directory or file already exists at the target, the script warns and skips it. Existing files are backed up with a timestamp before being replaced. Safe to re-run.
@@ -113,11 +122,11 @@ Removes only symlinks created by `install.sh`. Real directories and files are le
 make fetch-skill-creator
 ```
 
-Some skills require Python dependencies (`anthropic`, `pyyaml`, `requests`). Activate a virtual environment first:
+Some skills require Python dependencies. Activate a virtual environment first:
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-make python-deps
+make skill-creator-deps
 ```
 
 ## Editing Workflow

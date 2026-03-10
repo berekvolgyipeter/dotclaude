@@ -2,19 +2,22 @@
 paths:
   - "tests/**/*.py"
   - "test/**/*.py"
+  - "**/test_*.py"
 ---
 
-# Testing Guidelines
+# Python Testing Guidelines
 
-Pytest conventions covering fixtures, mocking, and parametrize usage.
+## Testing Best Practices
 
-## 🧪 Testing Strategy
+**Fixtures:** Put all fixtures in `conftest.py` — pytest discovers them automatically across the test suite without any imports.
 
-### Testing Best Practices
+**Mocking:** Use `@patch` as a decorator, not as a context manager — it keeps teardown automatic and avoids extra indentation nesting.
 
-**Fixtures:** All fixtures must be in `conftest.py`
+**Arrange-Act-Assert (AAA):** Structure every test in three phases — Arrange (set up preconditions), Act (execute the code under test), Assert (verify the outcome). Keep each phase visually distinct; a blank line between them is enough.
 
-**Mocking:** Use `@patch` as decorator, NOT as context manager
+**One behavior per test:** Each test should verify exactly one behavior, making failures easy to diagnose. If a test name requires "and", split it into two tests.
+
+**Test error paths:** Always test failure cases, not just the happy path. For each function under test, consider what can go wrong — invalid input, missing resources, boundary conditions — and assert the expected exception or error response with `pytest.raises(SomeError, match="...")`.
 
 **Parametrize over duplicating test methods:** When multiple tests differ only in input data and expected output, use `@pytest.mark.parametrize` instead of writing separate test methods. This produces more rigorous coverage with less code and is easier to extend.
 
@@ -35,6 +38,8 @@ def test_parse_mixed(self):
 def test_parse(self, input_val, expected):
     assert parse(input_val) == expected
 ```
+
+**Test against specification:** If a spec, PRD, or requirements doc exists for the feature being tested, read it before writing tests — derive test cases directly from the specified behaviour, not just from the implementation. Tests that only reflect the code can't catch the code being wrong.
 
 **Test thoroughly:** Tests must be complete in two ways:
 - **Scenario coverage** — cover all meaningful input combinations; no redundant cases, no gaps
@@ -77,11 +82,11 @@ def test_user_update_email_fails_with_invalid_format(sample_user):
     assert "Invalid email format" in str(exc_info.value)
 ```
 
-### Test Organization
+## Test Organization
 
 - Unit tests: Test individual functions/methods in isolation
 - Integration tests: Test component interactions
 - End-to-end tests: Test complete user workflows
-- Tests live in `tests/unit/` directory, mirroring the `src/` folder structure
+- Tests mirror the `src/` folder structure
 - Use `conftest.py` for shared fixtures
-- Aim for 80%+ code coverage, but focus on critical paths
+- Prioritize coverage of critical paths and business logic

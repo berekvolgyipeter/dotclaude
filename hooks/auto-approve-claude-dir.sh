@@ -54,7 +54,7 @@ ALLOWED_WRITE_PATHS=(
 
 # Resolve the real repo path even when invoked via ~/.claude/hooks/ symlink,
 # so paths match regardless of whether Claude uses the symlink or repo path.
-DOTCLAUDE_REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+DOTCLAUDE_REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd "$(pwd -P)/.." && pwd -P)"
 
 # Global ~/.claude/ directories that Read, Grep, and Glob may access.
 # These house the shared config managed by the dotclaude repo.
@@ -66,12 +66,14 @@ ALLOWED_READ_SEARCH_DIRS=(
   "$HOME/.claude/agents"
   "$HOME/.claude/templates"
   "$HOME/.claude/hooks"
+  "$HOME/.claude/index"
   "$DOTCLAUDE_REPO/skills"
   "$DOTCLAUDE_REPO/commands"
   "$DOTCLAUDE_REPO/rules"
   "$DOTCLAUDE_REPO/agents"
   "$DOTCLAUDE_REPO/templates"
   "$DOTCLAUDE_REPO/hooks"
+  "$DOTCLAUDE_REPO/index"
 )
 
 # --- Matching helpers ---
