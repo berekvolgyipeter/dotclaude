@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Python packages needed by skills (e.g. skill-creator uses anthropic + pyyaml)
-DEPS=(anthropic pyyaml requests)
+DEPS=(anthropic pyyaml requests python-dotenv ruff)
 
 # Try package managers in order of preference: uv (fastest), pip3, pip
 # "command -v" checks if a command exists; "&>/dev/null" hides the output

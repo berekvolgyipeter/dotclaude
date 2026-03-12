@@ -34,7 +34,7 @@ for file in "${FILES[@]}"; do
         # If install.sh backed up the original file, restore the most recent backup
         # ls -t sorts by modification time (newest first), head -1 picks the latest
         # 2>/dev/null suppresses errors if no backups exist
-        latest_backup=$(ls -t "$target".backup.* 2>/dev/null | head -1)
+        latest_backup=$(find "$(dirname "$target")" -maxdepth 1 -name "$(basename "$target").backup.*" -print0 2>/dev/null | xargs -0 ls -t 2>/dev/null | head -1)
         if [ -n "$latest_backup" ]; then
             mv "$latest_backup" "$target"
             echo "Restored backup: $latest_backup -> $target"

@@ -33,6 +33,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 |---------|-------------|
 | [/review](commands/review.md) | Full technical code review |
 | [/delta-review](commands/delta-review.md) | Review uncommitted changes against latest commit |
+| [/pr-summary](commands/pr-summary.md) | Brief PR summary grouped by feature/area |
 | [/fix-review](commands/fix-review.md) | Fix issues found in a code review |
 | [/generate-prp](commands/generate-prp.md) | Generate a Product Requirements Prompt |
 | [/execute-prp](commands/execute-prp.md) | Implement a PRP |
@@ -66,7 +67,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | Item | Description |
 |------|-------------|
 | [hooks/](hooks/) | Event-driven shell scripts (e.g. auto-approve `.claude/` writes) |
-| [scripts/](scripts/) | Shared utility scripts (e.g. `index-codebase.sh` for claude-context indexing) |
+| [scripts/](scripts/) | Shared utility scripts (e.g. `index_codebase.py` for claude-context indexing) |
 | [templates/](templates/) | Starter files for new projects (`CLAUDE.md`, `mcp.json`, `serena.project.yml`) |
 | [settings.json](settings.json) | Shared permissions & preferences |
 | [statusline-command.sh](statusline-command.sh) | Custom status line script |
@@ -89,7 +90,7 @@ Array settings (e.g. `permissions.allow`) concatenate across levels. Project-lev
 
 ### claude-context
 
-[template.mcp.json](template.mcp.json) sets up the claude-context MCP server which needs:
+The claude-context MCP server (configured in `.mcp.json`) needs:
 - an `OPENAI_API_KEY` set in project root `.env`
 - a locally running instance of Milvus vector db
     - check out [this repo](https://github.com/berekvolgyipeter/milvus) to run Milvus via Docker Compose
@@ -122,11 +123,10 @@ Removes only symlinks created by `install.sh`. Real directories and files are le
 make fetch-skill-creator
 ```
 
-Some skills require Python dependencies. Activate a virtual environment first:
+Some skills require Python dependencies:
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
-make skill-creator-deps
+make python-deps
 ```
 
 ## Editing Workflow

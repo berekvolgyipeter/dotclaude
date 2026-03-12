@@ -105,6 +105,8 @@ match_cmd() {
 match_write() {
   local path="$1"
   for pattern in "${ALLOWED_WRITE_PATHS[@]}"; do
+    # patterns intentionally contain globs, so $pattern must stay unquoted
+    # shellcheck disable=SC2254
     case "$path" in
       $pattern) return 0 ;;
       $PWD/$pattern) return 0 ;;
