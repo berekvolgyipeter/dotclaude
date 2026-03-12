@@ -87,17 +87,17 @@ For each changed file or new file, analyze for:
 - Confirm type errors are legitimate
 - Validate security concerns with context
 
+## Step 6: Check Documentation
+
+For each changed file, check whether documentation needs to be updated:
+
+- Look for `README.md`, `docs/`, `CHANGELOG.md`, or other documentation files in the repo
+- If new public APIs, CLI flags, config options, environment variables, or user-facing behaviors were added/removed/renamed, check if the docs reflect them
+- If any docs are stale or missing coverage of the changes, flag it as a 🟡 MEDIUM issue
+
 ## Output Format
 
-Save a new file to `.claude/.code-reviews/[current-branch-name]--delta--yyyy-mm-dd.md`
-
-**Stats:**
-
-- Files Modified: 0
-- Files Added: 0
-- Files Deleted: 0
-- New lines: 0
-- Deleted lines: 0
+Save a new file to `.claude/.code-reviews/[current-branch-name]--delta--yyyy-mm-dd--HH-MM.md`
 
 **List issues ordered by severity: 🔴 CRITICAL first, then 🟠 HIGH, 🟡 MEDIUM, and 🔵 LOW last. Number them sequentially starting from 1. For each issue found, use this format:**
 
