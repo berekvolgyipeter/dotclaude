@@ -62,11 +62,19 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [validation-gates](agents/validation-gates.md) | Runs tests and iterates on fixes until they pass |
 | [documentation-manager](agents/documentation-manager.md) | Keeps docs in sync with code changes |
 
+### [Hooks](hooks/)
+
+Event-driven shell scripts registered in `settings.json`.
+
+| Hook | Event | Description |
+|------|-------|-------------|
+| [auto-approve-claude-dir.sh](hooks/auto-approve-claude-dir.sh) | `PreToolUse` | Auto-approves safe Bash, Write, Read, Grep, and Glob operations on `.claude/` paths that Claude Code would otherwise block due to command-injection detection |
+| [log-instructions-loaded.sh](hooks/log-instructions-loaded.sh) | `InstructionsLoaded` | Logs each instruction file load to `.claude/.logs/instructions-loaded.log`. Disabled by default (`LOG_INSTRUCTIONS_LOADED_ENABLED=0` in `settings.json`); set to `1` to enable |
+
 ### Other
 
 | Item | Description |
 |------|-------------|
-| [hooks/](hooks/) | Event-driven shell scripts (e.g. auto-approve `.claude/` writes) |
 | [scripts/](scripts/) | Shared utility scripts (e.g. `index_codebase.py` for claude-context indexing) |
 | [templates/](templates/) | Starter files for new projects (`CLAUDE.md`, `mcp.json`, `serena.project.yml`) |
 | [settings.json](settings.json) | Shared permissions & preferences |

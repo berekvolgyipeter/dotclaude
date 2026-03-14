@@ -1,6 +1,8 @@
 .env
 .DS_Store
 .venv/
-.code-reviews/
+.claude/.code-reviews/
+.claude/.logs/
+*cache/
 skills/skill-creator/
 scratch/
