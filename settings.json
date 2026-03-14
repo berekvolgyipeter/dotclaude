@@ -1,6 +1,7 @@
 {
   "env": {
-    "USE_BUILTIN_RIPGREP": "0"
+    "USE_BUILTIN_RIPGREP": "0",
+    "LOG_INSTRUCTIONS_LOADED_ENABLED": "0"
   },
   "permissions": {
     "allow": [
@@ -45,6 +46,16 @@
     "serena"
   ],
   "hooks": {
+    "InstructionsLoaded": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/log-instructions-loaded.sh"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash|Write|Read|Grep|Glob",
