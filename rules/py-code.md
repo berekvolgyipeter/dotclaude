@@ -25,14 +25,10 @@ Rules:
 
 ## Core Development Philosophy
 
-- **KISS**: Choose straightforward solutions over complex ones.
-- **YAGNI**: Implement features only when needed, not in anticipation.
 - **DRY**: Implement logic once; upper layers pass parameters through, not re-implement.
-- **Single Responsibility**: Each function, class, and module has one clear purpose.
 - **Fail Fast**: Raise exceptions immediately when issues occur.
 - **No Mutation of Arguments**: Do not modify mutable arguments (lists, dicts, sets) in place — return new or modified values instead.
 - **Dependency Inversion**: Depend on abstractions for service/module dependencies — not for configuration (see Configuration Extraction below).
-- **Open/Closed**: Open for extension, closed for modification.
 
 ---
 
@@ -42,6 +38,34 @@ Rules:
 - **Max function length: 50 lines**
 - **Max class length: 200 lines**
 - Organize code into clearly separated modules grouped by feature or responsibility
+- **Single Level of Abstraction per method** — every statement in a method should operate at the same abstraction level. If a method mixes raw exception handling, direct value checks, and high-level orchestration calls, extract the low-level steps into private methods so the parent reads as a clean sequence of same-level operations.
+
+```python
+# ❌ BAD — mixed abstraction levels
+async def process(self, order: Order) -> Receipt:
+    try:
+        items = await asyncio.gather(*[fetch_item(i) for i in order.item_ids])
+    except Exception as e:
+        logger.warning(f"Failed to fetch items: {e}")
+        return Receipt(status="failed")
+    if not items:
+        return Receipt(status="empty")
+    total = sum(i.price for i in items)
+    if total > self.limit:
+        return Receipt(status="over_limit")
+    charge = await self.payment_gateway.charge(order.account, total)
+    ...
+
+# ✅ GOOD — each step at the same level
+async def process(self, order: Order) -> Receipt:
+    items = await self._fetch_items(order)
+    if items is None:
+        return Receipt(status="failed")
+    result = self._validate_total(items)
+    if result is not None:
+        return result
+    return await self._charge_account(order, items)
+```
 
 ---
 
@@ -67,10 +91,6 @@ Rules:
 - **`pathlib` over `os.path`** for all file/path operations
 - **`@property` not getter/setter methods** — `user.name`, not `user.get_name()`
 
-### Commenting
-
-**DO NOT comment obvious code.** Only comment business rules, workarounds, non-obvious decisions, or important side effects.
-
 ### Models and Dataclasses
 
 - **Define models in dedicated modules** (`models/`, `schemas/`), never inline with business logic
@@ -81,7 +101,6 @@ Rules:
 
 - **Use `StrEnum`/`IntEnum` for categorical values** — no magic strings scattered through code
 - **Define enums close to their domain** — in the relevant `models/` or `enums.py` module
-- **Use enums for any value that appears in comparisons, match/case, or is passed between functions**
 
 ```python
 # ❌ BAD — magic strings
@@ -117,7 +136,6 @@ def filter_orders(orders: list[Order], threshold: int) -> list[Order]:
 - **Use absolute imports** — never relative (`from ..utils import x`)
 - **No wildcard imports** (`from module import *`)
 - **Exception**: import inside a function only to resolve circular dependencies
-- Use short aliases for frequently used modules: `from myapp import config as cfg`
 
 ---
 
@@ -125,7 +143,6 @@ def filter_orders(orders: list[Order], threshold: int) -> list[Order]:
 
 - Create domain-specific exception hierarchies (`PaymentError` → `InsufficientFundsError`)
 - Catch specific exceptions, not bare `except Exception`
-- Use context managers for resource management (`@contextmanager`)
 - **Do not use exceptions for control flow** — exceptions signal errors, not branching logic
 - **No log-and-reraise** — either handle the exception or let it propagate, not both
 - **Let exceptions bubble** unless the current layer can meaningfully recover

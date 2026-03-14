@@ -22,9 +22,14 @@ Before making any edit, read the surrounding context and match its style — for
 ❌ BAD: Adding a raw glob pattern (`**/*.py`) to a column that uses human-readable text ("Python files")
 ✅ GOOD: Reading nearby entries first, then writing new content that matches their style
 
-## Tool Preferences
+## Tool Requirements
 
-Prefer these tools in all projects:
-- `Glob` tool over `find` — more intuitive pattern matching
-- `Grep` tool over `rg`/`grep` — structured output, correct permissions
-- `Read` tool over `cat` — structured output with line numbers
+NEVER use `cat`, `head`, `tail`, `find`, `grep`, or `rg` via the Bash tool. Always use the dedicated tools instead:
+
+| ❌ Do NOT use | ✅ Use instead | Why |
+|---|---|---|
+| `cat`, `head`, `tail` | `Read` tool | Structured output with line numbers |
+| `find`, `ls` | `Glob` tool | Pattern matching, sorted results |
+| `grep`, `rg` | `Grep` tool | Structured output, correct permissions |
+
+This is a hard rule, not a preference. Violations waste tool calls due to permission blocks.

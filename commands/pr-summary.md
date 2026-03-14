@@ -10,24 +10,29 @@ Generate a concise, human-readable PR summary of changes on this branch compared
 
 ## Step 1: Gather Changes
 
-Fetch the latest remote state:
+Fetch the latest remote state and find the true fork point:
 ```bash
 git fetch origin $BASE_BRANCH
 ```
 
-See which files changed and line counts:
+Find the merge-base (the commit where this branch diverged from the base). Use this as `MERGE_BASE` for all subsequent diffs:
 ```bash
-git diff --stat origin/$BASE_BRANCH
+git merge-base origin/$BASE_BRANCH HEAD
 ```
 
-See commit history on this branch:
+See which files changed and line counts (from the fork point, not the full base branch):
 ```bash
-git log origin/$BASE_BRANCH..HEAD --oneline
+git diff --stat $MERGE_BASE
+```
+
+See commit history on this branch (only commits unique to this branch):
+```bash
+git log $MERGE_BASE..HEAD --oneline
 ```
 
 See the full diff:
 ```bash
-git diff origin/$BASE_BRANCH
+git diff $MERGE_BASE
 ```
 
 See untracked files:
