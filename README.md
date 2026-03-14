@@ -71,14 +71,32 @@ Event-driven shell scripts registered in `settings.json`.
 | [auto-approve-claude-dir.sh](hooks/auto-approve-claude-dir.sh) | `PreToolUse` | Auto-approves safe Bash, Write, Read, Grep, and Glob operations on `.claude/` paths that Claude Code would otherwise block due to command-injection detection |
 | [log-instructions-loaded.sh](hooks/log-instructions-loaded.sh) | `InstructionsLoaded` | Logs each instruction file load to `.claude/.logs/instructions-loaded.log`. Disabled by default (`LOG_INSTRUCTIONS_LOADED_ENABLED=0` in `settings.json`); set to `1` to enable |
 
-### Other
+### [Templates](templates/)
 
-| Item | Description |
+| File | Description |
 |------|-------------|
-| [scripts/](scripts/) | Shared utility scripts (e.g. `index_codebase.py` for claude-context indexing) |
-| [templates/](templates/) | Starter files for new projects (`CLAUDE.md`, `mcp.json`, `serena.project.yml`) |
-| [settings.json](settings.json) | Shared permissions & preferences |
-| [statusline-command.sh](statusline-command.sh) | Custom status line script |
+| [prp_template.md](templates/prp_template.md) | PRP template used by the `/generate-prp` command |
+
+### [Scripts](scripts/)
+
+| File | Description |
+|------|-------------|
+| [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
+| [index_codebase.py](scripts/index_codebase.py) | Indexes codebase for the claude-context MCP server |
+
+### [settings.json](settings.json)
+
+Shared permissions, preferences, and security posture.
+
+**Privacy:** Three env flags disable telemetry, error reporting, and the feedback survey — Claude doesn't phone home by default. Override per-project if needed.
+
+**Deny list — no exceptions, no approval prompts:**
+- *Destructive commands:* `rm -rf`, `sudo`, `mkfs`, `dd`, `wget ... | bash` (classic supply-chain attack vector)
+- *Irreversible git:* force-push and `git reset --hard`
+- *Shell config:* `~/.bashrc`, `~/.zshrc` — PATH manipulation and alias injection are off the table
+- *Credential stores:* SSH keys, AWS/Azure/GitHub CLI configs, git-credentials, Docker, Kubernetes, npm/pypi/gem tokens, macOS Keychain, `.env` files — and crypto wallet data (MetaMask, Electrum, Exodus, Phantom, Solflare)
+
+**Hooks as a second layer:** `block-rm-rf.sh` and `block-push-to-main.sh` fire on every `Bash` call as a `PreToolUse` hook, independent of the permission system. If a permission rule is misconfigured, the hook still blocks it.
 
 ## How It Works
 
@@ -111,7 +129,7 @@ make install
 
 This runs `setup/install.sh`, which symlinks directories and files from this repo into `~/.claude/`:
 - **Directories**: `rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`, `scripts/`, `index/`
-- **Files**: `settings.json`, `statusline-command.sh`
+- **Files**: `settings.json`
 
 If a real (non-symlink) directory or file already exists at the target, the script warns and skips it. Existing files are backed up with a timestamp before being replaced. Safe to re-run.
 
@@ -168,4 +186,5 @@ Use `template.CLAUDE.md`, `template.mcp.json`, and `template.serena.project.yml`
 
 ## Acknowledgments
 
-- [coleam00/context-engineering-intro](https://github.com/coleam00/context-engineering-intro) — inspiration for commands and rules
+- [coleam00/context-engineering-intro](https://github.com/coleam00/context-engineering-intro) — inspiration for some commands and rules
+- [trailofbits/claude-code-config](https://github.com/trailofbits/claude-code-config) — security and privacy focused settings

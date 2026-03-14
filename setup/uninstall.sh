@@ -6,7 +6,7 @@ CLAUDE_DIR="$HOME/.claude"
 
 # Must match the same lists used in install.sh
 DIRS=(rules commands agents skills templates hooks scripts index)
-FILES=(settings.json statusline-command.sh)
+FILES=(settings.json)
 
 # --- Remove directory symlinks ---
 for dir in "${DIRS[@]}"; do
