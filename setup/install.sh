@@ -8,7 +8,7 @@ CLAUDE_DIR="$HOME/.claude"
 
 # Directories and files to symlink into ~/.claude/
 DIRS=(rules commands agents skills templates hooks scripts index)
-FILES=(settings.json statusline-command.sh)
+FILES=(settings.json)
 
 # Create ~/.claude/ if it doesn't exist yet
 mkdir -p "$CLAUDE_DIR"
@@ -43,8 +43,8 @@ for dir in "${DIRS[@]}"; do
 done
 
 # --- Symlink individual files ---
-# Files can live in the repo root (e.g. settings.json) or in setup/
-# (e.g. statusline-command.sh). We check both locations.
+# Files can live in the repo root (e.g. settings.json) or in setup/.
+# We check both locations.
 SETUP_DIR="$REPO_DIR/setup"
 for file in "${FILES[@]}"; do
     target="$CLAUDE_DIR/$file"      # where the symlink will be created
