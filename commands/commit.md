@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Stage all changes and commit with a short conventional commit message suggested by Claude.
+description: Stage all changes, commit, and push with a suggested conventional commit message.
 disable-model-invocation: true
 model: haiku
 allowed-tools:
@@ -53,7 +53,7 @@ chore: bump dependencies to latest patch versions
 test(auth): add edge cases for token expiry
 ```
 
-## Step 2: Stage and Commit
+## Step 2: Stage, Commit, and Push
 
 First, show the proposed message to the user as a code block:
 
@@ -61,16 +61,17 @@ First, show the proposed message to the user as a code block:
 <type>(<scope>): <summary>
 ```
 
-Then stage all changes and commit:
+Then stage all changes, commit, and push:
 
 ```bash
 git add -A
 git commit -m "<proposed message>"
+git push
 ```
 
 **Do NOT add Co-Authored-By, Signed-off-by, or any other trailers/metadata to the commit message.** The message must contain only the conventional commit summary line — nothing else.
 
-If the commit hook fails, report the error and stop — do not retry or bypass hooks.
+If the commit or push fails, report the error and stop — do not retry or bypass hooks.
 
 ## Step 3: Confirm
 

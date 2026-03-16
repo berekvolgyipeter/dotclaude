@@ -24,3 +24,12 @@ printf '### Changed Files\n\n%s\n\n' "${STAT:-(none)}"
 printf '### Untracked Files\n\n%s\n\n' "${UNTRACKED:-(none)}"
 printf '### Commits\n\n%s\n\n' "${COMMITS:-(none)}"
 printf '### Diff\n\n%s\n\n' "${DIFF:-(none)}"
+
+if [[ -n "$UNTRACKED" ]]; then
+  printf '### Untracked File Contents\n\n'
+  while IFS= read -r file; do
+    printf '#### %s\n\n' "$file"
+    cat "$file"
+    printf '\n\n'
+  done <<< "$UNTRACKED"
+fi

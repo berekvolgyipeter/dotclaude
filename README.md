@@ -41,7 +41,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [/prep-parallel](commands/parallel/prep-parallel.md) | Set up worktrees for parallel Claude Code agents |
 | [/execute-parallel](commands/parallel/execute-parallel.md) | Run parallel task execution |
 | [/primer](commands/primer.md) | Prime context for a session |
-| [/commit](commands/commit.md) | Stage all changes and commit with a suggested conventional commit message |
+| [/commit](commands/commit.md) | Stage all changes, commit, and push with a suggested conventional commit message |
 
 ### [Skills](skills/)
 

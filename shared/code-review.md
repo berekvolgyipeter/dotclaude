@@ -32,7 +32,7 @@ Note any failures. These are objective findings to include in the review.
 For each changed and new file:
 
 1. **Review the diff** from the change overview loaded above — understand exactly what lines were added, removed, or modified.
-2. **Read the full file** to understand the broader context around the changes.
+2. **Read the full file** to understand the broader context around the changes. Skip this for untracked files — their full contents are already included in the change overview above.
 
 ## Step 4: Analyze
 
