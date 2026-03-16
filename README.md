@@ -86,6 +86,7 @@ Event-driven shell scripts registered in `settings.json`.
 | [index_codebase.py](scripts/index_codebase.py) | Indexes codebase for the claude-context MCP server |
 | [delta-diff.sh](scripts/delta-diff.sh) | Injects a local diff overview (uncommitted changes vs HEAD) as markdown context |
 | [pr-diff.sh](scripts/pr-diff.sh) | Injects a branch diff overview (changed files, commits, untracked) as markdown context |
+| [latest-review.sh](scripts/latest-review.sh) | Outputs the path to the newest code review file in `.claude/.code-reviews/` |
 
 ### [settings.json](settings.json)
 
