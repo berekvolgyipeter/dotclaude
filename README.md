@@ -32,14 +32,14 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 | Command | Description |
 |---------|-------------|
-| [/review](commands/review.md) | Full technical code review |
-| [/delta-review](commands/delta-review.md) | Review uncommitted changes against latest commit |
-| [/pr-summary](commands/pr-summary.md) | Brief PR summary grouped by feature/area |
-| [/fix-review](commands/fix-review.md) | Fix issues found in a code review |
-| [/generate-prp](commands/generate-prp.md) | Generate a Product Requirements Prompt |
-| [/execute-prp](commands/execute-prp.md) | Implement a PRP |
-| [/prep-parallel](commands/prep-parallel.md) | Set up worktrees for parallel Claude Code agents |
-| [/execute-parallel](commands/execute-parallel.md) | Run parallel task execution |
+| [/pr-review](commands/review/pr-review.md) | Full technical code review |
+| [/delta-review](commands/review/delta-review.md) | Review uncommitted changes against latest commit |
+| [/pr-summary](commands/review/pr-summary.md) | Brief PR summary grouped by feature/area |
+| [/fix-review](commands/review/fix-review.md) | Fix issues found in a code review |
+| [/generate-prp](commands/prp/generate-prp.md) | Generate a Product Requirements Prompt |
+| [/execute-prp](commands/prp/execute-prp.md) | Implement a PRP |
+| [/prep-parallel](commands/parallel/prep-parallel.md) | Set up worktrees for parallel Claude Code agents |
+| [/execute-parallel](commands/parallel/execute-parallel.md) | Run parallel task execution |
 | [/primer](commands/primer.md) | Prime context for a session |
 | [/commit](commands/commit.md) | Stage all changes and commit with a suggested conventional commit message |
 

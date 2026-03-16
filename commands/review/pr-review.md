@@ -1,5 +1,5 @@
 ---
-name: review
+name: pr-review
 description: Technical code review for quality and bugs for changes to a target branch. If no target branch is passed, it defaults to the default branch.
 disable-model-invocation: true
 argument-hint: "[target-branch]"

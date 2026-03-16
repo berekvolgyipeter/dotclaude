@@ -110,10 +110,10 @@ For 3+ learnings, use this structured template:
 
 ### Skill / Command / Agent Updates
 
-1. /review — Add diff-size gate
-   - Context: User ran /review on a 2000-line PR; the command tried to review every file and hit context limits
+1. /pr-review — Add diff-size gate
+   - Context: User ran /pr-review on a 2000-line PR; the command tried to review every file and hit context limits
    - Issue: No guidance on handling large diffs — should summarize by file first, then deep-dive on request
-   - File: `~/.claude/commands/review.md`
+   - File: `~/.claude/commands/review/pr-review.md`
 ```
 
 ## Implementation
