@@ -1,86 +1,46 @@
 ---
 name: pr-summary
-description: Generate a brief PR summary of branch changes compared to base branch.
+description: Generate a brief PR summary of branch changes compared to a target branch. If no target branch is passed, it defaults to the default branch.
 disable-model-invocation: true
+context: fork
+model: haiku
+argument-hint: "[target-branch]"
+allowed-tools:
+  - Bash(bash $HOME/.claude/scripts/pr-diff.sh *)
 ---
 
-Set `BASE_BRANCH` to `$ARGUMENTS` if provided, otherwise `main`.
+!`bash $HOME/.claude/scripts/pr-diff.sh $ARGUMENTS`
 
-Generate a concise, human-readable PR summary of changes on this branch compared to the base branch.
+The branch diff context above contains the merge base commit, changed files, commits, and untracked files.
 
-## Step 1: Gather Changes
+## Task
 
-Fetch the latest remote state and find the true fork point:
-```bash
-git fetch origin $BASE_BRANCH
-```
+Analyze the diff context above and generate a concise, human-readable PR summary of what changed on this branch compared to the target branch.
 
-Find the merge-base (the commit where this branch diverged from the base). Use this as `MERGE_BASE` for all subsequent diffs:
-```bash
-git merge-base origin/$BASE_BRANCH HEAD
-```
+## Output Format
 
-See which files changed and line counts (from the fork point, not the full base branch):
-```bash
-git diff --stat $MERGE_BASE
-```
+Your entire response must be a single fenced markdown code block so the user can copy it with one click. Do NOT output anything outside the code block — no preamble, no explanation, no follow-up.
 
-See commit history on this branch (only commits unique to this branch):
-```bash
-git log $MERGE_BASE..HEAD --oneline
-```
-
-See the full diff:
-```bash
-git diff $MERGE_BASE
-```
-
-See untracked files:
-```bash
-git ls-files --others --exclude-standard
-```
-
-## Step 2: Read Changed Files
-
-Read each changed file to understand the full context — not just the diff.
-
-## Step 3: Write the Summary
-
-Save to `.claude/.code-reviews/[current-branch-name]--pr-summary--yyyy-mm-dd--HH-MM.md`
-
-Use this format:
+Use this exact format:
 
 ```markdown
-# PR Summary: [branch-name]
+# [branch-name]
 
-**Base:** `$BASE_BRANCH` | **Date:** yyyy-mm-dd
+1-2 sentence overview of what changed and why.
 
-## Overview
+## Area/feature
 
-Brief 2-4 sentence overview of the purpose and scope of the changes.
+summary on what was done
 
-## Changes
+## Area/feature
 
-Group changes by feature or logical area — not by individual file. Each group should explain what was done and why. Mention key files only when it helps the reader understand the change.
-
-### Feature/Area Name
-
-Brief description of what changed in this area and why.
-
-### Another Feature/Area
-
-Brief description.
-
-## Notes
-
-Anything a reviewer should know: breaking changes, migration steps, follow-ups needed, or dependencies.
+summary on what was done
 ```
 
-## Important
+## Rules
 
-- Be brief — this is for humans scanning a PR
-- Group changes by feature, logical area, or purpose — never list hundreds of files individually
-- Focus on *what* and *why*, not line-by-line diffs
-- Mention specific files only when it adds clarity (e.g. a new entrypoint, a config change)
-- Omit the Notes section if there's nothing noteworthy
-- Do not editorialize or suggest improvements — just summarize
+- Your ENTIRE response is the fenced code block — nothing else
+- Keep it very short — a quick glance should tell the reader what happened
+- Use short `##` sections grouped by area/feature as shown in the template
+- Focus on *what* and *why*, not file-by-file details
+- Do not editorialize, suggest improvements, or list individual files — just summarize

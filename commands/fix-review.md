@@ -35,7 +35,9 @@ Mark each as `pending` before starting. Move to `in_progress` when you begin, `c
 
 ## Step 4: Re-read Standards
 
-Before writing any code, read `~/.claude/index/rules.md` and load the applicable rule files for the files you're about to change.
+Before writing any code load the applicable rule files for the files you're about to change.
+
+@~/.claude/shared/rules-index.md
 
 This ensures guidelines are fresh in context at the point of action, not just loaded at the start of a review.
 

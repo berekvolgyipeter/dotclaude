@@ -73,7 +73,6 @@
       "Read(~/Library/Application Support/**/solflare*/**)"
     ]
   },
-  "alwaysThinkingEnabled": true,
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "claude-context",
@@ -121,5 +120,6 @@
     "type": "command",
     "command": "bash ~/.claude/scripts/statusline-command.sh"
   },
+  "alwaysThinkingEnabled": true,
   "autoMemoryEnabled": false
 }

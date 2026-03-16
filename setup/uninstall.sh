@@ -5,7 +5,7 @@ set -euo pipefail
 CLAUDE_DIR="$HOME/.claude"
 
 # Must match the same lists used in install.sh
-DIRS=(rules commands agents skills templates hooks scripts index)
+DIRS=(rules commands agents skills templates hooks scripts shared)
 FILES=(settings.json)
 
 # --- Remove directory symlinks ---

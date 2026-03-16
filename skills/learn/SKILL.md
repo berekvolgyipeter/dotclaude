@@ -47,7 +47,7 @@ For each one found (or expected but missing), read its current definition file, 
 
 Decide whether a learning is **universal** (applies to all projects → user-level `~/.claude/`) or **project-specific** (→ project-level `.claude/`).
 
-**Rule files (user-level `~/.claude/`):** See `~/.claude/index/rules.md` for the full list of rule files and what each covers.
+**Rule files (user-level `~/.claude/`):** @~/.claude/shared/rules-index.md
 
 **Rule files (project-level `.claude/`):**
 - **Project specific details** → `.claude/CLAUDE.md`

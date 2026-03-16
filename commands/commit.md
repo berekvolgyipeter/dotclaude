@@ -2,27 +2,16 @@
 name: commit
 description: Stage all changes and commit with a short conventional commit message suggested by Claude.
 disable-model-invocation: true
+model: haiku
+allowed-tools:
+  - Bash(bash $HOME/.claude/scripts/delta-diff.sh)
 ---
+
+!`bash $HOME/.claude/scripts/delta-diff.sh`
 
 Stage all changes and commit them with a concise, conventional commit message.
 
-## Step 1: Inspect Changes
-
-Run these to understand what changed:
-
-```bash
-git status
-```
-
-```bash
-git diff HEAD
-```
-
-```bash
-git diff --cached
-```
-
-## Step 2: Derive the Commit Message
+## Step 1: Derive the Commit Message
 
 Analyze the diff and produce **one short commit message** following [Conventional Commits](https://www.conventionalcommits.org/):
 
@@ -64,7 +53,7 @@ chore: bump dependencies to latest patch versions
 test(auth): add edge cases for token expiry
 ```
 
-## Step 3: Stage and Commit
+## Step 2: Stage and Commit
 
 First, show the proposed message to the user as a code block:
 
@@ -83,6 +72,6 @@ git commit -m "<proposed message>"
 
 If the commit hook fails, report the error and stop — do not retry or bypass hooks.
 
-## Step 4: Confirm
+## Step 3: Confirm
 
 Run `git log --oneline -3` and show the output so the user can verify the commit landed.

@@ -19,13 +19,14 @@ Manage rules, skills, commands, agents, hooks, and templates in one place instea
 | [py-test.md](rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
 | [docs.md](rules/docs.md) | Markdown files | Documentation principles, timeless writing, avoid volatile details |
 
-### [Index](index/)
+### [Shared](shared/)
 
 Reference files explicitly read by commands and skills — not auto-loaded.
 
 | File | Description |
 |------|-------------|
-| [index/rules.md](index/rules.md) | Registry of all rule files — what each covers and when to load it |
+| [shared/rules-index.md](shared/rules-index.md) | Registry of all rule files — what each covers and when to load it |
+| [shared/code-review.md](shared/code-review.md) | Shared review protocol, analysis checklist, and output format |
 
 ### [Commands](commands/)
 
@@ -83,6 +84,8 @@ Event-driven shell scripts registered in `settings.json`.
 |------|-------------|
 | [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
 | [index_codebase.py](scripts/index_codebase.py) | Indexes codebase for the claude-context MCP server |
+| [delta-diff.sh](scripts/delta-diff.sh) | Injects a local diff overview (uncommitted changes vs HEAD) as markdown context |
+| [pr-diff.sh](scripts/pr-diff.sh) | Injects a branch diff overview (changed files, commits, untracked) as markdown context |
 
 ### [settings.json](settings.json)
 
@@ -128,7 +131,7 @@ make install
 ```
 
 This runs `setup/install.sh`, which symlinks directories and files from this repo into `~/.claude/`:
-- **Directories**: `rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`, `scripts/`, `index/`
+- **Directories**: `rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`, `scripts/`, `shared/`
 - **Files**: `settings.json`
 
 If a real (non-symlink) directory or file already exists at the target, the script warns and skips it. Existing files are backed up with a timestamp before being replaced. Safe to re-run.

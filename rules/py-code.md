@@ -37,6 +37,7 @@ Rules:
 - **Max file length: 500 lines** — split into modules when approaching this limit
 - **Max function length: 50 lines**
 - **Max class length: 200 lines**
+- **Max cyclomatic complexity: 3** — flatten deep nesting with early returns, guard clauses, or extracted helpers
 - Organize code into clearly separated modules grouped by feature or responsibility
 - **Single Level of Abstraction per method** — every statement in a method should operate at the same abstraction level. If a method mixes raw exception handling, direct value checks, and high-level orchestration calls, extract the low-level steps into private methods so the parent reads as a clean sequence of same-level operations.
 

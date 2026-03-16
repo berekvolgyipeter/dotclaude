@@ -66,14 +66,14 @@ ALLOWED_READ_SEARCH_DIRS=(
   "$HOME/.claude/agents"
   "$HOME/.claude/templates"
   "$HOME/.claude/hooks"
-  "$HOME/.claude/index"
+  "$HOME/.claude/shared"
   "$DOTCLAUDE_REPO/skills"
   "$DOTCLAUDE_REPO/commands"
   "$DOTCLAUDE_REPO/rules"
   "$DOTCLAUDE_REPO/agents"
   "$DOTCLAUDE_REPO/templates"
   "$DOTCLAUDE_REPO/hooks"
-  "$DOTCLAUDE_REPO/index"
+  "$DOTCLAUDE_REPO/shared"
 )
 
 # --- Matching helpers ---
