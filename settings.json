@@ -106,6 +106,16 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/stop-lint-and-test.sh"
+          }
+        ]
+      }
     ]
   },
   "statusLine": {

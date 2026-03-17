@@ -68,6 +68,8 @@ For each changed file, check whether documentation needs to be updated:
 
 Save a new file to `.claude/.code-reviews/[current-branch-name]--review.md`
 
+Normalize the branch name for the filename: convert to lowercase and replace any character that is not a letter or digit with a dash (`-`).
+
 **List issues ordered by severity: 🔴 CRITICAL first, then 🟠 HIGH, 🟡 MEDIUM, and 🔵 LOW last. Number them sequentially starting from 1. For each issue found, use this format:**
 
 ### #1 🔴 CRITICAL | [path/to/file.py:42](../../path/to/file.py#L42) — One-line description

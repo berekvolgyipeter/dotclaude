@@ -73,6 +73,7 @@ Event-driven shell scripts registered in `settings.json`.
 |------|-------|-------------|
 | [auto-approve-claude-dir.sh](hooks/auto-approve-claude-dir.sh) | `PreToolUse` | Auto-approves safe Bash, Write, Read, Grep, and Glob operations on `.claude/` paths that Claude Code would otherwise block due to command-injection detection |
 | [log-instructions-loaded.sh](hooks/log-instructions-loaded.sh) | `InstructionsLoaded` | Logs each instruction file load to `.claude/.logs/instructions-loaded.log`. Disabled by default (`LOG_INSTRUCTIONS_LOADED_ENABLED=0` in `settings.json`); set to `1` to enable |
+| [stop-lint-and-test.sh](hooks/stop-lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined |
 
 ### [Templates](templates/)
 
