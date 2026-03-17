@@ -2,20 +2,22 @@
 name: pr-summary
 description: Generate a brief PR summary of branch changes compared to a target branch. If no target branch is passed, it defaults to the default branch.
 disable-model-invocation: true
-context: fork
 model: haiku
 argument-hint: "[target-branch]"
 allowed-tools:
-  - Bash(bash $HOME/.claude/scripts/pr-diff.sh *)
+  - Bash(bash $HOME/.claude/scripts/review/pr-diff.sh *)
+  - Agent(review:diff-summarizer)
 ---
 
-!`bash $HOME/.claude/scripts/pr-diff.sh $ARGUMENTS`
+!`bash $HOME/.claude/scripts/review/pr-diff.sh $ARGUMENTS`
 
-The branch diff context above contains the merge base commit, changed files, commits, and untracked files.
+The branch change overview above contains the DIFF_BASE, changed files, commits, and untracked files.
 
 ## Task
 
-Analyze the diff context above and generate a concise, human-readable PR summary of what changed on this branch compared to the target branch.
+Dispatch a `review:diff-summarizer` subagent with the file list, untracked files, and DIFF_BASE from the overview above. The agent will read per-file diffs and return a structured summary.
+
+Using the subagent's summary, generate a concise, human-readable PR summary of what changed on this branch compared to the target branch.
 
 ## Output Format
 

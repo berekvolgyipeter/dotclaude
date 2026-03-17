@@ -4,16 +4,25 @@ description: Stage all changes, commit, and push with a suggested conventional c
 disable-model-invocation: true
 model: haiku
 allowed-tools:
-  - Bash(bash $HOME/.claude/scripts/delta-diff.sh)
+  - Bash(bash $HOME/.claude/scripts/review/delta-diff.sh)
+  - Bash(git add -A)
+  - Bash(git commit -m *)
+  - Bash(git push)
+  - Bash(git log *)
+  - Agent(review:diff-summarizer)
 ---
 
-!`bash $HOME/.claude/scripts/delta-diff.sh`
+!`bash $HOME/.claude/scripts/review/delta-diff.sh`
 
 Stage all changes and commit them with a concise, conventional commit message.
 
-## Step 1: Derive the Commit Message
+## Step 1: Summarize Changes
 
-Analyze the diff and produce **one short commit message** following [Conventional Commits](https://www.conventionalcommits.org/):
+Dispatch a `review:diff-summarizer` subagent with the file list, untracked files, and DIFF_BASE from the overview above. The agent will read per-file diffs and return a structured summary including change type, scope, and description.
+
+## Step 2: Derive the Commit Message
+
+Using the summary from the subagent, produce **one short commit message** following [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
 <type>(<optional scope>): <imperative summary>
@@ -53,7 +62,7 @@ chore: bump dependencies to latest patch versions
 test(auth): add edge cases for token expiry
 ```
 
-## Step 2: Stage, Commit, and Push
+## Step 3: Stage, Commit, and Push
 
 First, show the proposed message to the user as a code block:
 
@@ -61,7 +70,7 @@ First, show the proposed message to the user as a code block:
 <type>(<scope>): <summary>
 ```
 
-Then stage all changes, commit, and push:
+Then run **all three commands** in sequence — staging, committing, and pushing are all required:
 
 ```bash
 git add -A
@@ -69,10 +78,12 @@ git commit -m "<proposed message>"
 git push
 ```
 
+**Do NOT skip `git push`.** Every commit must be pushed. Do not stop after `git commit`.
+
 **Do NOT add Co-Authored-By, Signed-off-by, or any other trailers/metadata to the commit message.** The message must contain only the conventional commit summary line — nothing else.
 
 If the commit or push fails, report the error and stop — do not retry or bypass hooks.
 
-## Step 3: Confirm
+## Step 4: Confirm
 
 Run `git log --oneline -3` and show the output so the user can verify the commit landed.

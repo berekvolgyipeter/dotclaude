@@ -15,10 +15,8 @@ Before implementing anything, confirm:
 3. Does this follow the existing pattern in the codebase?
 
 Rules:
-- Build ONLY what is asked for - nothing more
+- Build ONLY what is asked for — no speculative features, no "just in case" additions
 - Choose the simplest solution that works
-- No speculative features or "nice-to-haves"
-- No additional functionality "just in case"
 - Stop when the requirement is met
 
 ---
@@ -38,33 +36,52 @@ Rules:
 - **Max function length: 50 lines**
 - **Max class length: 200 lines**
 - **Max cyclomatic complexity: 3** — flatten deep nesting with early returns, guard clauses, or extracted helpers
+- **Max function arguments: 4** — if a function needs more, apply one of these in order of preference:
+  1. **Introduce a dataclass** — group related parameters into a named object
+  2. **Promote to class state** — if the same args recur across methods, make them `__init__` parameters
+  3. **Decompose the function** — if parameters belong to distinct concerns, split into smaller functions
+
+```python
+# ❌ BAD — too many arguments
+def publish_document(doc: Doc, threshold: int, retries: int, timeout: float, mode: str, dry_run: bool): ...
+
+# ✅ GOOD — grouped into a dataclass
+@dataclass
+class PublishConfig:
+    threshold: int
+    retries: int
+    timeout: float
+    mode: str
+    dry_run: bool
+
+def publish_document(doc: Doc, config: PublishConfig): ...
+```
+
 - Organize code into clearly separated modules grouped by feature or responsibility
-- **Single Level of Abstraction per method** — every statement in a method should operate at the same abstraction level. If a method mixes raw exception handling, direct value checks, and high-level orchestration calls, extract the low-level steps into private methods so the parent reads as a clean sequence of same-level operations.
+
+- **Single Level of Abstraction per method** — every statement in a method should operate at the same abstraction level. Extract low-level steps into private methods so the parent reads as a clean sequence of same-level operations.
 
 ```python
 # ❌ BAD — mixed abstraction levels
-async def process(self, order: Order) -> Receipt:
+async def fulfill_order(self, order: Order) -> Receipt:
     try:
         items = await asyncio.gather(*[fetch_item(i) for i in order.item_ids])
     except Exception as e:
         logger.warning(f"Failed to fetch items: {e}")
         return Receipt(status="failed")
-    if not items:
-        return Receipt(status="empty")
+
     total = sum(i.price for i in items)
     if total > self.limit:
         return Receipt(status="over_limit")
-    charge = await self.payment_gateway.charge(order.account, total)
-    ...
+
+    return await self.payment_gateway.charge(order.account, total)
 
 # ✅ GOOD — each step at the same level
-async def process(self, order: Order) -> Receipt:
+async def fulfill_order(self, order: Order) -> Receipt:
     items = await self._fetch_items(order)
     if items is None:
         return Receipt(status="failed")
-    result = self._validate_total(items)
-    if result is not None:
-        return result
+
     return await self._charge_account(order, items)
 ```
 
@@ -91,6 +108,36 @@ async def process(self, order: Order) -> Receipt:
 - **f-strings only** — never `%` formatting or `.format()`
 - **`pathlib` over `os.path`** for all file/path operations
 - **`@property` not getter/setter methods** — `user.name`, not `user.get_name()`
+
+### Naming — The 5-Second Rule
+
+**If you can't understand what a function, class, or variable does within 5 seconds of reading its name, the name is wrong.**
+
+- **No vague names** — every name must reveal intent
+- **No abbreviations** — `user_repository.py` not `usr_repo.py`
+- **Name length proportional to scope** — `i` is acceptable in a 3-line loop; module-level names need full descriptive words
+- **Functions**: use **verb + domain + detail** — describe the action being performed. If you need "and" to describe what a function does, split it
+- **Classes**: name by **responsibility**, not data shape — what it *does*, not what it *holds*
+- **Variables**: name by **meaning in context**, not type or structure
+- **Booleans**: must use an intent-revealing prefix — `is_`, `has_`, `does_`, `can_`, `should_`. Applies to both variables and methods that return `bool`
+
+```python
+# ❌ BAD — vague, requires reading the body to understand
+def process(data): ...
+def handle(event): ...
+def do_stuff(items): ...
+class Manager: ...
+class Info: ...
+temp = get_result()
+
+# ✅ GOOD — intent is obvious from the name alone
+def validate_user_email(email: str) -> bool: ...
+def fetch_active_subscriptions(user_id: str) -> list[Subscription]: ...
+def transform_api_response(raw: dict) -> OrderSummary: ...
+class PaymentGatewayClient: ...
+class InventoryAllocationService: ...
+active_subscription_count = count_active_subscriptions(user)
+```
 
 ### Models and Dataclasses
 
@@ -122,7 +169,7 @@ if order.status == OrderStatus.PENDING: ...
 
 ```python
 # App-layer — reads config internally
-def process_orders():
+def dispatch_pending_orders():
     threshold = settings.ORDER_THRESHOLD
     ...
 

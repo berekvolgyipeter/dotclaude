@@ -10,4 +10,5 @@ if ! ls "${REVIEW_DIR}"/*.md &>/dev/null; then
   exit 0
 fi
 
-stat -f '%m %N' "${REVIEW_DIR}"/*.md | sort -rn | head -1 | cut -d' ' -f2-
+# shellcheck disable=SC2012
+ls -t "${REVIEW_DIR}"/*.md 2>/dev/null | head -1

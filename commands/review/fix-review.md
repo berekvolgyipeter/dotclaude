@@ -3,12 +3,12 @@ name: fix-review
 description: Process to fix bugs found in manual/AI code review
 disable-model-invocation: true
 allowed-tools:
-  - Bash(bash $HOME/.claude/scripts/latest-review.sh)
+  - Bash(bash $HOME/.claude/scripts/review/latest-review.sh)
 ---
 
 The review file to fix is:
 
-!`bash $HOME/.claude/scripts/latest-review.sh`
+!`bash $HOME/.claude/scripts/review/latest-review.sh`
 
 User feedback or questions: $ARGUMENTS
 

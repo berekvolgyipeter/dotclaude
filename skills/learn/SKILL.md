@@ -65,7 +65,7 @@ This includes the learn skill itself — if the learning process was suboptimal,
 For substantial rewrites of skill, command, or agent instructions, invoke the `prompt-engineering` skill to ensure the new content follows best practices for AI prompt design. For simple additions like a single rule line in CLAUDE.md, just match the existing style — the overhead of invoking another skill isn't worth it for small changes.
 
 For each learning, create a clear, actionable update:
-- **Match content to scope**: General rules (`~/.claude/`) must use universally applicable text and examples — no project-specific names or domain concepts. Project-specific learnings (`.claude/`) may use domain terms and reference actual code patterns. When a learning is general, extract the universal principle and craft a generic example.
+- **Match content to scope**: General rules (`~/.claude/`) must use universally applicable text and examples — **never use actual class, function, variable, or file names from the current project**. Fabricate minimal generic names (e.g. `is_valid`, `has_items`, `MyClass`). Project-specific learnings (`.claude/`) may use domain terms and reference actual code patterns. When a learning is general, extract the universal principle and craft a fully generic example.
 - **Be concise**: One clear point per rule
 - **Be actionable**: The next agent running this skill/command/agent should know exactly what to do differently
 - **Show examples**: Use ✅ GOOD / ❌ BAD format when helpful

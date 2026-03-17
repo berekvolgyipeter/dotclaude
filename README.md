@@ -26,7 +26,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | File | Description |
 |------|-------------|
 | [shared/rules-index.md](shared/rules-index.md) | Registry of all rule files — what each covers and when to load it |
-| [shared/code-review.md](shared/code-review.md) | Shared review protocol, analysis checklist, and output format |
+| [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis |
 
 ### [Commands](commands/)
 
@@ -62,6 +62,8 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 |-------|-------------|
 | [validation-gates](agents/validation-gates.md) | Runs tests and iterates on fixes until they pass |
 | [documentation-manager](agents/documentation-manager.md) | Keeps docs in sync with code changes |
+| [code-reviewer](agents/review/code-reviewer.md) | Focused code reviewer for batches of changed files, dispatched by review commands |
+| [diff-summarizer](agents/review/diff-summarizer.md) | Reads diffs on demand and returns structured change summaries |
 
 ### [Hooks](hooks/)
 
@@ -84,9 +86,9 @@ Event-driven shell scripts registered in `settings.json`.
 |------|-------------|
 | [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
 | [index_codebase.py](scripts/index_codebase.py) | Indexes codebase for the claude-context MCP server |
-| [delta-diff.sh](scripts/delta-diff.sh) | Injects a local diff overview (uncommitted changes vs HEAD) as markdown context |
-| [pr-diff.sh](scripts/pr-diff.sh) | Injects a branch diff overview (changed files, commits, untracked) as markdown context |
-| [latest-review.sh](scripts/latest-review.sh) | Outputs the path to the newest code review file in `.claude/.code-reviews/` |
+| [delta-diff.sh](scripts/review/delta-diff.sh) | Injects a local change overview (stats, file list) as markdown context — diffs are read on demand by subagents |
+| [pr-diff.sh](scripts/review/pr-diff.sh) | Injects a branch change overview (stats, file list, commits) as markdown context — diffs are read on demand by subagents |
+| [latest-review.sh](scripts/review/latest-review.sh) | Outputs the path to the newest code review file in `.claude/.code-reviews/` |
 
 ### [settings.json](settings.json)
 
@@ -192,3 +194,6 @@ Use `template.CLAUDE.md`, `template.mcp.json`, and `template.serena.project.yml`
 
 - [coleam00/context-engineering-intro](https://github.com/coleam00/context-engineering-intro) — inspiration for some commands and rules
 - [trailofbits/claude-code-config](https://github.com/trailofbits/claude-code-config) — security and privacy focused settings
+- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions and code review patterns
+- [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns
+- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern
