@@ -5,6 +5,12 @@
 # If none found, exits silently. If found, runs lint and test targets.
 # Exit 2 tells Claude Code to block and continue; any other non-zero exit is a hard error.
 
+# 🎸 Hooks in you, hooks in me, hooks in the ceiling
+#    For that well hung feeling
+#    No big deal, no big sin, strung up on love
+#    I got the hooks screwed in
+#                              — Iron Maiden, Hooks in You
+
 set -euo pipefail
 
 INPUT=$(cat)
