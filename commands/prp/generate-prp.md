@@ -62,7 +62,7 @@ make test
 *** ULTRATHINK ABOUT THE PRP AND PLAN YOUR APPROACH THEN START WRITING THE PRP ***
 
 ## Output
-Save as: `.claude/PRPs/{feature-name}.md`
+Save as: `.claude/PRPs/{feature-name}.md` using the Write tool directly — do not run `mkdir` first, the Write tool creates parent directories automatically.
 
 ## Quality Checklist
 - [ ] All necessary context included

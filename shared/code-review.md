@@ -62,17 +62,17 @@ For each changed file, check whether documentation needs to be updated:
 
 - Look for `README.md`, `docs/`, `CHANGELOG.md`, or other documentation files in the repo
 - If new public APIs, CLI flags, config options, environment variables, or user-facing behaviors were added/removed/renamed, check if the docs reflect them
-- If any docs are stale or missing coverage of the changes, flag it as a 🟡 MEDIUM issue
+- If any docs are stale or missing coverage of the changes, flag it as a MEDIUM issue
 
 ## Output Format
 
-Save a new file to `.claude/.code-reviews/[current-branch-name]--review.md`
+Save a new file to `.claude/.code-reviews/[current-branch-name]--review.md` using the Write tool directly — do not run `mkdir` first, the Write tool creates parent directories automatically.
 
 Normalize the branch name for the filename: convert to lowercase and replace any character that is not a letter or digit with a dash (`-`).
 
-**List issues ordered by severity: 🔴 CRITICAL first, then 🟠 HIGH, 🟡 MEDIUM, and 🔵 LOW last. Number them sequentially starting from 1. For each issue found, use this format:**
+**List issues ordered by severity: CRITICAL first, then HIGH, MEDIUM, and LOW last. Number them sequentially starting from 1. For each issue found, use this format:**
 
-### #1 🔴 CRITICAL | [path/to/file.py:42](../../path/to/file.py#L42) — One-line description
+### #1 CRITICAL | [path/to/file.py:42](../../path/to/file.py#L42) — One-line description
 
 **Why this is a problem:** Explanation of why this is a problem and what impact it has.
 
@@ -81,10 +81,10 @@ Normalize the branch name for the filename: convert to lowercase and replace any
 ---
 
 Use severity indicators:
-- 🔴 **CRITICAL** — Runtime crashes, security vulnerabilities, data loss
-- 🟠 **HIGH** — Significant bugs that will cause incorrect behavior
-- 🟡 **MEDIUM** — Issues that should be fixed but won't cause immediate failures
-- 🔵 **LOW** — Minor improvements, style issues with functional impact
+- **CRITICAL** — Runtime crashes, security vulnerabilities, data loss
+- **HIGH** — Significant bugs that will cause incorrect behavior
+- **MEDIUM** — Issues that should be fixed but won't cause immediate failures
+- **LOW** — Minor improvements, style issues with functional impact
 
 Separate each issue with a horizontal rule (`---`).
 

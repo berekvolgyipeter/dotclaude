@@ -1,9 +1,4 @@
----
-paths:
-  - "**/*.py"
----
-
-# Python Developer Guidelines
+# Python Developer Rules
 
 ## CRITICAL: KISS & YAGNI ENFORCEMENT
 

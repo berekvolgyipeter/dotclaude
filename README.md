@@ -12,12 +12,21 @@ Manage rules, skills, commands, agents, hooks, and templates in one place instea
 
 ### [Rules](rules/)
 
+Always-loaded rule files discovered automatically by Claude Code.
+
 | File | Scope | Description |
 |------|-------|-------------|
 | [general.md](rules/general.md) | All files | No-guessing policy, tool preferences |
-| [py-code.md](rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
-| [py-test.md](rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
-| [docs.md](rules/docs.md) | Markdown files | Documentation principles, timeless writing, avoid volatile details |
+
+### [Context Rules](context-rules/)
+
+Rule files loaded on demand by the `load-context-rules.sh` hook when Edit/Write targets a matching file pattern. Not auto-discovered by Claude Code — the hook controls when they enter context.
+
+| File | Loaded when | Description |
+|------|-------------|-------------|
+| [py-code.md](context-rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
+| [py-test.md](context-rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
+| [docs.md](context-rules/docs.md) | Markdown files | Documentation principles, timeless writing, avoid volatile details |
 
 ### [Shared](shared/)
 
@@ -71,9 +80,11 @@ Event-driven shell scripts registered in `settings.json`.
 
 | Hook | Event | Description |
 |------|-------|-------------|
-| [auto-approve-claude-dir.sh](hooks/auto-approve-claude-dir.sh) | `PreToolUse` | Auto-approves safe Bash, Write, Read, Grep, and Glob operations on `.claude/` paths that Claude Code would otherwise block due to command-injection detection |
-| [log-instructions-loaded.sh](hooks/log-instructions-loaded.sh) | `InstructionsLoaded` | Logs each instruction file load to `.claude/.logs/instructions-loaded.log`. Disabled by default (`LOG_INSTRUCTIONS_LOADED_ENABLED=0` in `settings.json`); set to `1` to enable |
+| [auto-approve-claude-dir.sh](hooks/auto-approve-claude-dir.sh) | `PreToolUse` | Auto-approves Read, Grep, and Glob operations on `.claude/` paths |
+| [load-context-rules.sh](hooks/load-context-rules.sh) | `PreToolUse` | Loads context rules from `context-rules/` on first Edit/Write per session when the target file matches a rule's glob pattern. Deduplicates via transcript markers |
 | [stop-lint-and-test.sh](hooks/stop-lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined |
+| [block-rm-rf.sh](hooks/block-rm-rf.sh) | `PreToolUse` | Blocks destructive `rm -rf` and `rm -fr` Bash commands |
+| [block-push-to-main.sh](hooks/block-push-to-main.sh) | `PreToolUse` | Blocks direct `git push` to the `main` branch |
 
 ### [Templates](templates/)
 
@@ -135,7 +146,7 @@ make install
 ```
 
 This runs `setup/install.sh`, which symlinks directories and files from this repo into `~/.claude/`:
-- **Directories**: `rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`, `scripts/`, `shared/`
+- **Directories**: `rules/`, `context-rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`, `scripts/`, `shared/`
 - **Files**: `settings.json`
 
 If a real (non-symlink) directory or file already exists at the target, the script warns and skips it. Existing files are backed up with a timestamp before being replaced. Safe to re-run.
@@ -187,7 +198,7 @@ Use `template.CLAUDE.md`, `template.mcp.json`, and `template.serena.project.yml`
 ## Conventions
 
 - **No project-specific content here.** Rules, commands, or skills referencing a specific project's paths belong in that project's `.claude/`.
-- **Path-filtered rules** (YAML frontmatter `paths:`) are fine for language-specific content (e.g. scoped to `**/*.py`).
+- **Context rules** (`context-rules/`) are loaded by the `load-context-rules.sh` hook on Edit/Write — not auto-discovered. Add new context rules there and register their patterns in the hook script.
 - **Templates** should be referenced via absolute path: `~/.claude/templates/prp_template.md`.
 - **`make lint` / `make test`** in shared commands are acceptable — all projects are assumed to use a Makefile.
 

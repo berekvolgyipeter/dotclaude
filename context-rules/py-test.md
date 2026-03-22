@@ -1,9 +1,4 @@
----
-paths:
-  - "**/{test,tests}/**/*.py"
----
-
-# Python Testing Guidelines
+# Python Testing Rules
 
 ## Testing Best Practices
 
