@@ -82,7 +82,7 @@ Event-driven shell scripts registered in `settings.json`.
 |------|-------|-------------|
 | [auto-approve-claude-dir.sh](hooks/auto-approve-claude-dir.sh) | `PreToolUse` | Auto-approves Read, Grep, and Glob operations on `.claude/` paths |
 | [load-context-rules.sh](hooks/load-context-rules.sh) | `PreToolUse` | Loads context rules from `context-rules/` on first Edit/Write per session when the target file matches a rule's glob pattern. Deduplicates via transcript markers |
-| [stop-lint-and-test.sh](hooks/stop-lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined |
+| [stop-lint-and-test.sh](hooks/stop-lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools on non-gitignored files. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined |
 | [block-rm-rf.sh](hooks/block-rm-rf.sh) | `PreToolUse` | Blocks destructive `rm -rf` and `rm -fr` Bash commands |
 | [block-push-to-main.sh](hooks/block-push-to-main.sh) | `PreToolUse` | Blocks direct `git push` to the `main` branch |
 

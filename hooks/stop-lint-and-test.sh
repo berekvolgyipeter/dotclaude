@@ -27,9 +27,21 @@ fi
 
 CWD=$(echo "$INPUT" | jq -r '.cwd // empty')
 
-# Check if Edit or Write tools were used in the session
-HAS_EDITS=$(jq -s '[.[].message? // empty | select(.role == "assistant") | .content[]? | select(.type == "tool_use") | .name] | map(select(. == "Edit" or . == "Write")) | length' "$TRANSCRIPT" 2>/dev/null) || HAS_EDITS=0
-[[ "$HAS_EDITS" =~ ^[0-9]+$ ]] || HAS_EDITS=0
+# Check if Edit or Write tools were used in the session (excluding gitignored files)
+EDITED_FILES=$(jq -rs '[.[].message? // empty | select(.role == "assistant") | .content[]? | select(.type == "tool_use") | select(.name == "Edit" or .name == "Write") | .input.file_path // empty] | unique | .[]' "$TRANSCRIPT" 2>/dev/null) || EDITED_FILES=""
+
+HAS_EDITS=0
+if [ -n "$EDITED_FILES" ]; then
+  # When CWD is absent, git check-ignore will likely fail (not a git repo);
+  # in that case all files are treated as non-ignored (fail-safe: run lint).
+  GIT_ROOT="${CWD:-$(dirname "$TRANSCRIPT")}"
+  while IFS= read -r file; do
+    if ! git -C "$GIT_ROOT" check-ignore -q "$file" 2>/dev/null; then
+      HAS_EDITS=1
+      break
+    fi
+  done <<< "$EDITED_FILES"
+fi
 
 if [ "$HAS_EDITS" -eq 0 ]; then
   exit 0
