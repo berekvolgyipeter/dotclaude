@@ -1,56 +1,86 @@
 #!/usr/bin/env bash
 
 # Claude Code status line script
-# Shows: oauth email (blue) | current directory (yellow) | model (orange) | context usage
+# Shows: masked email (blue) | current directory (white) + branch (light yellow) | model (orange) + context usage (green/yellow/red)
 
+# Claude Code passes session data as JSON on stdin
 input=$(cat)
 
-# Extract fields
-cwd=$(echo "$input" | jq -r '.cwd // .workspace.current_dir // empty')
-model=$(echo "$input" | jq -r '.model.display_name // empty')
-used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
-ctx_size=$(echo "$input" | jq -r '.context_window.context_window_size // empty')
+# Extract all fields in a single jq pass; // "" always emits a line so read -r assigns empty on absent fields
+# Sum raw token counts for exact used-token display (avoids rounding from integer percentage)
+{ read -r cwd; read -r model; read -r used_pct; read -r ctx_size; read -r ctx_used_tokens; } < <(
+  echo "$input" | jq -r '
+    (.cwd // .workspace.current_dir // ""),
+    (.model.display_name // ""),
+    (.context_window.used_percentage // ""),
+    (.context_window.context_window_size // ""),
+    ((.context_window.current_usage.input_tokens // 0) +
+     (.context_window.current_usage.cache_creation_input_tokens // 0) +
+     (.context_window.current_usage.cache_read_input_tokens // 0))'
+)
 
-# ANSI colors
+# ANSI colors (256-color palette)
 BLUE='\033[38;5;39m'
-YELLOW='\033[38;5;220m'
-ORANGE='\033[38;5;208m'
-GREEN='\033[38;5;76m'
+LIGHT_YELLOW='\033[38;5;228m'
+ORANGE='\033[38;5;214m'
+WHITE='\033[97m'
 RESET='\033[0m'
+# Context usage threshold colors
+CTX_GREEN='\033[32m'
+CTX_YELLOW='\033[33m'
+CTX_RED='\033[31m'
 
-# OAuth email: read from ~/.claude.json
+# Read OAuth email from ~/.claude.json; suppress errors if file is absent or malformed
 email=$(jq -r '.oauthAccount.emailAddress // empty' ~/.claude.json 2>/dev/null)
 
-# Show only the directory name (basename) of cwd
-if [ -n "$cwd" ]; then
-  cwd=$(basename "$cwd")
-fi
-
-# Build output parts
+# Each statusline segment is appended here; printed one per line at the end
 parts=()
 
+# Segment 1: masked email (e.g. p****@example.com)
 if [ -n "$email" ]; then
-  parts+=("$(printf "${BLUE}%s${RESET}" "$email")")
+  first="${email:0:1}"
+  domain="${email#*@}"
+  masked="${first}****@${domain}"
+  parts+=("$(printf "${BLUE}%s${RESET}" "$masked")")
 fi
 
+# Segment 2: directory name + git branch (branch omitted when not in a repo)
 if [ -n "$cwd" ]; then
-  parts+=("$(printf "${YELLOW}%s${RESET}" "$cwd")")
-fi
-
-if [ -n "$model" ]; then
-  parts+=("$(printf "${ORANGE}%s${RESET}" "$model")")
-fi
-
-if [ -n "$used_pct" ] && [ "$used_pct" != "null" ]; then
-  ctx_str="ctx: ${used_pct}%"
-  if [ -n "$ctx_size" ] && [ "$ctx_size" != "null" ]; then
-    formatted_size=$(printf "%d" "$ctx_size" | rev | sed 's/[0-9]\{3\}/& /g' | rev | sed 's/^ //')
-    ctx_str="${ctx_str} (window: ${formatted_size})"
+  branch=$(git -C "$cwd" branch --show-current 2>/dev/null)
+  cwd=$(basename "$cwd")
+  if [ -n "$branch" ]; then
+    parts+=("$(printf "${WHITE}%s${RESET} ${LIGHT_YELLOW}[%s]${RESET}" "$cwd" "$branch")")
+  else
+    parts+=("$(printf "${WHITE}%s${RESET}" "$cwd")")
   fi
-  parts+=("$(printf "${GREEN}%s${RESET}" "$ctx_str")")
 fi
 
-# Print each part on its own line
+# Segment 3: model name + context usage with color-coded percentage
+#   green < 50%, yellow 50–79%, red >= 80%
+if [ -n "$model" ]; then
+  model_part="$(printf "${ORANGE}%s${RESET}" "$model")"
+  if [ -n "$used_pct" ] && [ "$used_pct" != "null" ]; then
+    ctx_int=$(printf "%.0f" "$used_pct")  # round float to integer for comparison
+    if [ "$ctx_int" -lt 50 ]; then
+      ctx_color="$CTX_GREEN"
+    elif [ "$ctx_int" -lt 80 ]; then
+      ctx_color="$CTX_YELLOW"
+    else
+      ctx_color="$CTX_RED"
+    fi
+    ctx_str="ctx: $(printf "%.0f" "$used_pct")%"
+    if [ -n "$ctx_size" ] && [ "$ctx_size" != "null" ]; then
+      # Format used tokens from raw counts (exact); total window size rounded to nearest k
+      used_k=$(awk -v n="$ctx_used_tokens" 'BEGIN { printf "%.1f", n / 1000 }')
+      total_k=$(awk -v n="$ctx_size" 'BEGIN { printf "%.0f", n / 1000 }')
+      ctx_str="${ctx_str} (${used_k}k / ${total_k}k)"
+    fi
+    model_part="${model_part} $(printf "${ctx_color}%s${RESET}" "$ctx_str")"
+  fi
+  parts+=("$model_part")
+fi
+
+# Print each segment on its own line; %b interprets the ANSI escape sequences
 for part in "${parts[@]}"; do
   printf "%b\n" "$part"
 done

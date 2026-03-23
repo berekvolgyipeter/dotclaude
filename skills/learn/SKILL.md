@@ -47,7 +47,7 @@ For each one found (or expected but missing), read its current definition file, 
 
 Decide whether a learning is **universal** (applies to all projects → user-level `~/.claude/`) or **project-specific** (→ project-level `.claude/`).
 
-**Rule files (user-level `~/.claude/`):** See `~/.claude/index/rules.md` for the full list of rule files and what each covers.
+**Rule files (user-level `~/.claude/`):** @~/.claude/shared/rules-index.md
 
 **Rule files (project-level `.claude/`):**
 - **Project specific details** → `.claude/CLAUDE.md`
@@ -65,7 +65,7 @@ This includes the learn skill itself — if the learning process was suboptimal,
 For substantial rewrites of skill, command, or agent instructions, invoke the `prompt-engineering` skill to ensure the new content follows best practices for AI prompt design. For simple additions like a single rule line in CLAUDE.md, just match the existing style — the overhead of invoking another skill isn't worth it for small changes.
 
 For each learning, create a clear, actionable update:
-- **Match content to scope**: General rules (`~/.claude/`) must use universally applicable text and examples — no project-specific names or domain concepts. Project-specific learnings (`.claude/`) may use domain terms and reference actual code patterns. When a learning is general, extract the universal principle and craft a generic example.
+- **Match content to scope**: General rules (`~/.claude/`) must use universally applicable text and examples — **never use actual class, function, variable, or file names from the current project**. Fabricate minimal generic names (e.g. `is_valid`, `has_items`, `MyClass`). Project-specific learnings (`.claude/`) may use domain terms and reference actual code patterns. When a learning is general, extract the universal principle and craft a fully generic example.
 - **Be concise**: One clear point per rule
 - **Be actionable**: The next agent running this skill/command/agent should know exactly what to do differently
 - **Show examples**: Use ✅ GOOD / ❌ BAD format when helpful
@@ -110,10 +110,10 @@ For 3+ learnings, use this structured template:
 
 ### Skill / Command / Agent Updates
 
-1. /review — Add diff-size gate
-   - Context: User ran /review on a 2000-line PR; the command tried to review every file and hit context limits
+1. /pr-review — Add diff-size gate
+   - Context: User ran /pr-review on a 2000-line PR; the command tried to review every file and hit context limits
    - Issue: No guidance on handling large diffs — should summarize by file first, then deep-dive on request
-   - File: `~/.claude/commands/review.md`
+   - File: `~/.claude/commands/review/pr-review.md`
 ```
 
 ## Implementation

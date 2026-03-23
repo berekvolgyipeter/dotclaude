@@ -5,7 +5,7 @@ set -euo pipefail
 CLAUDE_DIR="$HOME/.claude"
 
 # Must match the same lists used in install.sh
-DIRS=(rules commands agents skills templates hooks scripts index)
+DIRS=(rules context-rules commands agents skills templates hooks scripts shared)
 FILES=(settings.json)
 
 # --- Remove directory symlinks ---
@@ -34,7 +34,8 @@ for file in "${FILES[@]}"; do
         # If install.sh backed up the original file, restore the most recent backup
         # ls -t sorts by modification time (newest first), head -1 picks the latest
         # 2>/dev/null suppresses errors if no backups exist
-        latest_backup=$(find "$(dirname "$target")" -maxdepth 1 -name "$(basename "$target").backup.*" -print0 2>/dev/null | xargs -0 ls -t 2>/dev/null | head -1)
+        # shellcheck disable=SC2012
+        latest_backup=$(ls -t "${CLAUDE_DIR}/$(basename "$target").backup."* 2>/dev/null | head -1)
         if [ -n "$latest_backup" ]; then
             mv "$latest_backup" "$target"
             echo "Restored backup: $latest_backup -> $target"
