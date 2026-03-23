@@ -6,6 +6,10 @@
     "DISABLE_ERROR_REPORTING": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1"
   },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(make lint)",
@@ -125,6 +129,27 @@
     "type": "command",
     "command": "bash ~/.claude/scripts/statusline-command.sh"
   },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "allowUnsandboxedCommands": false,
+    "network": {
+      "allowedDomains": [
+        "platform.claude.com",
+        "code.claude.com"
+      ]
+    },
+    "filesystem": {
+      "allowWrite": [
+        "/tmp",
+        "/private/tmp"
+      ]
+    }
+  },
   "alwaysThinkingEnabled": true,
-  "autoMemoryEnabled": false
+  "plansDirectory": ".claude/plans",
+  "autoMemoryEnabled": false,
+  "companyAnnouncements": [
+    "It is recommended that each repo defines make lint, make test, and make tree targets, as user-level Claude Code workflows rely on them."
+  ]
 }

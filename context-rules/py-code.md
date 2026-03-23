@@ -1,26 +1,12 @@
 # Python Developer Rules
 
-## CRITICAL: KISS & YAGNI ENFORCEMENT
-
-**DO NOT IMPLEMENT ANYTHING BEYOND WHAT IS EXPLICITLY REQUESTED.**
-
-Before implementing anything, confirm:
-1. Is this explicitly requested, or am I adding scope?
-2. Have I used a tool to confirm the answer, or am I guessing?
-3. Does this follow the existing pattern in the codebase?
-
-Rules:
-- Build ONLY what is asked for — no speculative features, no "just in case" additions
-- Choose the simplest solution that works
-- Stop when the requirement is met
-
----
-
 ## Core Development Philosophy
 
+- **KISS**: Choose the simplest solution that works. Before implementing, confirm the request is explicit and use tools to verify rather than guessing.
+- **YAGNI**: Build only what is explicitly requested — no speculative features, no "just in case" additions. Stop when the requirement is met.
 - **DRY**: Implement logic once; upper layers pass parameters through, not re-implement.
 - **Fail Fast**: Raise exceptions immediately when issues occur.
-- **No Mutation of Arguments**: Do not modify mutable arguments (lists, dicts, sets) in place — return new or modified values instead.
+- **No Mutation of Arguments**: Do not modify mutable arguments (lists, dicts, sets) passed into a function — return new or modified values instead.
 - **Dependency Inversion**: Depend on abstractions for service/module dependencies — not for configuration (see Configuration Extraction below).
 
 ---
@@ -97,7 +83,7 @@ async def fulfill_order(self, order: Order) -> Receipt:
 - **Always use type hints** for function signatures and class attributes
 - **Use precise types** — avoid `Any` and `object`; prefer union types (`ModelA | ModelB | None`). `Any` is acceptable only at third-party library boundaries
 - **Use modern 3.10+ type syntax** — `list[str]` not `List[str]`, `str | None` not `Optional[str]`
-- **Format with `make lint`**
+- **Format with the project's lint command** (e.g. `make lint`)
 - **Use `pydantic` v2** for data validation and settings management
 - **Always use keyword arguments** for optional parameters, not positional
 - **f-strings only** — never `%` formatting or `.format()`
