@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "cleanupPeriodDays": 365,
   "env": {
     "DISABLE_TELEMETRY": "1",
@@ -31,46 +30,66 @@
       "mcp__serena__get_symbols_overview",
       "mcp__serena__search_for_pattern"
     ],
+    "ask": [
+      "Bash(docker *)", // docker socket is root-equivalent
+      "Bash(curl --unix-socket*)", // raw requests to any socket
+      "Bash(socat *UNIX*)", // socket relay/tunneling tool
+      "Bash(nc -U *)", // netcat to unix sockets
+      "Bash(ncat --unixsock*)", // nmap's netcat variant
+      "Bash(chmod *)", // permission changes
+      "Bash(chown *)", // ownership changes
+      "Bash(ssh *)", // outbound SSH sessions
+      "Bash(scp *)", // file transfer over SSH
+      "Bash(rsync *)", // file sync, could exfiltrate
+      "Bash(git push *)", // pushing code to remote
+      "Bash(git remote *)", // changing remote URLs
+      "Bash(pkill *)", // killing processes
+      "Bash(kill *)", // killing processes
+      "Bash(launchctl *)" // macOS service management
+    ],
     "deny": [
-      "Bash(rm -rf *)",
-      "Bash(rm -fr *)",
-      "Bash(sudo *)",
-      "Bash(mkfs *)",
-      "Bash(dd *)",
-      "Bash(wget *|bash*)",
-      "Bash(wget *| bash*)",
-      "Bash(wget * | bash*)",
-      "Bash(curl *|bash*)",
-      "Bash(curl *| bash*)",
-      "Bash(curl * | bash*)",
-      "Bash(curl *|sh*)",
-      "Bash(curl * | sh*)",
-      "Bash(git push --force*)",
-      "Bash(git push *--force*)",
-      "Bash(git reset --hard*)",
-      "Edit(~/.bashrc)",
-      "Edit(~/.zshrc)",
-      "Edit(~/.ssh/**)",
-      "Edit(**/.env)",
-      "Read(**/.env)",
-      "Read(~/.ssh/**)",
-      "Read(~/.gnupg/**)",
-      "Read(~/.aws/**)",
-      "Read(~/.azure/**)",
-      "Read(~/.config/gh/**)",
-      "Read(~/.git-credentials)",
-      "Read(~/.docker/config.json)",
-      "Read(~/.kube/**)",
-      "Read(~/.npmrc)",
-      "Read(~/.npm/**)",
-      "Read(~/.pypirc)",
-      "Read(~/.gem/credentials)",
-      "Read(~/Library/Keychains/**)",
-      "Read(~/Library/Application Support/**/metamask*/**)",
-      "Read(~/Library/Application Support/**/electrum*/**)",
-      "Read(~/Library/Application Support/**/exodus*/**)",
-      "Read(~/Library/Application Support/**/phantom*/**)",
-      "Read(~/Library/Application Support/**/solflare*/**)"
+      "Bash(rm -rf *)", // recursive delete, irreversible
+      "Bash(rm -fr *)", // recursive delete (flag order variant)
+      "Bash(sudo *)", // privilege escalation
+      "Bash(mkfs *)", // formats filesystem, destroys data
+      "Bash(dd *)", // raw disk write, can destroy data
+      "Bash(wget *|bash*)", // remote code execution
+      "Bash(wget *| bash*)", // remote code execution (space variant)
+      "Bash(wget * | bash*)", // remote code execution (spaced pipe)
+      "Bash(curl *|bash*)", // remote code execution
+      "Bash(curl *| bash*)", // remote code execution (space variant)
+      "Bash(curl * | bash*)", // remote code execution (spaced pipe)
+      "Bash(curl *|sh*)", // remote code execution via sh
+      "Bash(curl *| sh*)", // remote code execution via sh (space variant)
+      "Bash(curl * | sh*)", // remote code execution via sh (spaced pipe)
+      "Bash(git push --force*)", // force push, can destroy remote history
+      "Bash(git push *--force*)", // force push (flag in middle)
+      "Bash(git reset --hard*)", // discards all uncommitted changes
+      "Edit(~/.bashrc)", // shell config, persists backdoors
+      "Edit(~/.zshrc)", // shell config, persists backdoors
+      "Edit(~/.ssh/**)", // SSH keys and config
+      "Edit(**/.env)", // environment files with secrets
+      "Read(**/.env)", // environment files with secrets
+      "Read(~/.ssh/**)", // SSH private keys
+      "Read(~/.gnupg/**)", // GPG private keys
+      "Read(~/.aws/**)", // AWS credentials
+      "Read(~/.azure/**)", // Azure credentials
+      "Read(~/.config/gh/**)", // GitHub CLI credentials
+      "Read(~/.git-credentials)", // git stored credentials
+      "Read(~/.docker/config.json)", // Docker registry credentials
+      "Read(~/.kube/**)", // Kubernetes credentials
+      "Read(~/.npmrc)", // npm auth tokens
+      "Read(~/.npm/**)", // npm cache, may contain tokens
+      "Read(~/.pypirc)", // PyPI credentials
+      "Read(~/.gem/credentials)", // RubyGems credentials
+      "Read(~/Library/Keychains/**)", // macOS keychain
+      "Read(~/Library/Application Support/**/metamask*/**)", // MetaMask wallet
+      "Read(~/Library/Application Support/**/electrum*/**)", // Electrum wallet
+      "Read(~/Library/Application Support/**/exodus*/**)", // Exodus wallet
+      "Read(~/Library/Application Support/**/phantom*/**)", // Phantom wallet
+      "Read(~/Library/Application Support/**/solflare*/**)", // Solflare wallet
+      "Read(~/.config/gcloud/**)", // GCP Application Default Credentials
+      "Read(~/.netrc)" // plaintext credentials for HTTP services
     ]
   },
   "enableAllProjectMcpServers": false,
@@ -135,14 +154,19 @@
     "allowUnsandboxedCommands": false,
     "network": {
       "allowedDomains": [
+        "github.com",
         "platform.claude.com",
         "code.claude.com"
-      ]
+      ],
+      "allowAllUnixSockets": true // needed by git SSH agent; ask-list still prompts for direct CLI socket access
     },
     "filesystem": {
       "allowWrite": [
         "/tmp",
         "/private/tmp"
+      ],
+      "allowRead": [
+        "~/.ssh/known_hosts" // SSH-based git operations; low-risk (only hostnames, no keys)
       ]
     }
   },

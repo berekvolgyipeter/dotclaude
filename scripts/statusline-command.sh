@@ -6,17 +6,18 @@
 # Claude Code passes session data as JSON on stdin
 input=$(cat)
 
-# Extract fields from the JSON payload; // empty yields no output if field is absent/null
-cwd=$(echo "$input" | jq -r '.cwd // .workspace.current_dir // empty')
-model=$(echo "$input" | jq -r '.model.display_name // empty')
-used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
-ctx_size=$(echo "$input" | jq -r '.context_window.context_window_size // empty')
+# Extract all fields in a single jq pass; // "" always emits a line so read -r assigns empty on absent fields
 # Sum raw token counts for exact used-token display (avoids rounding from integer percentage)
-ctx_used_tokens=$(echo "$input" | jq -r '
-  (.context_window.current_usage.input_tokens // 0) +
-  (.context_window.current_usage.cache_creation_input_tokens // 0) +
-  (.context_window.current_usage.cache_read_input_tokens // 0)
-')
+{ read -r cwd; read -r model; read -r used_pct; read -r ctx_size; read -r ctx_used_tokens; } < <(
+  echo "$input" | jq -r '
+    (.cwd // .workspace.current_dir // ""),
+    (.model.display_name // ""),
+    (.context_window.used_percentage // ""),
+    (.context_window.context_window_size // ""),
+    ((.context_window.current_usage.input_tokens // 0) +
+     (.context_window.current_usage.cache_creation_input_tokens // 0) +
+     (.context_window.current_usage.cache_read_input_tokens // 0))'
+)
 
 # ANSI colors (256-color palette)
 BLUE='\033[38;5;39m'
@@ -59,7 +60,7 @@ fi
 if [ -n "$model" ]; then
   model_part="$(printf "${ORANGE}%s${RESET}" "$model")"
   if [ -n "$used_pct" ] && [ "$used_pct" != "null" ]; then
-    ctx_int=$(printf "%.f" "$used_pct")  # round float to integer for comparison
+    ctx_int=$(printf "%.0f" "$used_pct")  # round float to integer for comparison
     if [ "$ctx_int" -lt 50 ]; then
       ctx_color="$CTX_GREEN"
     elif [ "$ctx_int" -lt 80 ]; then
@@ -70,8 +71,8 @@ if [ -n "$model" ]; then
     ctx_str="ctx: $(printf "%.0f" "$used_pct")%"
     if [ -n "$ctx_size" ] && [ "$ctx_size" != "null" ]; then
       # Format used tokens from raw counts (exact); total window size rounded to nearest k
-      used_k=$(awk "BEGIN { printf \"%.1f\", $ctx_used_tokens / 1000 }")
-      total_k=$(awk "BEGIN { printf \"%.0f\", $ctx_size / 1000 }")
+      used_k=$(awk -v n="$ctx_used_tokens" 'BEGIN { printf "%.1f", n / 1000 }')
+      total_k=$(awk -v n="$ctx_size" 'BEGIN { printf "%.0f", n / 1000 }')
       ctx_str="${ctx_str} (${used_k}k / ${total_k}k)"
     fi
     model_part="${model_part} $(printf "${ctx_color}%s${RESET}" "$ctx_str")"

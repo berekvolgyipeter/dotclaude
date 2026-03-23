@@ -15,10 +15,8 @@ set -euo pipefail
 
 INPUT=$(cat)
 
-STOP_HOOK_ACTIVE=$(echo "$INPUT" | jq -r '.stop_hook_active')
-if [ "$STOP_HOOK_ACTIVE" = "true" ]; then
-  exit 0
-fi
+STOP_HOOK_ACTIVE=$(echo "$INPUT" | jq -r '.stop_hook_active // empty')
+[ "${STOP_HOOK_ACTIVE:-false}" = "true" ] && exit 0
 
 TRANSCRIPT=$(echo "$INPUT" | jq -r '.transcript_path')
 if [ -z "$TRANSCRIPT" ] || [ ! -f "$TRANSCRIPT" ]; then
@@ -74,13 +72,13 @@ fi
 FAILED=0
 
 # Each target runs independently — unavailable targets are skipped, not blocking
-# Output goes to stdout so Claude receives it when exit 2 triggers a continue
+# Output goes directly to stderr so make's streaming output is not buffered
 if [ "$HAS_LINT" -eq 1 ]; then
-  LINT_OUT=$(make lint 2>&1) || { FAILED=1; echo "$LINT_OUT" >&2; }
+  make lint 2>&1 || FAILED=1
 fi
 
 if [ "$HAS_TEST" -eq 1 ]; then
-  TEST_OUT=$(make test 2>&1) || { FAILED=1; echo "$TEST_OUT" >&2; }
+  make test 2>&1 || FAILED=1
 fi
 
 if [ "$FAILED" -ne 0 ]; then

@@ -47,7 +47,7 @@ Using [~/.claude/templates/prp_template.md](~/.claude/templates/prp_template.md)
 - list tasks to be completed to fullfill the PRP in the order they should be completed
 
 ### Validation Gates (Must be Executable)
-These commands are defined in the Makefile and use uv for Python dependency management:
+These commands are defined in the Makefile:
 
 ```bash
 # Format code, fix linting issues, and run type checking

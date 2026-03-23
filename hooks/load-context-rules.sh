@@ -24,6 +24,7 @@ RULE_PATHS=(
 # --- Parse hook input
 INPUT=$(cat)
 FILE=$(jq -r '.tool_input.file_path // empty' <<< "$INPUT")
+[ -z "$FILE" ] && exit 0
 TRANSCRIPT=$(jq -r '.transcript_path // empty' <<< "$INPUT")
 
 # Match file against pipe-delimited patterns
@@ -37,7 +38,8 @@ matches_any() {
   return 1
 }
 
-# Exit early if no file path or no rule patterns match
+# Fast-path: exit early if no rule pattern matches the file at all,
+# avoiding the transcript grep and file reads in the main loop.
 match_found=false
 for patterns in "${RULE_PATHS[@]}"; do
   matches_any "$FILE" "$patterns" && { match_found=true; break; }
@@ -54,7 +56,9 @@ rule_marker() {
 
 # Check whether a rule marker already appears in the session transcript
 is_rule_loaded() {
-  [ -n "$TRANSCRIPT" ] && [ -f "$TRANSCRIPT" ] && grep -q "$(rule_marker "$1")" "$TRANSCRIPT" 2>/dev/null
+  local marker
+  marker=$(rule_marker "$1")
+  [ -n "$TRANSCRIPT" ] && [ -f "$TRANSCRIPT" ] && grep -qF "$marker" "$TRANSCRIPT" 2>/dev/null
 }
 
 # Collect rule content for matching, not-yet-loaded rules

@@ -11,4 +11,4 @@ if ! ls "${REVIEW_DIR}"/*.md &>/dev/null; then
 fi
 
 # shellcheck disable=SC2012
-ls -t "${REVIEW_DIR}"/*.md 2>/dev/null | head -1
+ls -t "${REVIEW_DIR}"/*.md 2>/dev/null | head -1 || true
