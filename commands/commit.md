@@ -1,30 +1,27 @@
 ---
 name: commit
-description: Stage all changes and commit with a short conventional commit message suggested by Claude.
+description: Stage all changes and commit with a suggested conventional commit message.
 disable-model-invocation: true
+model: haiku
+allowed-tools:
+  - Bash(bash $HOME/.claude/scripts/review/delta-diff.sh)
+  - Bash(git add -A)
+  - Bash(git commit -m *)
+  - Bash(git log *)
+  - Agent(review:diff-summarizer)
 ---
+
+!`bash $HOME/.claude/scripts/review/delta-diff.sh`
 
 Stage all changes and commit them with a concise, conventional commit message.
 
-## Step 1: Inspect Changes
+## Step 1: Summarize Changes
 
-Run these to understand what changed:
-
-```bash
-git status
-```
-
-```bash
-git diff HEAD
-```
-
-```bash
-git diff --cached
-```
+Dispatch a `review:diff-summarizer` subagent with the file list, untracked files, and DIFF_BASE from the overview above. The agent will read per-file diffs and return a structured summary including change type, scope, and description.
 
 ## Step 2: Derive the Commit Message
 
-Analyze the diff and produce **one short commit message** following [Conventional Commits](https://www.conventionalcommits.org/):
+Using the summary from the subagent, produce **one short commit message** following [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
 <type>(<optional scope>): <imperative summary>
@@ -72,16 +69,14 @@ First, show the proposed message to the user as a code block:
 <type>(<scope>): <summary>
 ```
 
-Then stage all changes and commit:
+Then run both commands in sequence:
 
 ```bash
 git add -A
 git commit -m "<proposed message>"
 ```
 
-**Do NOT add Co-Authored-By, Signed-off-by, or any other trailers/metadata to the commit message.** The message must contain only the conventional commit summary line — nothing else.
-
-If the commit hook fails, report the error and stop — do not retry or bypass hooks.
+If the commit fails, report the error and stop — do not retry or bypass hooks.
 
 ## Step 4: Confirm
 

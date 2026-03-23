@@ -1,9 +1,4 @@
----
-paths:
-  - "**/*.md"
----
-
-# Documentation Guidelines
+# Documentation Rules
 
 Best practices for writing and maintaining project documentation.
 
@@ -12,7 +7,7 @@ Best practices for writing and maintaining project documentation.
 Documentation should be **timeless and high-level**, focusing on architecture and patterns rather than implementation details.
 
 1. **No Code Examples in Architecture Docs** - Architecture docs describe a project's structure, component relationships, and data flow. Code changes frequently, making embedded examples outdated.
-   - ✅ GOOD: "Scrapers use `prepare_download_directory()` for overwrite handling"
+   - ✅ GOOD: "The file handler calls `prepare_output_directory()` before writing"
    - ❌ BAD: Including the full function implementation in `CLAUDE.md`
    - **Exception**: Best-practice and guideline docs (e.g., rule files, style guides) — generalized code examples ARE allowed and encouraged to illustrate patterns and conventions
 

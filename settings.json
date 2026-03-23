@@ -1,11 +1,13 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "cleanupPeriodDays": 365,
   "env": {
-    "LOG_INSTRUCTIONS_LOADED_ENABLED": "0",
     "DISABLE_TELEMETRY": "1",
     "DISABLE_ERROR_REPORTING": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
   },
   "permissions": {
     "allow": [
@@ -14,16 +16,8 @@
       "Bash(make coverage)",
       "Bash(make tree)",
       "Bash(source .venv/bin/activate)",
-      "Bash(rg:*)",
-      "Bash(ls:*)",
-      "Bash(tree:*)",
-      "Bash(git fetch *)",
+      "Bash(source venv/bin/activate)",
       "Bash(git status)",
-      "Bash(git diff HEAD)",
-      "Bash(git diff --stat *)",
-      "Bash(git log *..HEAD --oneline)",
-      "Bash(git ls-files --others --exclude-standard)",
-      "Bash(ls -t .claude/.code-reviews/*.md | head -1)",
       "Skill",
       "WebSearch",
       "mcp__claude-context__get_indexing_status",
@@ -36,44 +30,68 @@
       "mcp__serena__get_symbols_overview",
       "mcp__serena__search_for_pattern"
     ],
+    "ask": [
+      "Bash(docker *)", // docker socket is root-equivalent
+      "Bash(curl --unix-socket*)", // raw requests to any socket
+      "Bash(socat *UNIX*)", // socket relay/tunneling tool
+      "Bash(nc -U *)", // netcat to unix sockets
+      "Bash(ncat --unixsock*)", // nmap's netcat variant
+      "Bash(chmod *)", // permission changes
+      "Bash(chown *)", // ownership changes
+      "Bash(ssh *)", // outbound SSH sessions
+      "Bash(scp *)", // file transfer over SSH
+      "Bash(rsync *)", // file sync, could exfiltrate
+      "Bash(git push *)", // pushing code to remote
+      "Bash(git remote *)", // changing remote URLs
+      "Bash(pkill *)", // killing processes
+      "Bash(kill *)", // killing processes
+      "Bash(launchctl *)" // macOS service management
+    ],
     "deny": [
-      "Bash(rm -rf *)",
-      "Bash(rm -fr *)",
-      "Bash(sudo *)",
-      "Bash(mkfs *)",
-      "Bash(dd *)",
-      "Bash(wget *|bash*)",
-      "Bash(wget *| bash*)",
-      "Bash(wget * | bash*)",
-      "Bash(git push --force*)",
-      "Bash(git push *--force*)",
-      "Bash(git reset --hard*)",
-      "Edit(~/.bashrc)",
-      "Edit(~/.zshrc)",
-      "Edit(~/.ssh/**)",
-      "Edit(**/.env)",
-      "Read(**/.env)",
-      "Read(~/.ssh/**)",
-      "Read(~/.gnupg/**)",
-      "Read(~/.aws/**)",
-      "Read(~/.azure/**)",
-      "Read(~/.config/gh/**)",
-      "Read(~/.git-credentials)",
-      "Read(~/.docker/config.json)",
-      "Read(~/.kube/**)",
-      "Read(~/.npmrc)",
-      "Read(~/.npm/**)",
-      "Read(~/.pypirc)",
-      "Read(~/.gem/credentials)",
-      "Read(~/Library/Keychains/**)",
-      "Read(~/Library/Application Support/**/metamask*/**)",
-      "Read(~/Library/Application Support/**/electrum*/**)",
-      "Read(~/Library/Application Support/**/exodus*/**)",
-      "Read(~/Library/Application Support/**/phantom*/**)",
-      "Read(~/Library/Application Support/**/solflare*/**)"
+      "Bash(rm -rf *)", // recursive delete, irreversible
+      "Bash(rm -fr *)", // recursive delete (flag order variant)
+      "Bash(sudo *)", // privilege escalation
+      "Bash(mkfs *)", // formats filesystem, destroys data
+      "Bash(dd *)", // raw disk write, can destroy data
+      "Bash(wget *|bash*)", // remote code execution
+      "Bash(wget *| bash*)", // remote code execution (space variant)
+      "Bash(wget * | bash*)", // remote code execution (spaced pipe)
+      "Bash(curl *|bash*)", // remote code execution
+      "Bash(curl *| bash*)", // remote code execution (space variant)
+      "Bash(curl * | bash*)", // remote code execution (spaced pipe)
+      "Bash(curl *|sh*)", // remote code execution via sh
+      "Bash(curl *| sh*)", // remote code execution via sh (space variant)
+      "Bash(curl * | sh*)", // remote code execution via sh (spaced pipe)
+      "Bash(git push --force*)", // force push, can destroy remote history
+      "Bash(git push *--force*)", // force push (flag in middle)
+      "Bash(git reset --hard*)", // discards all uncommitted changes
+      "Edit(~/.bashrc)", // shell config, persists backdoors
+      "Edit(~/.zshrc)", // shell config, persists backdoors
+      "Edit(~/.ssh/**)", // SSH keys and config
+      "Edit(**/.env)", // environment files with secrets
+      "Read(**/.env)", // environment files with secrets
+      "Read(~/.ssh/**)", // SSH private keys
+      "Read(~/.gnupg/**)", // GPG private keys
+      "Read(~/.aws/**)", // AWS credentials
+      "Read(~/.azure/**)", // Azure credentials
+      "Read(~/.config/gh/**)", // GitHub CLI credentials
+      "Read(~/.git-credentials)", // git stored credentials
+      "Read(~/.docker/config.json)", // Docker registry credentials
+      "Read(~/.kube/**)", // Kubernetes credentials
+      "Read(~/.npmrc)", // npm auth tokens
+      "Read(~/.npm/**)", // npm cache, may contain tokens
+      "Read(~/.pypirc)", // PyPI credentials
+      "Read(~/.gem/credentials)", // RubyGems credentials
+      "Read(~/Library/Keychains/**)", // macOS keychain
+      "Read(~/Library/Application Support/**/metamask*/**)", // MetaMask wallet
+      "Read(~/Library/Application Support/**/electrum*/**)", // Electrum wallet
+      "Read(~/Library/Application Support/**/exodus*/**)", // Exodus wallet
+      "Read(~/Library/Application Support/**/phantom*/**)", // Phantom wallet
+      "Read(~/Library/Application Support/**/solflare*/**)", // Solflare wallet
+      "Read(~/.config/gcloud/**)", // GCP Application Default Credentials
+      "Read(~/.netrc)" // plaintext credentials for HTTP services
     ]
   },
-  "alwaysThinkingEnabled": true,
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "claude-context",
@@ -82,23 +100,13 @@
     "serena"
   ],
   "hooks": {
-    "InstructionsLoaded": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $HOME/.claude/hooks/log-instructions-loaded.sh"
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
       {
-        "matcher": "Bash|Write|Read|Grep|Glob",
+        "matcher": "Read|Grep|Glob",
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/auto-approve-claude-dir.sh"
+            "command": "bash $HOME/.claude/hooks/auto-approve-claude-dir.sh"
           }
         ]
       },
@@ -114,6 +122,25 @@
             "command": "bash $HOME/.claude/hooks/block-push-to-main.sh"
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/load-context-rules.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/stop-lint-and-test.sh"
+          }
+        ]
       }
     ]
   },
@@ -121,5 +148,32 @@
     "type": "command",
     "command": "bash ~/.claude/scripts/statusline-command.sh"
   },
-  "autoMemoryEnabled": false
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "allowUnsandboxedCommands": false,
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "platform.claude.com",
+        "code.claude.com"
+      ],
+      "allowAllUnixSockets": true // needed by git SSH agent; ask-list still prompts for direct CLI socket access
+    },
+    "filesystem": {
+      "allowWrite": [
+        "/tmp",
+        "/private/tmp"
+      ],
+      "allowRead": [
+        "~/.ssh/known_hosts" // SSH-based git operations; low-risk (only hostnames, no keys)
+      ]
+    }
+  },
+  "alwaysThinkingEnabled": true,
+  "plansDirectory": ".claude/plans",
+  "autoMemoryEnabled": false,
+  "companyAnnouncements": [
+    "It is recommended that each repo defines make lint, make test, and make tree targets, as user-level Claude Code workflows rely on them."
+  ]
 }

@@ -47,7 +47,7 @@ Using [~/.claude/templates/prp_template.md](~/.claude/templates/prp_template.md)
 - list tasks to be completed to fullfill the PRP in the order they should be completed
 
 ### Validation Gates (Must be Executable)
-These commands are defined in the Makefile and use uv for Python dependency management:
+These commands are defined in the Makefile:
 
 ```bash
 # Format code, fix linting issues, and run type checking
@@ -62,7 +62,7 @@ make test
 *** ULTRATHINK ABOUT THE PRP AND PLAN YOUR APPROACH THEN START WRITING THE PRP ***
 
 ## Output
-Save as: `.claude/PRPs/{feature-name}.md`
+Save as: `.claude/PRPs/{feature-name}.md` using the Write tool directly — do not run `mkdir` first, the Write tool creates parent directories automatically.
 
 ## Quality Checklist
 - [ ] All necessary context included
