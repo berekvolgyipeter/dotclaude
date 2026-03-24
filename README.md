@@ -114,6 +114,13 @@ Shared permissions, preferences, and security posture.
 - *Shell config:* `~/.bashrc`, `~/.zshrc` — PATH manipulation and alias injection are off the table
 - *Credential stores:* SSH keys, AWS/Azure/GitHub CLI configs, git-credentials, Docker, Kubernetes, npm/pypi/gem tokens, macOS Keychain, `.env` files — and crypto wallet data (MetaMask, Electrum, Exodus, Phantom, Solflare)
 
+**Ask list** (allowed but requires confirmation):
+- *Root-equivalent access:* `docker`, `curl --unix-socket`, `socat *UNIX*`, `nc -U`, `ncat --unixsock` — the Docker socket and arbitrary Unix sockets grant host-level control
+- *Permission/ownership:* `chmod`, `chown`
+- *Network/data transfer:* `ssh`, `scp`, `rsync` — outbound sessions and file exfiltration vectors
+- *Git remotes:* `git push`, `git remote` — pushing code or changing remote URLs
+- *Process control:* `pkill`, `kill`, `launchctl` — killing processes or managing macOS services
+
 **Hooks:** `block-rm-rf.sh` and `block-push-to-main.sh` fire on every `Bash` call as a `PreToolUse` hook, independent of the permission system. If a permission rule is misconfigured, the hook still blocks it.
 
 **Sandboxing:** OS-level filesystem and network isolation for all bash commands and their subprocesses. Bash commands within sandbox boundaries are auto-approved — reducing prompt fatigue while maintaining security. The escape hatch is disabled; commands must run sandboxed or be explicitly excluded. Deny permission rules and sandbox isolation complement each other for defense in depth.
