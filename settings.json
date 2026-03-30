@@ -30,23 +30,6 @@
       "mcp__serena__get_symbols_overview",
       "mcp__serena__search_for_pattern"
     ],
-    "ask": [
-      "Bash(docker *)",
-      "Bash(curl --unix-socket*)",
-      "Bash(socat *UNIX*)",
-      "Bash(nc -U *)",
-      "Bash(ncat --unixsock*)",
-      "Bash(chmod *)",
-      "Bash(chown *)",
-      "Bash(ssh *)",
-      "Bash(scp *)",
-      "Bash(rsync *)",
-      "Bash(git push *)",
-      "Bash(git remote *)",
-      "Bash(pkill *)",
-      "Bash(kill *)",
-      "Bash(launchctl *)"
-    ],
     "deny": [
       "Bash(rm -rf *)",
       "Bash(rm -fr *)",
@@ -90,6 +73,23 @@
       "Read(~/Library/Application Support/**/solflare*/**)",
       "Read(~/.config/gcloud/**)",
       "Read(~/.netrc)"
+    ],
+    "ask": [
+      "Bash(docker *)",
+      "Bash(curl --unix-socket*)",
+      "Bash(socat *UNIX*)",
+      "Bash(nc -U *)",
+      "Bash(ncat --unixsock*)",
+      "Bash(chmod *)",
+      "Bash(chown *)",
+      "Bash(ssh *)",
+      "Bash(scp *)",
+      "Bash(rsync *)",
+      "Bash(git push *)",
+      "Bash(git remote *)",
+      "Bash(pkill *)",
+      "Bash(kill *)",
+      "Bash(launchctl *)"
     ]
   },
   "enableAllProjectMcpServers": false,
@@ -171,9 +171,10 @@
     }
   },
   "alwaysThinkingEnabled": true,
-  "plansDirectory": ".claude/plans",
-  "autoMemoryEnabled": false,
   "companyAnnouncements": [
     "It is recommended that each repo defines make lint, make test, and make tree targets, as user-level Claude Code workflows rely on them."
-  ]
+  ],
+  "plansDirectory": ".claude/plans",
+  "autoMemoryEnabled": false,
+  "effortLevel": "medium"
 }
