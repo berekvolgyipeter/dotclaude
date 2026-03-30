@@ -1,24 +1,40 @@
 ---
 name: primer
-description: Prime Context for Claude Code
+description: Explore and summarize a project's structure, purpose, key files, dependencies, and configuration
 disable-model-invocation: true
+model: haiku
+context: fork
+allowed-tools: Read, Grep, Glob, Bash(make *), Bash(ls *)
 ---
 
-# Prime Context for Claude Code
+# Project Primer
 
-Use the command `make tree` to get an understanding of the project structure.
+Efficiently explore this project and produce a concise summary. Minimize file reads — use directory listings and symbol overviews before reading full files.
 
-Start with reading the `.claude/CLAUDE.md` file to get an understanding of the project.
+## Steps
 
-Read the README.md file to get an understanding of the project.
+1. Run `make tree` to get the project structure.
+2. Read `.claude/CLAUDE.md` for project-specific instructions and conventions.
+3. Read `README.md` for project purpose, setup, and architecture.
+4. Identify entry points and key source files from the directory structure — read only the most important 3-5 files, not everything.
+5. Check for dependency manifests (`package.json`, `requirements.txt`, `go.mod`, `Cargo.toml`, etc.) and note key dependencies.
+6. Check for configuration files (CI/CD, linting, build config) and note any non-obvious setup.
 
-Read key files in the src/ or root directory
+## Output format
 
-IMPORTANT: Use Serena to search through the codebase. If you get any errors with Serena, retry with different Serena tools.
+Summarize findings in this structure:
 
-Explain back to me:
-- Project structure
-- Project purpose and goals
-- Key files and their purposes
-- Any important dependencies
-- Any important configuration files
+### Project Overview
+One-paragraph description of what the project does and why.
+
+### Structure
+Brief description of the directory layout and architecture.
+
+### Key Files
+Table of the most important files with a one-line purpose for each.
+
+### Dependencies
+Notable external dependencies and what they're used for.
+
+### Configuration
+Important config files and any required environment setup.

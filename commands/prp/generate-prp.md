@@ -2,52 +2,62 @@
 name: generate-prp
 description: Generate PRP (Product Requirements Prompt)
 disable-model-invocation: true
+argument-hint: "@feature-file"
+effort: max
+model: opus
 ---
 
 # Generate PRP (Product Requirements Prompt)
 
-## Feature file: $ARGUMENTS
+Read the feature specification below to understand what needs to be created, how the examples provided help, and any other considerations. Then follow this workflow in order.
 
-Generate a complete PRP (Product Requirements Prompt) for general feature implementation with thorough research. Ensure context is passed to the AI agent to enable self-validation and iterative refinement. Read the feature file first to understand what needs to be created, how the examples provided help, and any other considerations.
+<feature-spec>
+$ARGUMENTS
+</feature-spec>
 
-The AI agent only gets the context you are appending to the PRP and training data. Assume the AI agent has access to the codebase and the same knowledge cutoff as you, so its important that your research findings are included or referenced in the PRP. The Agent has Websearch capabilities, so pass urls to documentation and examples.
+The AI agent only gets the context you append to the PRP. It has access to the codebase and the same knowledge cutoff as you, so include or reference your research findings. The agent has WebSearch capabilities, so pass URLs to documentation and examples.
 
-## Research Process
+## Step 1 — Research
 
-1. **Codebase Analysis**
-   - Search for similar features/patterns in the codebase
-   - Identify files to reference in PRP
-   - Note existing conventions to follow
-   - Check test patterns for validation approach
+### 1a. Codebase Analysis
+- Use Glob and Grep to find similar features/patterns in the codebase
+- Identify files to reference in the PRP
+- Note existing conventions to follow
+- Check test patterns for the validation approach
 
-2. **External Research**
-   - Search for similar features/patterns online
-   - Library documentation (include specific URLs)
-   - Implementation examples (GitHub/StackOverflow/blogs)
-   - Best practices and common pitfalls
+### 1b. External Research
+- Use WebSearch to find implementation examples and library documentation (include specific URLs)
+- Look for best practices and common pitfalls
 
-3. **User Clarification** (if needed)
-   - Specific patterns to mirror and where to find them?
-   - Integration requirements and where to find them?
+### 1c. User Clarification (if needed)
+- Use AskUserQuestion for ambiguous requirements — e.g. specific patterns to mirror, integration requirements, or missing context
 
-## PRP Generation
+## Step 2 — Plan
 
-Using [~/.claude/templates/prp_template.md](~/.claude/templates/prp_template.md) as template:
+After completing all research, ULTRATHINK to plan the PRP structure before writing.
 
-### Critical Context to Include and pass to the AI agent as part of the PRP
+## Step 3 — Generate the PRP
+
+Use [~/.claude/templates/prp_template.md](~/.claude/templates/prp_template.md) as the template.
+
+### Context to Include
 - **Documentation**: URLs with specific sections
+- **Key Files & Directories**: Curated list of relevant files — not a full tree dump
 - **Code Examples**: Real snippets from codebase
-- **Gotchas**: Library quirks, version issues
+- **Gotchas**: Library quirks with contextual explanations (explain *why*, not just *what*)
 - **Patterns**: Existing approaches to follow
+- **Conditional Sections**: Include "Data Models" and "Integration Points" only if applicable
 
 ### Implementation Blueprint
-- Start with pseudocode showing approach
+- Check `~/.claude/shared/rules-index.md` for applicable coding rules (e.g., language style, testing conventions)
+- Check the target project for project-level rules in `.claude/rules/` and `.claude/CLAUDE.md` that may override or extend user-level rules
+- Start with pseudocode that follows the discovered coding standards (naming, structure, error handling conventions)
 - Reference real files for patterns
 - Include error handling strategy
-- list tasks to be completed to fullfill the PRP in the order they should be completed
+- List tasks in the order they should be completed
 
-### Validation Gates (Must be Executable)
-These commands are defined in the Makefile:
+### Validation Gates
+These commands are defined in the project Makefile:
 
 ```bash
 # Format code, fix linting issues, and run type checking
@@ -57,20 +67,15 @@ make lint
 make test
 ```
 
-*** CRITICAL AFTER YOU ARE DONE RESEARCHING AND EXPLORING THE CODEBASE BEFORE YOU START WRITING THE PRP ***
+## Step 4 — Save and Verify
 
-*** ULTRATHINK ABOUT THE PRP AND PLAN YOUR APPROACH THEN START WRITING THE PRP ***
-
-## Output
 Save as: `.claude/PRPs/{feature-name}.md` using the Write tool directly — do not run `mkdir` first, the Write tool creates parent directories automatically.
 
-## Quality Checklist
+Before saving, verify each item below. If any item fails, revise the PRP first:
 - [ ] All necessary context included
 - [ ] Validation gates are executable by AI
 - [ ] References existing patterns
 - [ ] Clear implementation path
 - [ ] Error handling documented
 
-Score the PRP on a scale of 1-10 (confidence level to succeed in one-pass implementation using claude codes)
-
-Remember: The goal is one-pass implementation success through comprehensive context.
+Score the PRP 1–10 (confidence for one-pass implementation success). The goal is comprehensive context that enables one-pass implementation.

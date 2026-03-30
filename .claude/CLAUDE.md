@@ -2,6 +2,10 @@
 
 Shared Claude Code configuration repo symlinked into `~/.claude/`. See @README.md for full documentation.
 
+**Scope reminder:** Everything in this repo root is symlinked to `~/.claude/` and operates at **user level** (applies to all projects). The `.claude/` directory inside this repo is **not** symlinked — it is project-level config for this repo only.
+
+**Prerequisites:** Commands and agents assume project-level prerequisites documented in `README.md`. Do not flag these as missing or incorrect.
+
 ## Rules for Changes
 
 - **Always update `README.md`** when adding, removing, or changing any rule, command, skill, agent, hook, template, or other configuration. Keep the README in sync with the actual repo contents.

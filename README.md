@@ -46,7 +46,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [/pr-summary](commands/review/pr-summary.md) | Brief PR summary grouped by feature/area |
 | [/fix-review](commands/review/fix-review.md) | Fix issues found in a code review |
 | [/generate-prp](commands/prp/generate-prp.md) | Generate a Product Requirements Prompt |
-| [/execute-prp](commands/prp/execute-prp.md) | Implement a PRP |
+| [/execute-prp](commands/prp/execute-prp.md) | Execute a PRP — internalize, plan, implement, validate, and verify |
 | [/prep-parallel](commands/parallel/prep-parallel.md) | Set up worktrees for parallel Claude Code agents |
 | [/execute-parallel](commands/parallel/execute-parallel.md) | Run parallel task execution |
 | [/primer](commands/primer.md) | Prime context for a session |
@@ -90,7 +90,7 @@ Event-driven shell scripts registered in `settings.json`.
 
 | File | Description |
 |------|-------------|
-| [prp_template.md](templates/prp_template.md) | PRP template used by the `/generate-prp` command |
+| [prp_template.md](templates/prp_template.md) | Language-agnostic PRP template used by the `/generate-prp` command |
 
 ### [Scripts](scripts/)
 
