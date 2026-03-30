@@ -6,7 +6,7 @@
 - **YAGNI**: Build only what is explicitly requested — no speculative features, no "just in case" additions. Stop when the requirement is met.
 - **DRY**: Implement logic once; upper layers pass parameters through, not re-implement.
 - **Fail Fast**: Raise exceptions immediately when issues occur.
-- **No Mutation of Arguments**: Do not modify mutable arguments (lists, dicts, sets) passed into a function — return new or modified values instead.
+- **No Mutation of Caller-Owned Arguments**: Do not mutate mutable arguments (lists, dicts, sets) that the caller still owns after the call returns — return a new or modified value instead. If in-place mutation is intentional (e.g. an accumulator or output buffer), document it explicitly. In-place operations on locally constructed objects are fine.
 - **Dependency Inversion**: Depend on abstractions for service/module dependencies — not for configuration (see Configuration Extraction below).
 
 ---

@@ -1,5 +1,4 @@
-name: "PRP Template"
-description: |
+# PRP Template
 
 ## Purpose
 Template optimized for AI agents to implement features with sufficient context and self-validation capabilities to achieve working code through iterative refinement.

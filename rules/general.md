@@ -22,6 +22,17 @@ Before making any edit, read the surrounding context and match its style — for
 ❌ BAD: Adding a raw glob pattern (`**/*.py`) to a column that uses human-readable text ("Python files")
 ✅ GOOD: Reading nearby entries first, then writing new content that matches their style
 
+## Check Before Implementing
+
+Before planning or implementing anything, always audit what already exists:
+
+1. Search the codebase for existing implementations, utilities, or patterns that address the same need
+2. Implement the least possible — reuse what's there before writing new code
+3. When something new must be added, identify the established pattern and place it accordingly
+
+❌ BAD: Writing a new helper without checking if one already exists
+✅ GOOD: Grep/Glob for related code first, reuse or extend what's found, only create new files/functions when truly needed
+
 ## Tool Requirements
 
 NEVER use `cat`, `head`, `tail`, `find`, `grep`, or `rg` via the Bash tool. Always use the dedicated tools instead:
