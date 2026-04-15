@@ -46,6 +46,31 @@ def test_parse(self, input_val, expected):
 ("admin_disabled", ["login_page", "admin_api", "user_mgmt"]),
 ```
 
+**Independent test constants:** Never import production constants to use as expected values in assertions — if the production value changes to garbage, the test must catch it. Hardcode expected values in a dedicated test constants file (e.g., `tests/**/constants.py`).
+
+```python
+# ❌ BAD — test mirrors whatever production says
+from src.config import ERROR_TEMPLATE
+
+assert format_error("oops") == ERROR_TEMPLATE.format(msg="oops")
+
+# ✅ GOOD — independent expected value catches regressions
+from tests.constants import EXPECTED_ERROR_TEMPLATE
+
+assert format_error("oops") == EXPECTED_ERROR_TEMPLATE.format(msg="oops")
+```
+
+**Mirror real calling patterns:** Test setups should invoke code the same way production does — use the same constructors, factory methods, or entry points that production code uses, not shortcuts or equivalents.
+
+```python
+# ❌ BAD — bypasses the factory, misses production wiring
+obj = MyService.__new__(MyService)
+obj._client = mock_client
+
+# ✅ GOOD — uses the same entry point as production
+obj = MyService.create(config=test_config, client=mock_client)
+```
+
 **DRY in tests:** Extract shared mock setup into `conftest.py` fixtures. If the same mock construction appears in multiple tests, it belongs in a fixture.
 
 ```python

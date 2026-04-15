@@ -47,10 +47,11 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [/fix-review](commands/review/fix-review.md) | Fix issues found in a code review |
 | [/generate-prp](commands/prp/generate-prp.md) | Generate a Product Requirements Prompt |
 | [/execute-prp](commands/prp/execute-prp.md) | Execute a PRP — internalize, plan, implement, validate, and verify |
+| [/refine-prp](commands/prp/refine-prp.md) | Refine a PRP in place — check logical correctness and rule compliance, then edit the PRP to fix issues |
 | [/prep-parallel](commands/parallel/prep-parallel.md) | Set up worktrees for parallel Claude Code agents |
 | [/execute-parallel](commands/parallel/execute-parallel.md) | Run parallel task execution |
 | [/primer](commands/primer.md) | Prime context for a session |
-| [/commit](commands/commit.md) | Stage all changes, commit, and push with a suggested conventional commit message |
+| [/commit](commands/commit.md) | Stage all changes and commit with a suggested conventional commit message |
 
 ### [Skills](skills/)
 

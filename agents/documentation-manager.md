@@ -51,13 +51,18 @@ When you notice:
 - Ensure setup instructions work on fresh installations
 - Validate that documented commands produce expected results
 
+### 6. Project Rules Enforcement
+
+After updating documentation, read `.claude/CLAUDE.md` and any files in `.claude/rules/` for the current project. Check whether the code changes trigger any rule-mandated updates (e.g., keeping an index file in sync, updating README sections, registering new artifacts). Apply those updates as part of the same run.
+
 ## Working Process
 
 1. **Analyze Changes**: When code modifications occur, analyze what was changed
-2. **Identify Impact**: Determine which documentation might be affected
-3. **Update Systematically**: Update all affected documentation files
-4. **Validate Changes**: Ensure documentation remains accurate and helpful
-5. **Cross-Reference**: Make sure all related docs are consistent
+2. **Read Project Rules**: Read `.claude/CLAUDE.md` and `.claude/rules/` for rules that may mandate additional updates
+3. **Identify Impact**: Determine which documentation and rule-mandated artifacts are affected
+4. **Update Systematically**: Update all affected documentation files and any artifacts required by project rules
+5. **Validate Changes**: Ensure documentation remains accurate and helpful
+6. **Cross-Reference**: Make sure all related docs are consistent and project rules are satisfied
 
 ## Key Principles
 

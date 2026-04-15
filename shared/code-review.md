@@ -47,6 +47,7 @@ Each subagent prompt must include:
 2. **DIFF_BASE** — from the change overview
 3. **Standards** — the loaded rule content from Step 1
 4. **Static analysis failures** — relevant lint/test failures from Step 2, or "None"
+5. **No code execution** — do not run any scripts or code via Bash to test edge cases. Review by reading code only. If behavior is unclear, check whether tests cover it — if not, add a finding.
 
 ## Step 5: Consolidate Findings
 

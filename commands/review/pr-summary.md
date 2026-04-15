@@ -5,11 +5,11 @@ disable-model-invocation: true
 model: haiku
 argument-hint: "[target-branch]"
 allowed-tools:
-  - Bash(bash $HOME/.claude/scripts/review/pr-diff.sh *)
+  - Bash(bash ~/.claude/scripts/review/pr-diff.sh *)
   - Agent(review:diff-summarizer)
 ---
 
-!`bash $HOME/.claude/scripts/review/pr-diff.sh $ARGUMENTS`
+!`bash ~/.claude/scripts/review/pr-diff.sh $ARGUMENTS`
 
 The branch change overview above contains the DIFF_BASE, changed files, commits, and untracked files.
 
