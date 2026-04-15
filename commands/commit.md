@@ -4,14 +4,14 @@ description: Stage all changes and commit with a suggested conventional commit m
 disable-model-invocation: true
 model: haiku
 allowed-tools:
-  - Bash(bash $HOME/.claude/scripts/review/delta-diff.sh)
+  - Bash(bash ~/.claude/scripts/review/delta-diff.sh)
   - Bash(git add -A)
   - Bash(git commit -m *)
   - Bash(git log *)
   - Agent(review:diff-summarizer)
 ---
 
-!`bash $HOME/.claude/scripts/review/delta-diff.sh`
+!`bash ~/.claude/scripts/review/delta-diff.sh`
 
 Stage all changes and commit them with a concise, conventional commit message.
 
@@ -63,13 +63,7 @@ test(auth): add edge cases for token expiry
 
 ## Step 3: Stage and Commit
 
-First, show the proposed message to the user as a code block:
-
-```
-<type>(<scope>): <summary>
-```
-
-Then run both commands in sequence:
+Run both commands in sequence:
 
 ```bash
 git add -A
@@ -78,6 +72,4 @@ git commit -m "<proposed message>"
 
 If the commit fails, report the error and stop — do not retry or bypass hooks.
 
-## Step 4: Confirm
-
-Run `git log --oneline -3` and show the output so the user can verify the commit landed.
+Output **only** the commit message as a code block and nothing else.

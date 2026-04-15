@@ -4,7 +4,7 @@ description: Technical code review for quality and bugs for changes to a target 
 disable-model-invocation: true
 argument-hint: "[target-branch]"
 allowed-tools:
-  - Bash(bash $HOME/.claude/scripts/review/pr-diff.sh *)
+  - Bash(bash ~/.claude/scripts/review/pr-diff.sh *)
   - Bash(make lint)
   - Bash(make lint 2>&1 || echo *)
   - Bash(make lint 2>&1; echo *)
@@ -16,6 +16,6 @@ allowed-tools:
   - Agent(review:code-reviewer)
 ---
 
-!`bash $HOME/.claude/scripts/review/pr-diff.sh $ARGUMENTS`
+!`bash ~/.claude/scripts/review/pr-diff.sh $ARGUMENTS`
 
 @~/.claude/shared/code-review.md
