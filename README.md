@@ -78,6 +78,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
 | [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
 | [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
+| [agent-harness](skills/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections (Archon, everything-claude-code) |
 | [slither](skills/slither/SKILL.md) | Slither static analysis for Solidity & Vyper |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
 | [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
@@ -245,3 +246,5 @@ Use `template.CLAUDE.md`, `template.mcp.json`, and `template.serena.project.yml`
 - [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions and code review patterns
 - [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns
 - [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern
+- [coleam00/archon](https://github.com/coleam00/archon) — agent-harness skill reference repo
+- [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) — agent-harness skill reference repo

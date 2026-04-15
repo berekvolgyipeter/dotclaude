@@ -1,0 +1,44 @@
+{
+    "repos": [
+        {
+            "github": "coleam00/archon",
+            "local_path": "~/.claude/skills-references/agent-harness/coleam00-archon",
+            "description": "Archon is an AI agent that builds, refines, and iterates on other AI agents. It serves as an agentic coding assistant and meta-agent harness — given a description, it generates fully functional agents using the Pydantic AI framework with MCP server support, iterative refinement loops, and a Streamlit-based UI for agent development workflows.",
+            "topics": [
+                "agent-builder",
+                "meta-agent",
+                "pydantic-ai",
+                "mcp",
+                "orchestration",
+                "iterative-refinement",
+                "streamlit"
+            ],
+            "content_types": [
+                "agents",
+                "frameworks",
+                "workflows"
+            ]
+        },
+        {
+            "github": "affaan-m/everything-claude-code",
+            "local_path": "~/.claude/skills-references/agent-harness/affaan-m-everything-claude-code",
+            "description": "A curated collection of Claude Code resources, tips, configurations, and best practices. Aggregates prompts, CLAUDE.md templates, hooks, MCP server setups, workflow patterns, and community knowledge for getting the most out of Claude Code as an AI coding assistant.",
+            "topics": [
+                "claude-code",
+                "resources",
+                "prompts",
+                "configuration",
+                "mcp",
+                "hooks",
+                "best-practices",
+                "community"
+            ],
+            "content_types": [
+                "resources",
+                "templates",
+                "configurations",
+                "guides"
+            ]
+        }
+    ]
+}
