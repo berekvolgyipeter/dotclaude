@@ -12,15 +12,16 @@ allowed-tools:
 
 # Skill / Command Review
 
-<file>
+<path>
 $ARGUMENTS
-</file>
+</path>
 
 Use the **skill-creator** skill for structural checks (anatomy, progressive disclosure, writing patterns) and the **prompt-engineering** skill for instruction quality (over-constraining, example gaps, vague action language). Do not modify anything.
 
-Detect the type first:
-- **Skill** — `SKILL.md` filename
-- **Command** — any other `.md` file
+Detect the type from the `$ARGUMENTS` reference:
+- **Directory reference** — treat as a skill; use Glob to find `SKILL.md` inside it and review that file
+- **`SKILL.md` filename** — treat as a skill
+- **Any other `.md` file** — treat as a command
 
 If a non-`SKILL.md` file is missing `disable-model-invocation: true`, report it as a **CRITICAL** finding (missing required frontmatter key) — do not reclassify it as a skill.
 
