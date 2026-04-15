@@ -41,17 +41,33 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 | Command | Description |
 |---------|-------------|
+| [/primer](commands/primer.md) | Prime context for a session |
+| [/commit](commands/commit.md) | Stage all changes and commit with a suggested conventional commit message |
+
+**[review/](commands/review/)**
+
+| Command | Description |
+|---------|-------------|
 | [/pr-review](commands/review/pr-review.md) | Full technical code review |
 | [/delta-review](commands/review/delta-review.md) | Review uncommitted changes against latest commit |
 | [/pr-summary](commands/review/pr-summary.md) | Brief PR summary grouped by feature/area |
 | [/fix-review](commands/review/fix-review.md) | Fix issues found in a code review |
+| [/skill-review](commands/review/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
+
+**[prp/](commands/prp/)**
+
+| Command | Description |
+|---------|-------------|
 | [/generate-prp](commands/prp/generate-prp.md) | Generate a Product Requirements Prompt |
 | [/execute-prp](commands/prp/execute-prp.md) | Execute a PRP — internalize, plan, implement, validate, and verify |
 | [/refine-prp](commands/prp/refine-prp.md) | Refine a PRP in place — check logical correctness and rule compliance, then edit the PRP to fix issues |
+
+**[parallel/](commands/parallel/)**
+
+| Command | Description |
+|---------|-------------|
 | [/prep-parallel](commands/parallel/prep-parallel.md) | Set up worktrees for parallel Claude Code agents |
 | [/execute-parallel](commands/parallel/execute-parallel.md) | Run parallel task execution |
-| [/primer](commands/primer.md) | Prime context for a session |
-| [/commit](commands/commit.md) | Stage all changes and commit with a suggested conventional commit message |
 
 ### [Skills](skills/)
 
@@ -72,6 +88,11 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 |-------|-------------|
 | [validation-gates](agents/validation-gates.md) | Runs tests and iterates on fixes until they pass |
 | [documentation-manager](agents/documentation-manager.md) | Keeps docs in sync with code changes |
+
+**[review/](agents/review/)**
+
+| Agent | Description |
+|-------|-------------|
 | [code-reviewer](agents/review/code-reviewer.md) | Focused code reviewer for batches of changed files, dispatched by review commands |
 | [diff-summarizer](agents/review/diff-summarizer.md) | Reads diffs on demand and returns structured change summaries |
 
@@ -99,6 +120,11 @@ Event-driven shell scripts registered in `settings.json`.
 |------|-------------|
 | [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
 | [index_codebase.py](scripts/index_codebase.py) | Indexes codebase for the claude-context MCP server |
+
+**[review/](scripts/review/)**
+
+| File | Description |
+|------|-------------|
 | [delta-diff.sh](scripts/review/delta-diff.sh) | Injects a local change overview (stats, file list) as markdown context — diffs are read on demand by subagents |
 | [pr-diff.sh](scripts/review/pr-diff.sh) | Injects a branch change overview (stats, file list, commits) as markdown context — diffs are read on demand by subagents |
 | [latest-review.sh](scripts/review/latest-review.sh) | Outputs the path to the newest code review file in `.claude/.code-reviews/` |
