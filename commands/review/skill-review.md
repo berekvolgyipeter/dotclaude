@@ -25,6 +25,8 @@ Detect the type from the `$ARGUMENTS` reference:
 
 If a non-`SKILL.md` file is missing `disable-model-invocation: true`, report it as a **CRITICAL** finding (missing required frontmatter key) — do not reclassify it as a skill.
 
+Read every file referenced with `@path` syntax in the target file (and recursively in those files). Their content is part of the skill/command and must be reviewed alongside the entry file. Report findings against the referenced files using their own paths.
+
 For commands, also check what skill-creator won't cover:
 - `disable-model-invocation: true` is present
 - `argument-hint` is set if the command takes arguments
