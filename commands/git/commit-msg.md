@@ -1,19 +1,17 @@
 ---
-name: commit
-description: Stage all changes and commit with a suggested conventional commit message.
+name: commit-msg
+description: Generate a suggested conventional commit message for the current changes.
 disable-model-invocation: true
 model: haiku
 allowed-tools:
   - Bash(bash ~/.claude/scripts/review/delta-diff.sh)
-  - Bash(git add -A)
-  - Bash(git commit -m *)
   - Bash(git log *)
   - Agent(review:diff-summarizer)
 ---
 
 !`bash ~/.claude/scripts/review/delta-diff.sh`
 
-Stage all changes and commit them with a concise, conventional commit message.
+Generate a concise, conventional commit message for the current changes.
 
 ## Step 1: Summarize Changes
 
@@ -61,15 +59,18 @@ chore: bump dependencies to latest patch versions
 test(auth): add edge cases for token expiry
 ```
 
-## Step 3: Stage and Commit
+## Output Format
 
-Run both commands in sequence:
+Your entire response must be a single fenced markdown code block so the user can copy it with one click. Do NOT output anything outside the code block — no preamble, no explanation, no follow-up.
 
-```bash
-git add -A
-git commit -m "<proposed message>"
+Use this exact format:
+
+```markdown
+<type>(<optional scope>): <imperative summary>
 ```
 
-If the commit fails, report the error and stop — do not retry or bypass hooks.
+## Rules
 
-Output **only** the commit message as a code block and nothing else.
+- Your ENTIRE response is the fenced code block — nothing else
+- Do not stage, commit, or run any git write commands
+- Do not editorialize or suggest improvements — just output the message

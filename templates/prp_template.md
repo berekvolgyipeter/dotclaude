@@ -8,7 +8,8 @@ Template optimized for AI agents to implement features with sufficient context a
 2. **Validation Loops**: Provide executable checks the AI can run and fix
 3. **Information Dense**: Use keywords and patterns from the codebase
 4. **Progressive Success**: Start simple, validate, then enhance
-5. **Global rules**: Follow all rules in CLAUDE.md
+5. **Global rules**: Follow user-level rules — see `~/.claude/shared/rules-index.md` for the registry
+6. **Project rules**: Follow project-level rules in `.claude/rules/` and `.claude/CLAUDE.md`
 
 ---
 

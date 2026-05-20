@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Downloads llms.txt from platform.claude.com and keeps only agent-sdk lines,
+# Downloads llms.txt from code.claude.com and keeps only agent-sdk lines,
 # excluding any that mention TypeScript.
 
 set -euo pipefail
@@ -10,7 +10,7 @@ DEST="$SKILL_DIR/references/agent_sdk_urls.md"
 mkdir -p "$SKILL_DIR/references"
 
 echo "Downloading llms.txt..."
-curl -fsSL "https://platform.claude.com/llms.txt" \
+curl -fsSL "https://code.claude.com/llms.txt" \
   | { grep 'agent-sdk' || true; } \
   | { grep -iv 'typescript' || true; } > "$DEST"
 

@@ -9,7 +9,15 @@ set -euo pipefail
 if [[ $# -gt 0 ]]; then
   TARGET_BRANCH="$1"
 else
-  TARGET_BRANCH=$(git remote show origin 2>/dev/null | grep 'HEAD branch' | awk '{print $NF}')
+  TARGET_BRANCH=$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's@^origin/@@') || true
+  if [ -z "$TARGET_BRANCH" ]; then
+    for candidate in main master; do
+      if git show-ref --verify --quiet "refs/remotes/origin/$candidate"; then
+        TARGET_BRANCH="$candidate"
+        break
+      fi
+    done
+  fi
   if [ -z "$TARGET_BRANCH" ]; then
     echo "Error: could not detect default branch. Pass it as an argument: pr-diff.sh <branch>" >&2
     exit 1

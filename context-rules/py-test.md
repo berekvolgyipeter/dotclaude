@@ -71,6 +71,29 @@ obj._client = mock_client
 obj = MyService.create(config=test_config, client=mock_client)
 ```
 
+**Env vars in `pyproject.toml`:** Set all environment variables required by unit tests under `[tool.pytest.ini_options]` `env` in `pyproject.toml` — never set them inline in test files, fixtures, or shell wrappers. If the project does not use `pyproject.toml`, declare them in `pytest.ini` under `[pytest]` `env` instead. This keeps the test environment reproducible and discoverable in one place. Sensitive values (API keys, credentials, tokens) must never be hardcoded — mock them with dummy placeholders.
+
+> **Requires the `pytest-env` plugin.** Add it to the project's dev dependencies and ask the user to install. Without it, pytest silently ignores the `env` key. For per-test overrides, use `monkeypatch.setenv(...)` inside the test — that's the idiomatic carve-out.
+
+```toml
+# ✅ GOOD: env vars declared centrally, secrets mocked
+[tool.pytest.ini_options]
+env = [
+    "APP_ENV=test",
+    "DATABASE_URL=sqlite:///:memory:",
+    "API_KEY=dummy-test-key",
+]
+```
+
+```ini
+# ✅ GOOD: same approach in pytest.ini when no pyproject.toml
+[pytest]
+env =
+    APP_ENV=test
+    DATABASE_URL=sqlite:///:memory:
+    API_KEY=dummy-test-key
+```
+
 **DRY in tests:** Extract shared mock setup into `conftest.py` fixtures. If the same mock construction appears in multiple tests, it belongs in a fixture.
 
 ```python

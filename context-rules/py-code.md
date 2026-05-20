@@ -6,7 +6,7 @@
 - **YAGNI**: Build only what is explicitly requested — no speculative features, no "just in case" additions. Stop when the requirement is met.
 - **DRY**: Implement logic once; upper layers pass parameters through, not re-implement.
 - **Fail Fast**: Raise exceptions immediately when issues occur.
-- **No Mutation of Caller-Owned Arguments**: Do not mutate mutable arguments (lists, dicts, sets) that the caller still owns after the call returns — return a new or modified value instead. If in-place mutation is intentional (e.g. an accumulator or output buffer), document it explicitly. In-place operations on locally constructed objects are fine.
+- **Be Explicit About Mutation**: If a function mutates a caller-owned argument (list, dict, set) as part of its contract, make it obvious — through the name (`append_*`, `update_*`, `populate_*`), a clear parameter name (`out`, `buffer`, `accumulator`), or a brief docstring note. Do not silently mutate arguments as an incidental side effect. Do **not** defensively `copy`/`deepcopy` inputs just to avoid mutation — trust the caller and prefer returning new values only when it's natural (e.g. pure transforms). In-place operations on locally constructed objects are always fine.
 - **Dependency Inversion**: Depend on abstractions for service/module dependencies — not for configuration (see Configuration Extraction below).
 
 ---
@@ -99,7 +99,7 @@ async def fulfill_order(self, order: Order) -> Receipt:
 - **Name length proportional to scope** — `i` is acceptable in a 3-line loop; module-level names need full descriptive words
 - **Functions**: use **verb + domain + detail** — describe the action being performed. If you need "and" to describe what a function does, split it
 - **Classes**: name by **responsibility**, not data shape — what it *does*, not what it *holds*
-- **Variables**: name by **meaning in context**, not type or structure
+- **Variables**: name by **meaning in context**, not type or structure. **Always include the noun** — never name a variable with only an adjective or past participle (`updated`, `discovered`, `extracted`, `filtered`). The name must answer "updated *what*?". Prefer the bare noun when the scope is clear (`orders`); only qualify it (`updated_orders`) when the unqualified name is already taken or genuinely ambiguous in context
 - **Booleans**: must use an intent-revealing prefix — `is_`, `has_`, `does_`, `can_`, `should_`. Applies to both variables and methods that return `bool`
 
 ```python
@@ -110,6 +110,8 @@ def do_stuff(items): ...
 class Manager: ...
 class Info: ...
 temp = get_result()
+updated = update_orders(orders)        # updated what? potatoes?
+discovered = scan_directory(path)      # discovered what?
 
 # ✅ GOOD — intent is obvious from the name alone
 def validate_user_email(email: str) -> bool: ...
@@ -118,6 +120,9 @@ def transform_api_response(raw: dict) -> OrderSummary: ...
 class PaymentGatewayClient: ...
 class InventoryAllocationService: ...
 active_subscription_count = count_active_subscriptions(user)
+orders = update_orders(orders)                       # bare noun when scope is clear
+updated_orders = update_orders(orders)               # qualify only when `orders` is taken
+files = scan_directory(path)
 ```
 
 ### Models and Dataclasses
@@ -158,6 +163,14 @@ def dispatch_pending_orders():
 def filter_orders(orders: list[Order], threshold: int) -> list[Order]:
     ...
 ```
+
+### Comments
+
+- **Default to no comments** — well-named identifiers and types document *what*. Only comment when the *why* is non-obvious (hidden constraint, subtle invariant, workaround for a specific bug)
+- **Never restate the code** — if the comment paraphrases the next line, delete it
+- **No task/PR context** — don't reference the current change, ticket, or callers; that belongs in commit messages
+- **One line is almost always enough** — never write multi-paragraph comment blocks
+- **Docstrings**: write one only when the contract is non-obvious from the signature. Single line unless behavior is genuinely complex. Don't restate parameter types or echo the function name in prose
 
 ### Imports
 

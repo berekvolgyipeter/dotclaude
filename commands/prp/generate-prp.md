@@ -51,6 +51,7 @@ Use [~/.claude/templates/prp_template.md](~/.claude/templates/prp_template.md) a
 ### Implementation Blueprint
 - Check `~/.claude/shared/rules-index.md` for applicable coding rules (e.g., language style, testing conventions)
 - Check the target project for project-level rules in `.claude/rules/` and `.claude/CLAUDE.md` that may override or extend user-level rules
+- In the generated PRP's "Core Principles" section, list BOTH tiers separately — a "Global rules" bullet pointing to the user-level registry and a "Project rules" bullet listing the specific project rule files applicable to this task. Do not conflate them under a single bullet.
 - Start with pseudocode that follows the discovered coding standards (naming, structure, error handling conventions)
 - Reference real files for patterns
 - Include error handling strategy
@@ -69,7 +70,17 @@ make test
 
 ## Step 4 — Save and Verify
 
-Save as: `.claude/PRPs/{feature-name}.md` using the Write tool directly — do not run `mkdir` first, the Write tool creates parent directories automatically.
+### Output Path
+
+Determine the save path from the input file path:
+
+1. If the input file is under `.claude/plans/<subfolder>/`, save to `.claude/PRPs/<subfolder>/<filename>-prp.md` (mirror the subfolder structure)
+2. Otherwise, save to `.claude/PRPs/<filename>-prp.md`
+3. If `$ARGUMENTS` is not a file path (e.g., inline prose), ask the user for a target filename or derive a kebab-case slug from the feature title, then save to `.claude/PRPs/<slug>-prp.md`.
+
+The PRP filename should match the input file's name with a `-prp` suffix (e.g., `auth-flow.md` → `auth-flow-prp.md`).
+
+Use the Write tool directly — do not run `mkdir` first, the Write tool creates parent directories automatically.
 
 Before saving, verify each item below. If any item fails, revise the PRP first:
 - [ ] All necessary context included
