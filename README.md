@@ -36,14 +36,22 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 |------|-------------|
 | [shared/rules-index.md](shared/rules-index.md) | Registry of all rule files — what each covers and when to load it |
 | [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis |
-| [shared/analyze-project.md](shared/analyze-project.md) | Project survey steps, imported by `/primer` and `/scaffold-rules` |
+| [shared/analyze-project.md](shared/analyze-project.md) | Project survey steps, imported by `/primer`, `/init-rules`, and `/refine-rules` |
+| [shared/project-rules/file-writing.md](shared/project-rules/file-writing.md) | Rule-file shape and writing rules, imported by `/init-rules` and `/refine-rules` |
+| [shared/project-rules/claudemd-section.md](shared/project-rules/claudemd-section.md) | CLAUDE.md progressive-disclosure section template, imported by `/init-rules` and `/refine-rules` |
 
 ### [Commands](commands/)
 
 | Command | Description |
 |---------|-------------|
 | [/primer](commands/primer.md) | Prime context for a session |
-| [/scaffold-rules](commands/scaffold-rules.md) | Decompose the project into modules, write per-module `.claude/rules/*.md` files with a `paths` frontmatter, and add a progressive-disclosure table to the project's CLAUDE.md |
+
+**[project-rules/](commands/project-rules/)**
+
+| Command | Description |
+|---------|-------------|
+| [/init-rules](commands/project-rules/init-rules.md) | Decompose a fresh project into modules, write per-module `.claude/rules/*.md` files with a `paths` frontmatter, and add a progressive-disclosure table to CLAUDE.md |
+| [/refine-rules](commands/project-rules/refine-rules.md) | Audit existing `.claude/rules/*.md` files and apply a minimal delta — modify, split, merge, remove, or add — keeping the CLAUDE.md table in sync |
 
 **[git/](commands/git/)**
 
