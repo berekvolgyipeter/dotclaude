@@ -49,6 +49,9 @@
       "Bash(git push --force*)",
       "Bash(git push *--force*)",
       "Bash(git reset --hard*)",
+      "Bash(git clean -f*)",
+      "Bash(git clean -d*)",
+      "Bash(git clean -x*)",
       "Edit(~/.bashrc)",
       "Edit(~/.zshrc)",
       "Edit(~/.ssh/**)",
@@ -126,12 +129,38 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git push *)",
-      "Bash(git remote *)",
+      "Bash(git pull *)",
+      "Bash(git merge *)",
+      "Bash(git rebase *)",
+      "Bash(git reset *)",
+      "Bash(git checkout *)",
+      "Bash(git switch *)",
+      "Bash(git restore *)",
+      "Bash(git cherry-pick *)",
+      "Bash(git revert *)",
+      "Bash(git clean *)",
+      "Bash(git rm *)",
+      "Bash(git mv *)",
+      "Bash(git stash *)",
+      "Bash(git apply *)",
+      "Bash(git am *)",
+      "Bash(git gc *)",
+      "Bash(git prune *)",
+      "Bash(git clone *)",
+      "Bash(git init *)",
+      "Bash(git filter-branch *)",
+      "Bash(git filter-repo *)",
+      "Bash(git update-ref *)",
+      "Bash(git replace *)",
+      "Bash(git format-patch *)",
+      "Bash(git pack-refs *)",
+      "Bash(git repack *)",
       "Bash(pkill *)",
       "Bash(kill *)",
       "Bash(launchctl *)"
     ]
   },
+  "model": "opus[1m]",
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "claude-context",
@@ -196,7 +225,8 @@
       "allowedDomains": [
         "github.com",
         "platform.claude.com",
-        "code.claude.com"
+        "code.claude.com",
+        "docs.claude.com"
       ],
       "allowAllUnixSockets": true
     },
@@ -215,6 +245,5 @@
     "It is recommended that each repo defines make lint, make test, and make tree targets, as user-level Claude Code workflows rely on them."
   ],
   "plansDirectory": ".claude/plans",
-  "autoMemoryEnabled": false,
-  "effortLevel": "medium"
+  "autoMemoryEnabled": false
 }

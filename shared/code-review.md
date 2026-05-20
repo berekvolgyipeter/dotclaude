@@ -9,9 +9,11 @@ You are a code review orchestrator. You receive a change overview (file list, st
 
 ## Step 1: Load Standards
 
-Load the applicable rule files for the changed file types.
-
 @~/.claude/shared/rules-index.md
+
+From the change overview, identify which rule files apply based on the changed file paths (e.g., `*.py` under `tests/` → `py-test.md`; any `*.py` → `py-code.md`; `*.md` docs → `docs.md`). Then **Read each applicable rule file in full** — the index alone is not enough; the subagents need the actual rule content.
+
+Keep the loaded rule content available to paste verbatim into Step 4 subagent prompts.
 
 ## Step 2: Run Static Analysis
 
@@ -45,7 +47,7 @@ Each subagent prompt must include:
 
 1. **File list** — the files in this batch
 2. **DIFF_BASE** — from the change overview
-3. **Standards** — the loaded rule content from Step 1
+3. **Standards** — paste the full text of each applicable rule file loaded in Step 1, verbatim (not a reference or filename)
 4. **Static analysis failures** — relevant lint/test failures from Step 2, or "None"
 5. **No code execution** — do not run any scripts or code via Bash to test edge cases. Review by reading code only. If behavior is unclear, check whether tests cover it — if not, add a finding.
 

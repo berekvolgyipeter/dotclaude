@@ -36,13 +36,21 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 |------|-------------|
 | [shared/rules-index.md](shared/rules-index.md) | Registry of all rule files — what each covers and when to load it |
 | [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis |
+| [shared/analyze-project.md](shared/analyze-project.md) | Project survey steps, imported by `/primer` and `/scaffold-rules` |
 
 ### [Commands](commands/)
 
 | Command | Description |
 |---------|-------------|
 | [/primer](commands/primer.md) | Prime context for a session |
-| [/commit](commands/commit.md) | Stage all changes and commit with a suggested conventional commit message |
+| [/scaffold-rules](commands/scaffold-rules.md) | Decompose the project into modules, write per-module `.claude/rules/*.md` files with a `paths` frontmatter, and add a progressive-disclosure table to the project's CLAUDE.md |
+
+**[git/](commands/git/)**
+
+| Command | Description |
+|---------|-------------|
+| [/commit-msg](commands/git/commit-msg.md) | Generate a suggested conventional commit message for the current changes |
+| [/pr-summary](commands/git/pr-summary.md) | Brief PR summary grouped by feature/area |
 
 **[review/](commands/review/)**
 
@@ -50,7 +58,6 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 |---------|-------------|
 | [/pr-review](commands/review/pr-review.md) | Full technical code review |
 | [/delta-review](commands/review/delta-review.md) | Review uncommitted changes against latest commit |
-| [/pr-summary](commands/review/pr-summary.md) | Brief PR summary grouped by feature/area |
 | [/fix-review](commands/review/fix-review.md) | Fix issues found in a code review |
 | [/skill-review](commands/review/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
 
@@ -138,7 +145,7 @@ Shared permissions, preferences, and security posture.
 
 **Deny list:**
 - *Destructive commands:* `rm -rf`, `sudo`, `mkfs`, `dd`, `wget ... | bash` (classic supply-chain attack vector)
-- *Irreversible git:* force-push and `git reset --hard`
+- *Irreversible git:* force-push, `git reset --hard`, and destructive `git clean` variants (`-f`, `-d`, `-x`)
 - *Shell config:* `~/.bashrc`, `~/.zshrc` — PATH manipulation and alias injection are off the table
 - *Credential stores:* SSH keys, AWS/Azure/GitHub CLI configs, git-credentials, Docker, Kubernetes, npm/pypi/gem tokens, macOS Keychain, `.env` files — and crypto wallet data (MetaMask, Electrum, Exodus, Phantom, Solflare)
 
@@ -146,7 +153,7 @@ Shared permissions, preferences, and security posture.
 - *Root-equivalent access:* `docker`, `curl --unix-socket`, `socat *UNIX*`, `nc -U`, `ncat --unixsock` — the Docker socket and arbitrary Unix sockets grant host-level control
 - *Permission/ownership:* `chmod`, `chown`
 - *Network/data transfer:* `ssh`, `scp`, `rsync` — outbound sessions and file exfiltration vectors
-- *Git remotes:* `git push`, `git remote` — pushing code or changing remote URLs
+- *Git write operations:* pushing, pulling, merging, rebasing, resetting, branch switching, cleaning, stashing, history rewriting — all state-mutating git commands (the JSON is the source of truth for the exact list)
 - *Process control:* `pkill`, `kill`, `launchctl` — killing processes or managing macOS services
 
 **Hooks:** `block-rm-rf.sh` and `block-push-to-main.sh` fire on every `Bash` call as a `PreToolUse` hook, independent of the permission system. If a permission rule is misconfigured, the hook still blocks it.
@@ -168,6 +175,7 @@ Array settings (e.g. `permissions.allow`) concatenate across levels. Project-lev
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed
 - A `Makefile` in each project with at least: `lint`, `test`, `tree` targets
+- Project-level Claude memory lives at `.claude/CLAUDE.md` (not a root-level `CLAUDE.md`) — commands and agents that read or write project memory assume this path
 
 ### claude-context
 
