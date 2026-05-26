@@ -1,12 +1,32 @@
 # dotclaude
 
-Shared [Claude Code](https://docs.anthropic.com/en/docs/claude-code) configuration repo, symlinked into `~/.claude/`. Edit files here, commit here — changes propagate to all projects automatically.
+Shared [Claude Code](https://docs.anthropic.com/en/docs/claude-code) configuration repo, symlinked into `~/.claude/` so edits here propagate to every project automatically.
 
 Manage rules, skills, commands, agents, hooks, and templates in one place instead of duplicating them across every project.
 
 > **Note:** This repo contains scripts that modify files on your system. Please review the contents before use.
 >
 > **Platform:** Only tested and developed on macOS. Linux may work but is untested; Windows is not supported.
+
+## Why this design
+
+Symlinking into `~/.claude/` and version-controlling everything in git turns this repo into the substrate for the `learn` skill: when Claude updates a rule, skill, or command based on session feedback, the change goes live in every project immediately and shows up as a reviewable git diff — making self-improvement auditable rather than a black box.
+
+**Security-first defaults.** Telemetry and error reporting are disabled, OS-level sandboxing isolates every bash command, and a layered deny/ask permission model plus PreToolUse hooks block destructive operations (`rm -rf`, force-push to `main`) and gate access to credentials, shell config, and cloud tokens — see [settings.json](#settingsjson) for the full posture.
+
+**Scope.** This repo configures Claude Code — it does not bundle a linter or test runner. The Stop hook delegates to whatever the host project uses (`make lint`, `make test`); it skips gracefully when those targets aren't defined.
+
+## Runtime Flow
+
+```mermaid
+flowchart LR
+    User([User prompt]) --> Claude
+    Claude -->|tool call| Pre[PreToolUse hooks]
+    Pre -->|load context rules<br/>auto-approve reads<br/>block destructive ops| Tool[Tool execution]
+    Tool --> Claude
+    Claude -.turn ends.-> Stop[Stop hook]
+    Stop -->|make lint + make test| Claude
+```
 
 ## What's Included
 
