@@ -1,8 +1,11 @@
 ---
 name: claude-agent-sdk
-description: "Expert implementation guidance for the Claude Agent SDK. Use WHENEVER users mention: building AI agents, using Claude in Python, working with the SDK, creating custom tools, managing agent sessions, controlling permissions, streaming responses, integrating MCP servers, adding hooks, deploying agents, or anything Agent SDK-related. Also use for: architecture questions about multi-turn vs one-shot, deciding between query() vs ClaudeSDKClient, implementing permissions/approvals workflows, building MCP-based extensions, cost/usage tracking, session persistence, structured outputs, subagents, or any SDK feature. This skill provides implementation patterns, decision trees, and working code examples—not just documentation pointers."
+description: "Expert implementation guidance for the Claude Agent SDK (Python). Use when users are building with the Agent SDK — creating custom tools, managing sessions, controlling permissions, streaming responses, integrating MCP servers, adding hooks, defining subagents, or deploying SDK-based agents. Also use for SDK architecture questions (query() vs ClaudeSDKClient, multi-turn vs one-shot, structured outputs, session persistence, cost tracking). Provides implementation patterns, decision guides, and pointers to working code in the SDK source — not just doc links."
 allowed-tools:
-  - "WebFetch(https://platform.claude.com/docs/en/agent-sdk*)"
+  - "Read"
+  - "Glob"
+  - "WebFetch(https://code.claude.com/docs/en/agent-sdk*)"
+  - "Bash(bash ~/.claude/skills/claude-agent-sdk/scripts/fetch-agent-sdk-urls.sh*)"
   - "mcp__claude-context__search_code"
 ---
 
@@ -20,9 +23,10 @@ Use this skill when:
 
 ## How to Answer SDK Questions
 
-The SDK evolves frequently. **Do not rely solely on the patterns below** — they are stable conceptual guidance, but exact APIs may have changed. Always verify against the live source:
+The SDK evolves frequently. The patterns below capture stable concepts, but field names and exact APIs may have moved. Verify concrete API details against the live source before quoting them:
 
-1. **Check official docs** for conceptual explanations: fetch from the URLs in [reference.md](references/reference.md).
+0. **Refresh the doc index when fetching docs.** If you need to consult the official docs to answer (i.e. you'll hit step 1 below), run `bash ~/.claude/skills/claude-agent-sdk/scripts/fetch-agent-sdk-urls.sh` first to rewrite `references/agent-sdk-urls.md` from Anthropic's current `llms.txt`. Skip the refresh for purely conceptual answers or when the existing snapshot is sufficient.
+1. **Check official docs** for conceptual explanations: fetch from the URLs listed in [agent-sdk-urls.md](references/agent-sdk-urls.md).
 2. **Search the indexed repo** for the feature in question:
    ```
    mcp__claude-context__search_code(
@@ -42,7 +46,7 @@ These concepts are architecturally stable — the names and roles don't change, 
 
 ### ClaudeAgentOptions — The Central Configuration Object
 
-Almost everything in the SDK is configured through `ClaudeAgentOptions`. Key fields include:
+Almost everything in the SDK is configured through `ClaudeAgentOptions`. Commonly used fields (verify exact names against the source before quoting in answers):
 
 - `system_prompt` — str or preset dict for customizing Claude's behavior
 - `allowed_tools` — tool whitelist (e.g., `["Read", "Write", "Bash"]`)
@@ -191,7 +195,7 @@ Four methods:
 
 **Look up**: read `examples/system_prompt.py`.
 
-## Decision Trees
+## Decision Guide
 
 ### Q: Should I use `query()` or `ClaudeSDKClient`?
 
@@ -208,7 +212,6 @@ Four methods:
 
 ## Learning Resources
 
-- **Official docs**: [reference.md](references/reference.md) — TOC with links to every platform.claude.com page
+- **Official docs**: [agent-sdk-urls.md](references/agent-sdk-urls.md) lists every Agent SDK (Python) page on code.claude.com with one-line descriptions; `WebFetch` any URL for the live content. Regenerate the list via `scripts/fetch-agent-sdk-urls.sh` when you need the latest set of pages.
 - **Semantic search** — Use `mcp__claude-context__search_code` on the indexed repo for any concept
 - **Browse examples**: `Glob(~/.claude/skills-references/claude-agent-sdk/claude-agent-sdk-python/examples/*.py)`
-- **Fetch latest docs**: Use `WebFetch` on URLs from [reference.md](references/reference.md) for up-to-date details
