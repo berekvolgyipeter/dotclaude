@@ -3,14 +3,15 @@
         {
             "github": "wshobson/agents",
             "local_path": "~/.claude/skills-references/plugin-browser/wshobson-agents",
-            "description": "Comprehensive Claude Code plugin marketplace by Seth Hobson with 112 specialized AI agents, 146 skills, 79 dev tools, and 16 workflow orchestrators across 73 focused plugins covering full-stack development, security, infrastructure, AI/ML, and more.",
+            "description": "Multi-harness agentic plugin marketplace by Seth Hobson with 83 plugins, 191 agents, 155 skills, 102 commands, and 16 workflow orchestrators. One Markdown source-of-truth generates harness-native artifacts for Claude Code, Codex CLI, Cursor, OpenCode, Gemini CLI, and GitHub Copilot CLI. Uses a tiered model strategy (Opus/Sonnet/Haiku) and ships a plugin-eval framework for measuring plugin/skill quality.",
             "topics": [
                 "agents",
                 "orchestration",
                 "automation",
                 "full-stack",
                 "devops",
-                "workflows"
+                "workflows",
+                "multi-harness"
             ],
             "content_types": [
                 "skills",
@@ -22,13 +23,15 @@
         {
             "github": "anthropics/claude-plugins-official",
             "local_path": "~/.claude/skills-references/plugin-browser/anthropics-claude-plugins-official",
-            "description": "Official Anthropic-managed directory of high-quality Claude Code plugins including feature-dev, frontend-design, plugin-dev toolkit, claude-md-management, claude-code-setup, and an example plugin reference implementation.",
+            "description": "Official Anthropic-curated directory of Claude Code plugins. Includes ~36 internal plugins (feature-dev, frontend-design, code-review, code-simplifier, code-modernization, pr-review-toolkit, plugin-dev, agent-sdk-dev, mcp-server-dev, mcp-tunnels, skill-creator, claude-md-management, claude-code-setup, commit-commands, hookify, ralph-loop, session-report, security-guidance, math-olympiad, language-server plugins for Python/TS/Go/Rust/Ruby/Swift/Kotlin/Lua/PHP/C#/clangd/JDT, and a reference example-plugin) plus ~15 third-party external plugins (asana, context7, discord, firebase, github, gitlab, greptile, imessage, laravel-boost, linear, playwright, serena, telegram, terraform, fakechat).",
             "topics": [
                 "official",
                 "anthropic",
                 "plugin-development",
                 "frontend",
-                "code-review"
+                "code-review",
+                "language-servers",
+                "external-plugins"
             ],
             "content_types": [
                 "skills",
@@ -40,14 +43,17 @@
         {
             "github": "anthropics/knowledge-work-plugins",
             "local_path": "~/.claude/skills-references/plugin-browser/anthropics-knowledge-work-plugins",
-            "description": "Anthropic's open-source plugins for knowledge workers using Claude Cowork (also compatible with Claude Code). Includes 11 role-based plugins for sales, legal, customer support, data, marketing, product management, productivity, and bioinformatics.",
+            "description": "Anthropic's open-source role-based plugins for knowledge workers using Claude Cowork (also compatible with Claude Code). Headline lineup of 11 plugins (productivity, sales, customer-support, product-management, marketing, legal, finance, data, enterprise-search, bio-research, cowork-plugin-management) plus additional plugin folders covering design, engineering, human-resources, operations, small-business, pdf-viewer, and a partner-built directory. Each bundles skills, commands, sub-agents, and MCP connectors for its function.",
             "topics": [
                 "knowledge-work",
                 "cowork",
                 "sales",
                 "legal",
                 "marketing",
-                "productivity"
+                "productivity",
+                "finance",
+                "data",
+                "bio-research"
             ],
             "content_types": [
                 "skills",
@@ -58,12 +64,13 @@
         {
             "github": "EveryInc/compound-engineering-plugin",
             "local_path": "~/.claude/skills-references/plugin-browser/everyinc-compound-engineering-plugin",
-            "description": "Every Inc's compound engineering plugin for Claude Code with 29+ agents, 23 workflow commands, and 18 skills. Implements a methodology where each unit of engineering work compounds to make future work easier, with planning, review, and knowledge-capture workflows. Includes a CLI to convert plugins to 10+ other agent platforms.",
+            "description": "Every Inc's compound engineering marketplace with two plugins. The compound-engineering plugin (50+ agents, 38+ skills) implements a methodology where each unit of work compounds future productivity — covering strategy, ideation, brainstorming, planning, code review, debugging, optimization, doc review, git workflows, session research, Slack research, and a /ce-setup bootstrap. The coding-tutor plugin pairs three commands with a single tutoring skill. Includes a CLI to convert plugins to 10+ other agent platforms.",
             "topics": [
                 "compound-engineering",
                 "workflow",
                 "code-review",
                 "planning",
+                "tutoring",
                 "multi-platform"
             ],
             "content_types": [
@@ -76,12 +83,13 @@
         {
             "github": "ghostsecurity/skills",
             "local_path": "~/.claude/skills-references/plugin-browser/ghostsecurity-skills",
-            "description": "Ghost Security's application security skills for Claude Code. Provides AI-native AppSec scanning including SAST code analysis, dependency vulnerability exploitability analysis (SCA), secrets detection, and dynamic vulnerability testing via companion tools (reaper, poltergeist, wraith).",
+            "description": "Ghost Security's AI-native application security plugin (`ghost`) for Claude Code. Provides 7 skills: ghost-repo-context (business criticality and component mapping), ghost-scan-code (SAST), ghost-scan-deps (SCA exploitability analysis), ghost-scan-secrets (secrets triage), ghost-validate (DAST validation against a live app), ghost-proxy (HTTP proxy for ghost-validate), and ghost-report (combined report across all scans).",
             "topics": [
                 "security",
                 "appsec",
                 "sast",
                 "sca",
+                "dast",
                 "secrets-scanning",
                 "vulnerability"
             ],
@@ -94,14 +102,15 @@
         {
             "github": "obra/superpowers",
             "local_path": "~/.claude/skills-references/plugin-browser/obra-superpowers",
-            "description": "An agentic skills framework and software development methodology by Jesse Vincent. Provides a structured workflow (brainstorming → design → planning → subagent-driven development) with enforced TDD, git worktree isolation, and systematic debugging. Works across Claude Code, Cursor, Codex, and OpenCode.",
+            "description": "An agentic skills framework and software development methodology by Jesse Vincent with 14 composable skills (brainstorming, writing-plans, executing-plans, subagent-driven-development, test-driven-development, systematic-debugging, dispatching-parallel-agents, using-git-worktrees, requesting-code-review, receiving-code-review, verification-before-completion, finishing-a-development-branch, writing-skills, using-superpowers). Enforces a brainstorming → design → planning → subagent-driven development loop with TDD and git worktree isolation. Installable on Claude Code, Codex CLI, Codex App, Factory Droid, Gemini CLI, OpenCode, Cursor, and GitHub Copilot CLI.",
             "topics": [
                 "methodology",
                 "tdd",
                 "planning",
                 "subagents",
                 "debugging",
-                "workflow"
+                "workflow",
+                "multi-harness"
             ],
             "content_types": [
                 "skills",
@@ -111,14 +120,15 @@
         {
             "github": "trailofbits/skills",
             "local_path": "~/.claude/skills-references/plugin-browser/trailofbits-skills",
-            "description": "Trail of Bits Claude Code plugin marketplace for security research, vulnerability detection, and audit workflows. Includes skills for secure smart contract development, constant-time analysis, audit context building, differential review, testing handbook generation, and more.",
+            "description": "Trail of Bits Claude Code plugin marketplace (~38 plugins) for security research, auditing, and engineering. Categories: smart contract security (building-secure-contracts, entry-point-analyzer), code auditing (audit-context-building, c-review, differential-review, dimensional-analysis, fp-check, insecure-defaults, semgrep-rule-creator/-variant-creator, sharp-edges, static-analysis, supply-chain-risk-auditor, testing-handbook-skills, trailmark, variant-analysis, agentic-actions-auditor, burpsuite-project-parser), verification (constant-time-analysis, mutation-testing, property-based-testing, spec-to-code-compliance, zeroize-audit), reverse engineering (dwarf-expert), malware (yara-authoring), mobile (firebase-apk-scanner), and developer tooling (modern-python, gh-cli, git-cleanup, seatbelt-sandboxer, second-opinion, devcontainer-setup, skill-improver, workflow-skill-design, ask-questions-if-underspecified, claude-in-chrome-troubleshooting, debug-buttercup, culture-index, let-fate-decide). Also exposes a Codex sidecar for Codex-native skill discovery.",
             "topics": [
                 "security",
                 "audit",
                 "vulnerability",
                 "smart-contracts",
                 "testing",
-                "reverse-engineering"
+                "reverse-engineering",
+                "static-analysis"
             ],
             "content_types": [
                 "skills",
@@ -128,7 +138,7 @@
         {
             "github": "trailofbits/skills-curated",
             "local_path": "~/.claude/skills-references/plugin-browser/trailofbits-skills-curated",
-            "description": "Curated, community-vetted Claude Code plugin marketplace maintained by Trail of Bits. Aggregates and reviews third-party skills and approved external marketplaces, including auto-converted OpenAI Codex skills. Every addition gets code review before inclusion.",
+            "description": "Curated, community-vetted Claude Code plugin marketplace maintained by Trail of Bits (~28 plugins). Aggregates and code-reviews third-party skills across development (planning-with-files, python-code-simplifier, react-pdf, skill-extractor), security (ffuf-web-fuzzing, ghidra-headless, scv-scan, security-awareness, wooyun-legacy), research (last30days, x-research), writing (humanizer), and auto-converted OpenAI Codex skills (cloudflare/netlify deploys, gh-address-comments, gh-fix-ci, jupyter-notebook, doc/pdf/spreadsheet, playwright, screenshot, security best-practices/ownership-map/threat-model, sentry, yeet, web-game). Lists other approved marketplaces, and every addition is code-reviewed before inclusion.",
             "topics": [
                 "curated",
                 "marketplace",
@@ -144,7 +154,7 @@
         {
             "github": "coreyhaines31/marketingskills",
             "local_path": "~/.claude/skills-references/plugin-browser/coreyhaines31-marketingskills",
-            "description": "Marketing skills for AI coding agents by Corey Haines covering CRO, copywriting, SEO, analytics, growth engineering, email sequences, A/B testing, ad creative, AI search optimization, churn prevention, and more. Includes 51 CLI tools and works across Claude Code, Codex, Cursor, and Windsurf.",
+            "description": "Marketing skills for AI coding agents by Corey Haines — 42 skills covering CRO, copywriting, copy-editing, SEO (ai-seo, programmatic-seo, seo-audit, schema, site-architecture), analytics, A/B testing, ads, ad-creative, ASO, churn-prevention, co-marketing, cold-email, community-marketing, competitor-profiling, competitors, content-strategy, customer-research, directory-submissions, emails, free-tools, image, launch, lead-magnets, marketing-ideas, marketing-psychology, onboarding, paywalls, popups, pricing, product-marketing, prospecting, referrals, revops, sales-enablement, signup, sms, social, and video. Works across Claude Code, Codex, Cursor, and Windsurf.",
             "topics": [
                 "marketing",
                 "seo",
@@ -161,16 +171,35 @@
         {
             "github": "openai/skills",
             "local_path": "~/.claude/skills-references/plugin-browser/openai-skills",
-            "description": "OpenAI's official skills catalog for Codex. Contains system skills (skill-creator, skill-installer), curated skills (openai-docs), and experimental skills (create-plan). Skills package repeatable capabilities for specific tasks and are installable via the built-in skill-installer.",
+            "description": "OpenAI's official skills catalog for Codex. Organized into system skills auto-installed with Codex (imagegen, openai-docs, plugin-creator, skill-creator, skill-installer) and ~38 curated skills installable via $skill-installer — Figma design tooling, Notion integrations (knowledge-capture, meeting-intelligence, research-documentation, spec-to-implementation), deployment targets (cloudflare, netlify, render, vercel), GitHub helpers (gh-address-comments, gh-fix-ci, yeet), document handling (pdf, jupyter-notebook), Playwright automation, screenshot/speech/transcribe, security best-practices/ownership-map/threat-model, Sentry, Linear, chatgpt-apps, cli-creator, and migrate-to-codex.",
             "topics": [
                 "openai",
                 "codex",
                 "skill-creation",
                 "planning",
-                "docs"
+                "docs",
+                "figma",
+                "notion"
             ],
             "content_types": [
                 "skills"
+            ]
+        },
+        {
+            "github": "mattpocock/skills",
+            "local_path": "~/.claude/skills-references/plugin-browser/mattpocock-skills",
+            "description": "Matt Pocock's reusable agent skills addressing common failure modes in AI-assisted software development (misalignment, verbosity, broken code, architectural decay). Organized into engineering (diagnose, grill-with-docs, improve-codebase-architecture, prototype, setup-matt-pocock-skills, tdd, to-issues, to-prd, triage, zoom-out), productivity (caveman compressed-communication mode, grill-me, handoff, write-a-skill), misc (git-guardrails-claude-code, migrate-to-shoehorn, scaffold-exercises, setup-pre-commit), plus in-progress and personal skill buckets. Distributed via the skills.sh installer for use across Claude Code, Codex, and Cursor.",
+            "topics": [
+                "engineering-fundamentals",
+                "tdd",
+                "debugging",
+                "planning",
+                "specifications",
+                "productivity"
+            ],
+            "content_types": [
+                "skills",
+                "plugins"
             ]
         }
     ]

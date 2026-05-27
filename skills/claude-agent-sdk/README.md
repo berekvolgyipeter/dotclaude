@@ -22,16 +22,6 @@ Indexes the cloned repo via the `claude-context` MCP server, making it available
 
 > Requires the `claude-context` MCP server to be configured. See the project README for MCP setup.
 
-## Updating the documentation reference
+## Doc index refresh
 
-`references/reference.md` is a hand-curated summary of the official SDK docs. To regenerate it:
-
-1. Fetch the current doc URLs:
-   ```sh
-   bash ~/.claude/skills/claude-agent-sdk/scripts/fetch-agent-sdk-urls.sh
-   ```
-   This downloads `llms.txt` from `platform.claude.com` and saves agent-sdk URLs (Python only) to `references/agent_sdk_urls.md`.
-
-2. Visit each URL in `references/agent_sdk_urls.md` and write a short summary for each into `references/reference.md`.
-
-This step is manual and only needed when the SDK docs change significantly.
+`references/agent-sdk-urls.md` is a snapshot of the Agent SDK (Python) pages listed in Anthropic's `code.claude.com/llms.txt`. A committed snapshot ships with the skill so it works offline. The skill refreshes the snapshot via `scripts/fetch-agent-sdk-urls.sh` when it needs to consult official docs and the existing snapshot may be stale; for purely conceptual answers or when the existing snapshot is sufficient, it reads the committed snapshot as-is. No manual step required — `SKILL.md` is the authoritative description of when the refresh runs.

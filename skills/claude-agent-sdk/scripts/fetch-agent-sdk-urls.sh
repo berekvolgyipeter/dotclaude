@@ -5,7 +5,7 @@
 set -euo pipefail
 
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DEST="$SKILL_DIR/references/agent_sdk_urls.md"
+DEST="$SKILL_DIR/references/agent-sdk-urls.md"
 
 mkdir -p "$SKILL_DIR/references"
 
@@ -14,4 +14,4 @@ curl -fsSL "https://code.claude.com/llms.txt" \
   | { grep 'agent-sdk' || true; } \
   | { grep -iv 'typescript' || true; } > "$DEST"
 
-echo "Done — agent-sdk URLs saved to references/agent_sdk_urls.md"
+echo "Done — agent-sdk URLs saved to references/agent-sdk-urls.md"
