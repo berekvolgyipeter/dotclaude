@@ -2,7 +2,6 @@
 name: prompt-engineering
 description: "Expert prompt engineering guidance with proven techniques and anti-patterns. Invoke this skill whenever writing, editing, reviewing, or refining any prompt that will be interpreted by an AI model — system prompts, agent instructions, tool-use prompts, command templates, multi-step task prompts, or agentic workflows. Use it even when the task doesn't explicitly mention 'prompt engineering' — if the output is instructions for an AI, this skill makes them significantly better. Trigger for both user-requested prompt work and when autonomously generating prompts as part of a larger task (e.g. creating skills, writing agent instructions, drafting review templates)."
 allowed-tools:
-  - "Bash(bash ~/.claude/skills/prompt-engineering/scripts/fetch-prompt-engineering-urls.sh)"
   - "WebFetch(https://platform.claude.com/docs/en/build-with-claude/prompt-engineering*)"
 ---
 
@@ -15,7 +14,7 @@ allowed-tools:
 | Writing a prompt from scratch | [Crafting prompts](#crafting-prompts) |
 | Reviewing or debugging an existing prompt | [Prompt review checklist](#prompt-review-checklist) |
 | Building an agentic system or multi-step workflow | [Agentic prompt patterns](#agentic-prompt-patterns) |
-| Need deeper detail on a specific technique | [Reference docs](#going-deeper) → WebFetch the relevant section |
+| Need deeper detail on a specific technique | [Going deeper](#going-deeper) — pick a source doc and WebFetch it |
 
 ## Crafting prompts
 
@@ -39,7 +38,7 @@ Run through this when reviewing or debugging a prompt:
 - [ ] **Missing examples?** — One concrete input/output example beats a paragraph of format description. If the prompt describes a format without showing it, add an example.
 - [ ] **Telling what NOT to do?** — Reframe as positive instructions. "Don't use markdown" → "Write in flowing prose paragraphs." Claude steers better toward a destination than away from one.
 - [ ] **Leftover aggressive language from older models?** — Phrases like "CRITICAL: You MUST use this tool" or "If in doubt, use [tool]" cause overtriggering on current Claude models. Dial back to normal phrasing: "Use this tool when..."
-- [ ] **Prefills on the last assistant turn?** — Deprecated in Claude 4.6. Use direct instructions, structured outputs, or XML output tags instead. See the migration patterns in the [best practices doc](#going-deeper).
+- [ ] **Prefills on the last assistant turn?** — Deprecated in Claude 4.6. Use direct instructions, structured outputs, or XML output tags instead. See migration patterns in the prompting best-practices doc listed under [Going deeper](#going-deeper).
 - [ ] **Vague action language?** — "Can you suggest changes?" makes Claude suggest rather than act. "Change this function to..." makes it act. Be explicit about whether you want analysis or action.
 
 ## Agentic prompt patterns
@@ -64,4 +63,4 @@ These are the non-obvious patterns from the official docs — things Claude woul
 
 ## Going deeper
 
-For technique-specific detail, consult [references/reference.md](references/reference.md) for URLs and a section-by-section map of what to WebFetch and when.
+For technique-specific detail, consult [references/reference.md](references/reference.md) — it lists the source URLs to WebFetch, with a one-line description of what each doc covers. Pick the doc that matches the topic (general principles and migration, when-to-prompt-engineer vs. switch models, or Console tooling) and fetch only that one.
