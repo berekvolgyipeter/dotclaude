@@ -1,5 +1,5 @@
 ---
-name: primer
+name: overview
 description: Explore and summarize a project's structure, purpose, key files, dependencies, and configuration
 disable-model-invocation: true
 model: haiku
@@ -7,7 +7,7 @@ context: fork
 allowed-tools: Read, Grep, Glob, Bash(make *), Bash(ls *)
 ---
 
-# Project Primer
+# Project Overview
 
 Efficiently explore this project and produce a concise summary. Minimize file reads — use directory listings and symbol overviews before reading full files.
 
