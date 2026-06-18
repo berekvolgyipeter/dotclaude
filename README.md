@@ -65,6 +65,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | Command | Description |
 |---------|-------------|
 | [/primer](commands/primer.md) | Prime context for a session |
+| [/architecture](commands/architecture.md) | Discover a component's architecture, functionality, and communication interfaces — excludes tests and CI/CD |
 
 **[project-rules/](commands/project-rules/)**
 
@@ -117,6 +118,15 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [slither](skills/slither/SKILL.md) | Slither static analysis for Solidity & Vyper |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
 | [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
+
+**[engineering/](skills/engineering/)**
+
+| Skill | Description |
+|-------|-------------|
+| [tdd](skills/engineering/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
+| [grill-with-docs](skills/engineering/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
+| [improve-codebase-architecture](skills/engineering/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
+| [to-prd](skills/engineering/to-prd/SKILL.md) | Turn the current conversation into a PRD saved under `.claude/prds/` |
 
 ### [Agents](agents/)
 
@@ -280,7 +290,10 @@ Use `template.CLAUDE.md`, `template.mcp.json`, and `template.serena.project.yml`
 - [coleam00/context-engineering-intro](https://github.com/coleam00/context-engineering-intro) — inspiration for some commands and rules
 - [trailofbits/claude-code-config](https://github.com/trailofbits/claude-code-config) — security and privacy focused settings
 - [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions and code review patterns
-- [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns
+- [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns; interface-as-contract documentation
 - [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern
 - [coleam00/archon](https://github.com/coleam00/archon) — agent-harness skill reference repo
 - [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) — agent-harness skill reference repo
+- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills (tdd, grill-with-docs, improve-codebase-architecture, to-prd)
+- [ghostsecurity/skills](https://github.com/ghostsecurity/skills) — codebase exploration heuristics
+- [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns
