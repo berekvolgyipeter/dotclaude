@@ -14,7 +14,7 @@ Help users discover, explore, and understand agent harness frameworks and Claude
 
 ## Catalog
 
-The catalog at `~/.claude/skills/agent-harness/references/catalog.json` lists all indexed repositories with descriptions and topics. Read it first to understand what's available and which repo is most relevant to the user's need.
+The catalog at `~/.claude/skills/reference-explorers/agent-harness/references/catalog.json` lists all indexed repositories with descriptions and topics. Read it first to understand what's available and which repo is most relevant to the user's need.
 
 Each entry has these fields: `github` (source repo), `local_path` (where it's cloned), `description` (what it contains), `topics` (keyword tags), and `content_types` (e.g. agents, frameworks, resources).
 
@@ -63,7 +63,7 @@ Glob(~/.claude/skills-references/agent-harness/<repo-dir>/**/*config*.json)
 ## Workflow
 
 1. **Understand the need** — ask clarifying questions if the user's request is vague (e.g., "agent" could mean orchestration framework, a specific Claude Code agent, or a resource collection).
-2. **Catalog** — read `~/.claude/skills/agent-harness/references/catalog.json` to identify which repos are relevant based on descriptions and topics.
+2. **Catalog** — read `~/.claude/skills/reference-explorers/agent-harness/references/catalog.json` to identify which repos are relevant based on descriptions and topics.
 3. **Search** — use semantic search to find matching content across all repos.
 4. **Read before recommending** — read the relevant README, docs, or source files before presenting findings. Understand what it does, what dependencies it needs, and how to use it.
 5. **Present matches** — show name, description, source repo, and category. When multiple options exist, compare them briefly.

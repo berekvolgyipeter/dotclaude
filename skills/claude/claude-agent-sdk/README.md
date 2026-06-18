@@ -7,7 +7,7 @@ Expert implementation guidance for the Claude Agent SDK (Python).
 ### 1. Clone the SDK repo
 
 ```sh
-bash ~/.claude/skills/claude-agent-sdk/scripts/clone-python-sdk-repo.sh
+bash ~/.claude/skills/claude/claude-agent-sdk/scripts/clone-python-sdk-repo.sh
 ```
 
 Clones `anthropics/claude-agent-sdk-python` into `~/.claude/skills-references/claude-agent-sdk/claude-agent-sdk-python/` with sparse checkout, excluding tests, CI, changelogs, and other non-essential files.
@@ -15,7 +15,7 @@ Clones `anthropics/claude-agent-sdk-python` into `~/.claude/skills-references/cl
 ### 2. Index for semantic search
 
 ```sh
-bash ~/.claude/skills/claude-agent-sdk/scripts/index-references.sh
+bash ~/.claude/skills/claude/claude-agent-sdk/scripts/index-references.sh
 ```
 
 Indexes the cloned repo via the `claude-context` MCP server, making it available for semantic search during skill lookup.
