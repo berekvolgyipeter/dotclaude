@@ -36,7 +36,7 @@ Always-loaded rule files discovered automatically by Claude Code.
 
 | File | Scope | Description |
 |------|-------|-------------|
-| [general.md](rules/general.md) | All files | No-guessing policy, tool preferences |
+| [general.md](rules/general.md) | All files | No-guessing policy, consistency, check-before-implementing, rules awareness |
 
 ### [Context Rules](context-rules/)
 
@@ -62,10 +62,12 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 ### [Commands](commands/)
 
+**[explore/](commands/explore/)**
+
 | Command | Description |
 |---------|-------------|
-| [/primer](commands/primer.md) | Prime context for a session |
-| [/architecture](commands/architecture.md) | Discover a component's architecture, functionality, and communication interfaces — excludes tests and CI/CD |
+| [/primer](commands/explore/primer.md) | Prime context for a session |
+| [/architecture](commands/explore/architecture.md) | Discover a component's architecture, functionality, and communication interfaces — excludes tests and CI/CD |
 
 **[project-rules/](commands/project-rules/)**
 
@@ -108,16 +110,20 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 ### [Skills](skills/)
 
+**[authoring/](skills/authoring/)**
+
 | Skill | Description |
 |-------|-------------|
-| [claude-code](skills/claude-code/SKILL.md) | Claude Code configuration & troubleshooting |
-| [claude-agent-sdk](skills/claude-agent-sdk/SKILL.md) | Agent SDK implementation patterns |
-| [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
-| [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
-| [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
-| [agent-harness](skills/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections (Archon, everything-claude-code) |
-| [py-debug](skills/py-debug/SKILL.md) | Python debugging |
-| [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
+| [prompt-engineering](skills/authoring/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
+| [learn](skills/authoring/learn/SKILL.md) | Self-improvement from conversation feedback |
+| [skill-creator](skills/authoring/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
+
+**[claude/](skills/claude/)**
+
+| Skill | Description |
+|-------|-------------|
+| [claude-code](skills/claude/claude-code/SKILL.md) | Claude Code configuration & troubleshooting |
+| [claude-agent-sdk](skills/claude/claude-agent-sdk/SKILL.md) | Agent SDK implementation patterns |
 
 **[engineering/](skills/engineering/)**
 
@@ -126,6 +132,14 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [tdd](skills/engineering/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
 | [grill-with-docs](skills/engineering/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
 | [improve-codebase-architecture](skills/engineering/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
+| [py-debug](skills/engineering/py-debug/SKILL.md) | Python debugging |
+
+**[reference-explorers/](skills/reference-explorers/)**
+
+| Skill | Description |
+|-------|-------------|
+| [plugin-browser](skills/reference-explorers/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
+| [agent-harness](skills/reference-explorers/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections (Archon, everything-claude-code) |
 
 ### [Agents](agents/)
 

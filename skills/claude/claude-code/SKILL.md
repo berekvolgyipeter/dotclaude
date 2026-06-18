@@ -2,7 +2,7 @@
 name: claude-code
 description: Expert guidance on Claude Code configuration, capabilities, and troubleshooting. Use this skill whenever the user asks about Claude Code features, configuration, best practices, or troubleshooting — even if phrased informally. Covers MCP servers, plugins, skills, subagents, hooks, permissions, keybindings, settings, terminal setup, GitHub Actions, CLAUDE.md, cost management, and common problems. Answers are sourced from official Claude Code product documentation.
 allowed-tools:
-  - "Bash(bash ~/.claude/skills/claude-code/scripts/fetch-claude-code-urls.sh*)"
+  - "Bash(bash ~/.claude/skills/claude/claude-code/scripts/fetch-claude-code-urls.sh*)"
   - "WebFetch(https://code.claude.com/docs*)"
 ---
 
@@ -16,7 +16,7 @@ Claude Code is Anthropic's official CLI providing specialized subagents, extensi
 
 ### Step 0 — Refresh the doc index when fetching docs
 
-If you need to consult the official docs to answer (i.e. you'll hit step 1 or step 2 below), run `bash ~/.claude/skills/claude-code/scripts/fetch-claude-code-urls.sh` first to rewrite `references/claude-code-urls.md` from Anthropic's current `llms.txt`. Skip the refresh for purely conceptual answers or when the existing snapshot is sufficient.
+If you need to consult the official docs to answer (i.e. you'll hit step 1 or step 2 below), run `bash ~/.claude/skills/claude/claude-code/scripts/fetch-claude-code-urls.sh` first to rewrite `references/claude-code-urls.md` from Anthropic's current `llms.txt`. Skip the refresh for purely conceptual answers or when the existing snapshot is sufficient.
 
 ### Step 1 — Find the relevant doc
 

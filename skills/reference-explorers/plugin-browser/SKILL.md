@@ -14,7 +14,7 @@ Help users discover and explore skills, agents, commands, and plugins from commu
 
 ## Catalog
 
-The catalog at `~/.claude/skills/plugin-browser/references/catalog.json` lists all indexed repositories with descriptions and topics. Read it first to understand what's available and which repo is most relevant to the user's need.
+The catalog at `~/.claude/skills/reference-explorers/plugin-browser/references/catalog.json` lists all indexed repositories with descriptions and topics. Read it first to understand what's available and which repo is most relevant to the user's need.
 
 Each entry has these fields: `github` (source repo), `local_path` (where it's cloned), `description` (what it contains), `topics` (keyword tags), and `content_types` (e.g. skills, agents, commands, plugins).
 
@@ -63,7 +63,7 @@ Glob(~/.claude/skills-references/plugin-browser/<repo-dir>/**/*plugin*.json)
 ## Workflow
 
 1. **Understand the need** — ask clarifying questions if the user's request is vague (e.g., "security" could mean AppSec scanning, smart contract auditing, or secrets detection).
-2. **Catalog** — read `~/.claude/skills/plugin-browser/references/catalog.json` to identify which repos are relevant based on descriptions and topics.
+2. **Catalog** — read `~/.claude/skills/reference-explorers/plugin-browser/references/catalog.json` to identify which repos are relevant based on descriptions and topics.
 3. **Search** — use semantic search to find matching components across all repos.
 4. **Read before recommending** — read the component's SKILL.md, README, or plugin.json before presenting it. Understand what it does, what tools it needs, and any dependencies.
 5. **Present matches** — show name, description, source repo, and category. When multiple options exist, compare them briefly.

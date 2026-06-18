@@ -8,7 +8,7 @@ Always-loaded — auto-discovered by Claude Code.
 
 | Rule file                     | Covers                                           |
 | ----------------------------- | ------------------------------------------------ |
-| `~/.claude/rules/general.md`  | Behavioral rules, general philosophy, tool prefs |
+| `~/.claude/rules/general.md`  | Behavioral rules, general philosophy        |
 
 ## Context Rules (`~/.claude/context-rules/`)
 
