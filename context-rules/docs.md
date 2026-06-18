@@ -15,7 +15,7 @@ Documentation should be **timeless and high-level**, focusing on architecture an
    - ✅ GOOD: "OpenAI Vision API"
    - ❌ BAD: "OpenAI GPT-5-mini Vision API" or "10 scrapers" or "version 3.2.1"
    - **Examples of volatile details**: Model names, file counts, version numbers, specific URLs
-   - **Exception**: Plan and PRP documents — volatile details ARE allowed because these are point-in-time artifacts, not living documentation
+   - **Exception**: Plan documents — volatile details ARE allowed because these are point-in-time artifacts, not living documentation
    - **Rationale**: These change frequently, breaking documentation accuracy
 
 **Remember**: Outdated documentation is worse than no documentation. Keep docs high-level, architectural, and resistant to code changes.
