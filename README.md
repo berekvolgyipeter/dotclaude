@@ -90,13 +90,14 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [/fix-review](commands/review/fix-review.md) | Fix issues found in a code review |
 | [/skill-review](commands/review/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
 
-**[prp/](commands/prp/)**
+**[plan/](commands/plan/)**
 
 | Command | Description |
 |---------|-------------|
-| [/generate-prp](commands/prp/generate-prp.md) | Generate a Product Requirements Prompt |
-| [/execute-prp](commands/prp/execute-prp.md) | Execute a PRP — internalize, plan, implement, validate, and verify |
-| [/refine-prp](commands/prp/refine-prp.md) | Refine a PRP in place — check logical correctness and rule compliance, then edit the PRP to fix issues |
+| [/to-plan](commands/plan/to-plan.md) | Synthesize the current conversation into a plan saved under `.claude/plans/` — pairs with the `grill-with-docs` skill |
+| [/generate-plan](commands/plan/generate-plan.md) | Generate a plan from a short prompt by researching the target component autonomously, saved under `.claude/plans/` |
+| [/refine-plan](commands/plan/refine-plan.md) | Refine a plan in place — check logical correctness and rule compliance, then edit the plan to fix issues |
+| [/execute-plan](commands/plan/execute-plan.md) | Execute a plan test-first — internalize, sequence the work, implement via the tdd red-green-refactor loop, validate, and verify |
 
 **[parallel/](commands/parallel/)**
 
@@ -126,7 +127,6 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [tdd](skills/engineering/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
 | [grill-with-docs](skills/engineering/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
 | [improve-codebase-architecture](skills/engineering/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
-| [to-prd](skills/engineering/to-prd/SKILL.md) | Turn the current conversation into a PRD saved under `.claude/prds/` |
 
 ### [Agents](agents/)
 
@@ -158,7 +158,7 @@ Event-driven shell scripts registered in `settings.json`.
 
 | File | Description |
 |------|-------------|
-| [prp_template.md](templates/prp_template.md) | Language-agnostic PRP template used by the `/generate-prp` command |
+| [plan-template.md](templates/plan-template.md) | Plan artifact structure used by the `/to-plan` and `/generate-plan` commands |
 
 ### [Scripts](scripts/)
 
@@ -282,7 +282,7 @@ Use `template.CLAUDE.md`, `template.mcp.json`, and `template.serena.project.yml`
 
 - **No project-specific content here.** Rules, commands, or skills referencing a specific project's paths belong in that project's `.claude/`.
 - **Context rules** (`context-rules/`) are loaded by the `load-context-rules.sh` hook on Edit/Write — not auto-discovered. Add new context rules there and register their patterns in the hook script.
-- **Templates** should be referenced via absolute path: `~/.claude/templates/prp_template.md`.
+- **Templates** should be referenced via absolute path: `~/.claude/templates/plan-template.md`.
 - **`make lint` / `make test`** in shared commands are acceptable — all projects are assumed to use a Makefile.
 
 ## Acknowledgments
@@ -294,6 +294,7 @@ Use `template.CLAUDE.md`, `template.mcp.json`, and `template.serena.project.yml`
 - [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern
 - [coleam00/archon](https://github.com/coleam00/archon) — agent-harness skill reference repo
 - [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) — agent-harness skill reference repo
-- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills (tdd, grill-with-docs, improve-codebase-architecture, to-prd)
+- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills (tdd, grill-with-docs, improve-codebase-architecture) and the `/to-plan` command
 - [ghostsecurity/skills](https://github.com/ghostsecurity/skills) — codebase exploration heuristics
 - [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns
+- [obra/superpowers](https://github.com/obra/superpowers) — interface-first module mapping and TDD framing in the plan template

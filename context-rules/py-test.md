@@ -32,7 +32,7 @@ def test_parse(self, input_val, expected):
     assert parse(input_val) == expected
 ```
 
-**Test against specification:** If a spec, PRD, or requirements doc exists for the feature being tested, read it before writing tests — derive test cases directly from the specified behaviour, not just from the implementation. Tests that only reflect the code can't catch the code being wrong.
+**Test against specification:** If a spec, plan, or requirements doc exists for the feature being tested, read it before writing tests — derive test cases directly from the specified behaviour, not just from the implementation. Tests that only reflect the code can't catch the code being wrong.
 
 **Test thoroughly:** Tests must be complete in two ways:
 - **Scenario coverage** — cover all meaningful input combinations; no redundant cases, no gaps

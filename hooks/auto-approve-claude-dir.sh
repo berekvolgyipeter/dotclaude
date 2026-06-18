@@ -5,7 +5,7 @@
 #
 # Claude Code treats any tool invocation touching ".claude/" as potentially
 # dangerous and prompts for manual approval. This hook whitelists specific
-# safe directories and commands so that skills like code-review and PRP
+# safe directories and commands so that skills like code-review and plan
 # generation can work without repeated user confirmations.
 #
 # How it works:

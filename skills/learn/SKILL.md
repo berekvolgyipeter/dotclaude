@@ -30,7 +30,7 @@ Scan the conversation for any invocations of custom tools:
 
 **Skills** — `Skill` tool calls where the `skill` parameter matches a name in `~/.claude/skills/` or `.claude/skills/`
 
-**Commands** — slash command invocations like `/fix-review`, `/generate-prp`, etc., which expand via the `Skill` tool
+**Commands** — slash command invocations like `/fix-review`, `/to-plan`, etc., which expand via the `Skill` tool
 
 **Agents** — `Task` tool calls where `subagent_type` matches a name in `~/.claude/agents/` or `.claude/agents/`
 
