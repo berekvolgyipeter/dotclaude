@@ -116,7 +116,6 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
 | [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
 | [agent-harness](skills/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections (Archon, everything-claude-code) |
-| [slither](skills/slither/SKILL.md) | Slither static analysis for Solidity & Vyper |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
 | [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
 
