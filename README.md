@@ -56,7 +56,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 |------|-------------|
 | [shared/rules-index.md](shared/rules-index.md) | Registry of all rule files — what each covers and when to load it |
 | [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis |
-| [shared/analyze-project.md](shared/analyze-project.md) | Project survey steps, imported by `/primer`, `/init-rules`, and `/refine-rules` |
+| [shared/analyze-project.md](shared/analyze-project.md) | Project survey steps, imported by `/overview`, `/init-rules`, and `/refine-rules` |
 | [shared/project-rules/file-writing.md](shared/project-rules/file-writing.md) | Rule-file shape and writing rules, imported by `/init-rules` and `/refine-rules` |
 | [shared/project-rules/claudemd-section.md](shared/project-rules/claudemd-section.md) | CLAUDE.md progressive-disclosure section template, imported by `/init-rules` and `/refine-rules` |
 
@@ -66,7 +66,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 | Command | Description |
 |---------|-------------|
-| [/primer](commands/explore/primer.md) | Prime context for a session |
+| [/overview](commands/explore/overview.md) | Prime context for a session |
 | [/architecture](commands/explore/architecture.md) | Discover a component's architecture, functionality, and communication interfaces — excludes tests and CI/CD |
 
 **[project-rules/](commands/project-rules/)**
