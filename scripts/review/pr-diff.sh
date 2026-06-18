@@ -29,7 +29,7 @@ if [[ ! "$TARGET_BRANCH" =~ ^[a-zA-Z0-9_./-]+$ ]]; then
   exit 1
 fi
 
-git fetch origin "$TARGET_BRANCH" >/dev/null 2>&1 || {
+git fetch origin "$TARGET_BRANCH:refs/remotes/origin/$TARGET_BRANCH" >/dev/null 2>&1 || {
   echo "Warning: could not fetch origin/${TARGET_BRANCH}; using local refs." >&2
 }
 

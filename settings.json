@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "cleanupPeriodDays": 365,
   "env": {
     "DISABLE_TELEMETRY": "1",
@@ -217,6 +218,8 @@
     "type": "command",
     "command": "bash ~/.claude/scripts/statusline-command.sh"
   },
+  "enabledPlugins": {},
+  "extraKnownMarketplaces": {},
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
@@ -245,6 +248,5 @@
     "It is recommended that each repo defines make lint, make test, and make tree targets, as user-level Claude Code workflows rely on them."
   ],
   "plansDirectory": ".claude/plans",
-  "autoMemoryEnabled": false,
-  "effortLevel": "high"
+  "autoMemoryEnabled": false
 }
