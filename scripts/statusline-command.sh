@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 
 # Claude Code status line script
-# Shows: masked email (blue) | current directory (white) + branch (light yellow) | model (orange) + context usage (green/yellow/red)
+# Shows: masked email (blue) | current directory (white) + branch (light yellow) | model (orange) + effort level (magenta) + context usage (green/yellow/red)
 
 # Claude Code passes session data as JSON on stdin
 input=$(cat)
 
 # Extract all fields in a single jq pass; // "" always emits a line so read -r assigns empty on absent fields
 # Sum raw token counts for exact used-token display (avoids rounding from integer percentage)
-{ read -r cwd; read -r model; read -r used_pct; read -r ctx_size; read -r ctx_used_tokens; } < <(
+{ read -r cwd; read -r model; read -r effort; read -r used_pct; read -r ctx_size; read -r ctx_used_tokens; } < <(
   echo "$input" | jq -r '
     (.cwd // .workspace.current_dir // ""),
     (.model.display_name // ""),
+    (.effort.level // ""),
     (.context_window.used_percentage // ""),
     (.context_window.context_window_size // ""),
     ((.context_window.current_usage.input_tokens // 0) +
@@ -24,6 +25,7 @@ BLUE='\033[38;5;39m'
 LIGHT_YELLOW='\033[38;5;228m'
 ORANGE='\033[38;5;214m'
 WHITE='\033[97m'
+MAGENTA='\033[38;5;176m'
 RESET='\033[0m'
 # Context usage threshold colors
 CTX_GREEN='\033[32m'
@@ -59,6 +61,10 @@ fi
 #   green < 50%, yellow 50–79%, red >= 80%
 if [ -n "$model" ]; then
   model_part="$(printf "${ORANGE}%s${RESET}" "$model")"
+  # Effort level (absent when the current model has no reasoning effort parameter)
+  if [ -n "$effort" ] && [ "$effort" != "null" ]; then
+    model_part="${model_part} $(printf "${MAGENTA}(%s)${RESET}" "$effort")"
+  fi
   if [ -n "$used_pct" ] && [ "$used_pct" != "null" ]; then
     ctx_int=$(printf "%.0f" "$used_pct")  # round float to integer for comparison
     if [ "$ctx_int" -lt 50 ]; then
