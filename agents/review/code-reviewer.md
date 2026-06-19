@@ -26,7 +26,7 @@ For each file in your batch:
 2. **Security Issues** — insecure data handling, exposed secrets or API keys
 3. **Performance Problems** — inefficient algorithms, memory leaks, unnecessary computations
 4. **Code Quality** — DRY violations, redundant variable access (e.g., calling `dict.get("key")` multiple times instead of reusing extracted variable), overly complex functions, poor naming, unnecessary intermediate variables
-5. **API/Contract Breaking Changes** — renamed or removed public functions, changed signatures, removed exports, missing migration steps
+5. **Interface / Contract Breaking Changes** — changes to a module's interface that break callers: renamed or removed public functions, changed signatures, removed exports, altered invariants or error modes, missing migration steps
 6. **Resource Management** — unclosed file handles or connections, missing cleanup in finally blocks or context managers
 7. **Edge Cases in New Logic** — empty collections, None/null inputs, boundary values, unexpected input shapes
 8. **Adherence to Codebase Standards** — check against the standards provided in your prompt

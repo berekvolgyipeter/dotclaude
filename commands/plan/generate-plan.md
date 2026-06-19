@@ -1,6 +1,6 @@
 ---
 name: generate-plan
-description: Generate a plan from a short prompt by researching the target component, then save it under .claude/plans/. Use when the user describes a feature to build but there's no prior conversation to synthesize.
+description: Generate a plan from a short prompt by researching the target area of the codebase, then save it under .claude/plans/. Use when the user describes a feature to build but there's no prior conversation to synthesize.
 disable-model-invocation: true
 argument-hint: "[feature description]"
 effort: max
@@ -18,7 +18,7 @@ $ARGUMENTS
 ## Step 1 — Research
 
 ### 1a. Codebase Analysis
-- Explore the component the request targets. Use Glob and Grep to find similar features/patterns, and read the relevant modules to understand the current state.
+- Explore the area of the codebase the request targets. Use Glob and Grep to find similar features/patterns, and read the relevant modules to understand the current state.
 - If present, locate and read the domain documentation for the target area: a root `CONTEXT.md` glossary (or, if a `CONTEXT-MAP.md` exists at the root, the per-context `CONTEXT.md` it points to), and any Architecture Decision Records under `docs/adr/`. Use that glossary's vocabulary throughout the plan and respect the documented decisions.
 - Identify the modules you'll build or modify, the existing conventions to follow, and the test patterns already in use.
 
@@ -26,7 +26,7 @@ $ARGUMENTS
 - When the feature involves an external library or unfamiliar API, use WebSearch and Context7 to find documentation, implementation examples, best practices, and common pitfalls. Note specific URLs. Skip this for changes confined to existing internal code.
 
 ### 1c. User Clarification (only when blocked)
-- Use AskUserQuestion for genuinely ambiguous requirements that research cannot resolve — e.g. which pattern to mirror, integration boundaries, or product intent. Do not interview for anything you can discover yourself.
+- Use AskUserQuestion for genuinely ambiguous requirements that research cannot resolve — e.g. which pattern to mirror, integration seams, or product intent. Do not interview for anything you can discover yourself.
 
 ## Step 2 — Plan
 

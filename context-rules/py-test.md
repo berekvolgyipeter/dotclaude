@@ -1,10 +1,14 @@
 # Python Testing Rules
 
+## Core Principle
+
+Tests verify observable **behavior through public interfaces**, never implementation details — a good test reads like a specification and survives an internal refactor. If a test breaks when you rename a private method or change an internal call sequence without changing behavior, it was testing implementation: rewrite it. Don't assert call counts/order, don't test private methods, and don't verify through a side channel (e.g. querying the database directly) instead of through the interface.
+
 ## Testing Best Practices
 
 **Fixtures:** Put all fixtures in `conftest.py` — pytest discovers them automatically across the test suite without any imports.
 
-**Mocking:** Use `@patch` as a decorator, not as a context manager — it keeps teardown automatic and avoids extra indentation nesting.
+**Mocking:** Mock only at system boundaries — external APIs, the database, the network, the filesystem, time, and randomness. Never mock your own modules or internal collaborators; doing so couples the test to implementation and is the surest sign of a brittle test. When you do patch a boundary, use `@patch` as a decorator, not a context manager — it keeps teardown automatic and avoids extra indentation nesting.
 
 **Arrange-Act-Assert (AAA):** Structure every test in three phases — Arrange (set up preconditions), Act (execute the code under test), Assert (verify the outcome). Keep each phase visually distinct; a blank line between them is enough.
 
@@ -125,8 +129,8 @@ def test_user_update_email_fails_with_invalid_format(sample_user):
 
 ## Test Organization
 
-- Unit tests: Test individual functions/methods in isolation
-- Integration tests: Test component interactions
+- Unit tests: Verify a unit's behavior through its public interface — not private methods or internal call sequences
+- Integration tests: Test module interactions
 - End-to-end tests: Test complete user workflows
 - Tests mirror the `src/` folder structure
 - Use `conftest.py` for shared fixtures

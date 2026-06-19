@@ -52,6 +52,7 @@ Before marking any task as complete, ensure:
 
 ### 5. Test Writing Standards
 When creating new tests:
+- Test observable behavior through public interfaces, not implementation details — a good test reads like a specification and survives an internal refactor. When driving new code, work in vertical slices (one behavior at a time, red-green-refactor), never all-tests-then-all-code
 - Write descriptive test names that explain what is being tested
 - Include at least:
   - Happy path test cases
@@ -59,7 +60,7 @@ When creating new tests:
   - Error/failure cases
   - Boundary condition tests
 - Use appropriate testing patterns (AAA: Arrange, Act, Assert)
-- Mock external dependencies appropriately
+- Mock only at system boundaries (external APIs, DB, filesystem, time) — never internal collaborators
 - Keep tests fast and deterministic
 
 ## Validation Process Workflow
@@ -106,7 +107,7 @@ make coverage       # Run tests with coverage report
 ## Quality Metrics to Track
 
 - Test success rate (must be 100%)
-- Code coverage (aim for >80%)
+- Behavior coverage — critical paths and complex logic are tested (a coverage percentage is a heuristic, not a target to chase)
 - Linting warnings/errors (should be 0)
 - Build time (shouldn't increase significantly)
 - Test execution time (keep under reasonable limits)
