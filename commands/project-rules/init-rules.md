@@ -20,11 +20,11 @@ Reference: https://code.claude.com/docs/en/memory.md#organize-rules-with-claude/
 
 ## Stage 1 — Analyze
 
-Explore this project to identify natural module boundaries. Minimize file reads — use directory listings and symbol overviews before reading full files.
+Explore this project to identify how it naturally divides into modules. Minimize file reads — use directory listings and symbol overviews before reading full files.
 
 @~/.claude/shared/analyze-project.md
 
-Stop when you can name the module boundaries.
+Stop when you can name the modules.
 
 ## Stage 2 — Decompose
 

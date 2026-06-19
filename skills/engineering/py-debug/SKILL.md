@@ -18,6 +18,7 @@ Not sure what's wrong? Start with `ipdb` — step through the code and observe. 
 
 ## Behavioral Rules
 
+- **Lock the bug with a failing test once reproduced** — before patching incorrect behavior, capture the faulty behavior as a regression test (through the public interface where one exists), so the fix is verified and the bug can't silently regress; skip this for pure performance or memory investigations, where a test through the public interface is rarely the right artifact
 - **Suggest only one tool per problem** — don't list all options and ask the user to choose
 - **Explain the fit in one sentence** before showing usage — e.g. "Since you want line-by-line timing, `line-profiler` is the right tool here."
 - **Prefer `ipdb` as the default** for general debugging; only reach for profilers when the problem is clearly performance- or memory-related

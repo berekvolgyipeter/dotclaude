@@ -16,6 +16,8 @@ Symlinking into `~/.claude/` and version-controlling everything in git turns thi
 
 **Scope.** This repo configures Claude Code — it does not bundle a linter or test runner. The Stop hook delegates to whatever the host project uses (`make lint`, `make test`); it skips gracefully when those targets aren't defined.
 
+**Engineering philosophy.** A single stance runs through the engineering artifacts here: deep modules behind simple interfaces, behavior-first testing, and design grounded in the project's domain language.
+
 ## Runtime Flow
 
 ```mermaid
@@ -66,8 +68,8 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 | Command | Description |
 |---------|-------------|
-| [/overview](commands/explore/overview.md) | Prime context for a session |
-| [/architecture](commands/explore/architecture.md) | Discover a component's architecture, functionality, and communication interfaces — excludes tests and CI/CD |
+| [/overview](commands/explore/overview.md) | Build a lightweight, high-level overview of a project |
+| [/architecture](commands/explore/architecture.md) | Discover a module's architecture, functionality, and communication interfaces, saved to `docs/architecture/` — excludes tests and CI/CD |
 
 **[project-rules/](commands/project-rules/)**
 
@@ -97,7 +99,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | Command | Description |
 |---------|-------------|
 | [/to-plan](commands/plan/to-plan.md) | Synthesize the current conversation into a plan saved under `.claude/plans/` — pairs with the `grill-with-docs` skill |
-| [/generate-plan](commands/plan/generate-plan.md) | Generate a plan from a short prompt by researching the target component autonomously, saved under `.claude/plans/` |
+| [/generate-plan](commands/plan/generate-plan.md) | Generate a plan from a short prompt by researching the target area of the codebase autonomously, saved under `.claude/plans/` |
 | [/refine-plan](commands/plan/refine-plan.md) | Refine a plan in place — check logical correctness and rule compliance, then edit the plan to fix issues |
 | [/execute-plan](commands/plan/execute-plan.md) | Execute a plan test-first — internalize, sequence the work, implement via the tdd red-green-refactor loop, validate, and verify |
 

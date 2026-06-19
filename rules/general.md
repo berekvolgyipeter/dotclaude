@@ -33,6 +33,15 @@ Before planning or implementing anything, always audit what already exists:
 ❌ BAD: Writing a new helper without checking if one already exists
 ✅ GOOD: Grep/Glob for related code first, reuse or extend what's found, only create new files/functions when truly needed
 
+## Keep Documentation Up-to-Date
+
+After any code change, use the `documentation-manager` agent proactively and regularly to keep project documentation in sync. Do not wait to be asked — invoke it whenever you add, remove, or change behavior, interfaces, configuration, or dependencies, and pass it the list of files that changed so it knows where to look.
+
+Treat documentation as part of the work, not an afterthought: READMEs, inline docs, and other project docs must always reflect the current state of the code.
+
+❌ BAD: Finishing a feature and moving on, leaving the README describing the old behavior
+✅ GOOD: After the code change, dispatch the `documentation-manager` agent with the changed files so docs stay accurate
+
 ## Rules Awareness
 
 When the user asks about rules, coding standards, or conventions — read `~/.claude/shared/rules-index.md` for user-level rules, and check `.claude/rules/` and `.claude/CLAUDE.md` in the current project for project-level rules. Use the index and project files to identify which rules are relevant, then read and answer from those files. Do not guess at rule content from memory.
