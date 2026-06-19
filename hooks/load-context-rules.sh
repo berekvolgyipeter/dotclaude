@@ -8,6 +8,12 @@
 # Deduplication: each injected rule is tagged with a marker comment
 # (<!-- rule:NAME -->). Before loading, the hook greps the session transcript
 # for that marker — if found, the rule is skipped. No temp files needed.
+#
+# Opt-out: set DOTCLAUDE_DISABLE_CONTEXT_RULES_HOOK=1 (or true) to skip this hook.
+
+case "${DOTCLAUDE_DISABLE_CONTEXT_RULES_HOOK:-}" in
+  1|true|True|TRUE|yes|YES) exit 0 ;;
+esac
 
 # --- Rules: parallel arrays mapping rule names to glob patterns (pipe-delimited)
 RULE_NAMES=(

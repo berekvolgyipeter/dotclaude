@@ -13,6 +13,11 @@
 
 set -euo pipefail
 
+# Opt-out: set DOTCLAUDE_DISABLE_LINT_TEST_HOOK=1 (or true) to skip this hook.
+case "${DOTCLAUDE_DISABLE_LINT_TEST_HOOK:-}" in
+  1|true|True|TRUE|yes|YES) exit 0 ;;
+esac
+
 INPUT=$(cat)
 
 STOP_HOOK_ACTIVE=$(echo "$INPUT" | jq -r '.stop_hook_active // empty')
