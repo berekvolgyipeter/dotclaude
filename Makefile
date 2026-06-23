@@ -1,4 +1,4 @@
-LINT_EXCLUDE := .git .venv skills/authoring/skill-creator
+LINT_EXCLUDE := .git .venv skills/skill-creator
 
 .PHONY: install uninstall fetch-skill-creator python-deps lint tree
 
