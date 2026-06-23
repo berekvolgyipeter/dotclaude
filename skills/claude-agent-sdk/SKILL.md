@@ -5,7 +5,7 @@ allowed-tools:
   - "Read"
   - "Glob"
   - "WebFetch(https://code.claude.com/docs/en/agent-sdk*)"
-  - "Bash(bash ~/.claude/skills/claude/claude-agent-sdk/scripts/fetch-agent-sdk-urls.sh*)"
+  - "Bash(bash ~/.claude/skills/claude-agent-sdk/scripts/fetch-agent-sdk-urls.sh*)"
   - "mcp__claude-context__search_code"
 ---
 
@@ -25,7 +25,7 @@ Use this skill when:
 
 The SDK evolves frequently. The patterns below capture stable concepts, but field names and exact APIs may have moved. Verify concrete API details against the live source before quoting them:
 
-0. **Refresh the doc index when fetching docs.** If you need to consult the official docs to answer (i.e. you'll hit step 1 below), run `bash ~/.claude/skills/claude/claude-agent-sdk/scripts/fetch-agent-sdk-urls.sh` first to rewrite `references/agent-sdk-urls.md` from Anthropic's current `llms.txt`. Skip the refresh for purely conceptual answers or when the existing snapshot is sufficient.
+0. **Refresh the doc index when fetching docs.** If you need to consult the official docs to answer (i.e. you'll hit step 1 below), run `bash ~/.claude/skills/claude-agent-sdk/scripts/fetch-agent-sdk-urls.sh` first to rewrite `references/agent-sdk-urls.md` from Anthropic's current `llms.txt`. Skip the refresh for purely conceptual answers or when the existing snapshot is sufficient.
 1. **Check official docs** for conceptual explanations: fetch from the URLs listed in [agent-sdk-urls.md](references/agent-sdk-urls.md).
 2. **Search the indexed repo** for the feature in question:
    ```

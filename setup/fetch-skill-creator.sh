@@ -6,7 +6,7 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Where skill-creator will be placed in this repo
-TARGET_DIR="$REPO_DIR/skills/authoring/skill-creator"
+TARGET_DIR="$REPO_DIR/skills/skill-creator"
 
 # The GitHub repo that contains the skill-creator (among other skills)
 REPO_URL="https://github.com/anthropics/skills.git"

@@ -112,36 +112,21 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 ### [Skills](skills/)
 
-**[authoring/](skills/authoring/)**
+Skills must live flat under `skills/` — Claude Code only discovers a skill whose `SKILL.md` is one level deep, so there are no subdirectories to group by.
 
 | Skill | Description |
 |-------|-------------|
-| [prompt-engineering](skills/authoring/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
-| [learn](skills/authoring/learn/SKILL.md) | Self-improvement from conversation feedback |
-| [skill-creator](skills/authoring/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
-
-**[claude/](skills/claude/)**
-
-| Skill | Description |
-|-------|-------------|
-| [claude-code](skills/claude/claude-code/SKILL.md) | Claude Code configuration & troubleshooting |
-| [claude-agent-sdk](skills/claude/claude-agent-sdk/SKILL.md) | Agent SDK implementation patterns |
-
-**[engineering/](skills/engineering/)**
-
-| Skill | Description |
-|-------|-------------|
-| [tdd](skills/engineering/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
-| [grill-with-docs](skills/engineering/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
-| [improve-codebase-architecture](skills/engineering/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
-| [py-debug](skills/engineering/py-debug/SKILL.md) | Python debugging |
-
-**[reference-explorers/](skills/reference-explorers/)**
-
-| Skill | Description |
-|-------|-------------|
-| [plugin-browser](skills/reference-explorers/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
-| [agent-harness](skills/reference-explorers/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections (Archon, everything-claude-code) |
+| [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
+| [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
+| [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
+| [claude-code](skills/claude-code/SKILL.md) | Claude Code configuration & troubleshooting |
+| [claude-agent-sdk](skills/claude-agent-sdk/SKILL.md) | Agent SDK implementation patterns |
+| [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
+| [grill-with-docs](skills/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
+| [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
+| [py-debug](skills/py-debug/SKILL.md) | Python debugging |
+| [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
+| [agent-harness](skills/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections (Archon, everything-claude-code) |
 
 ### [Agents](agents/)
 
