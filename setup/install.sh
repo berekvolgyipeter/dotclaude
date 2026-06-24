@@ -7,7 +7,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CLAUDE_DIR="$HOME/.claude"
 
 # Directories and files to symlink into ~/.claude/
-DIRS=(rules context-rules commands agents skills templates hooks scripts shared)
+DIRS=(rules context-rules commands agents skills output-styles templates hooks scripts shared)
 FILES=(settings.json)
 
 # Create ~/.claude/ if it doesn't exist yet

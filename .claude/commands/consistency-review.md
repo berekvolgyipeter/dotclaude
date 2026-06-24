@@ -31,7 +31,7 @@ Work through each. For every finding, cite `file:line`, quote the rule it breaks
 
 ### 1. Repo conventions (`.claude/CLAUDE.md` → Rules for Changes)
 
-- **README sync** — was `README.md` updated for every added/removed/changed rule, command, skill, agent, hook, template, or script?
+- **README sync** — was `README.md` updated for every added/removed/changed rule, command, skill, agent, hook, output style, template, or script?
 - **Command frontmatter** — does every new or changed command file carry `disable-model-invocation: true`?
 - **Rules index sync** — was `shared/rules-index.md` updated when a rule or context-rule *file* was added or removed?
 - **Context-rule placement** — do on-demand rule files live in `context-rules/` (not `rules/`) and have their glob registered in `load-context-rules.sh`?

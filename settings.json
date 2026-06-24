@@ -166,6 +166,7 @@
     ]
   },
   "model": "opus[1m]",
+  "outputStyle": "lean",
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "claude-context",
