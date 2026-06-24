@@ -41,30 +41,6 @@ This ensures guidelines are fresh in context at the point of action, not just lo
 
 For each issue, the review already explains the problem and suggests a fix. Your job is to apply it:
 1. **Apply the fix** using the appropriate edit tools
-2. **Verify** — run targeted tests if possible to confirm the fix works
+2. **Verify** — re-read the changed code to confirm the fix is correct and complete
 
 If a fix would conflict with another issue already fixed, note the conflict and adapt.
-
-## Step 5: Finalize
-
-Run lint and tests:
-
-```bash
-make lint
-```
-
-```bash
-make test
-```
-
-If either fails:
-- Diagnose the failure
-- Fix the root cause
-- Re-run until passing (or explain clearly why it can't pass)
-
-## Step 6: Summary
-
-End with a concise summary:
-- How many issues were fixed (and at what severity)
-- Any issues skipped and why
-- Whether lint and tests pass

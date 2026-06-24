@@ -144,15 +144,16 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 
 ### [Hooks](hooks/)
 
-Event-driven shell scripts registered in `settings.json`.
+Event-driven shell scripts registered in `settings.json`, or scoped to a single command via its `hooks` frontmatter.
 
 | Hook | Event | Description |
 |------|-------|-------------|
 | [auto-approve-claude-dir.sh](hooks/auto-approve-claude-dir.sh) | `PreToolUse` | Auto-approves Read, Grep, and Glob operations on `.claude/` paths |
 | [load-context-rules.sh](hooks/load-context-rules.sh) | `PreToolUse` | Loads context rules from `context-rules/` on first Edit/Write per session when the target file matches a rule's glob pattern. Deduplicates via transcript markers. Skipped when `DOTCLAUDE_DISABLE_CONTEXT_RULES_HOOK` is set to `1`/`true` |
-| [stop-lint-and-test.sh](hooks/stop-lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools on non-gitignored files. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined. Skipped when `DOTCLAUDE_DISABLE_LINT_TEST_HOOK` is set to `1`/`true` |
+| [stop-lint-and-test.sh](hooks/stop-lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools on non-gitignored files. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
 | [block-rm-rf.sh](hooks/block-rm-rf.sh) | `PreToolUse` | Blocks destructive `rm -rf` and `rm -fr` Bash commands |
 | [block-push-to-main.sh](hooks/block-push-to-main.sh) | `PreToolUse` | Blocks direct `git push` to the `main` branch |
+| [block-git-mutations.sh](hooks/block-git-mutations.sh) | `PreToolUse` | Blocks state-mutating `git` commands. Scoped via the `hooks` frontmatter of the read-only review commands (`pr-review`, `delta-review`, `consistency-review`), so it fires only while one of those is active |
 
 ### [Templates](templates/)
 
@@ -171,8 +172,9 @@ Event-driven shell scripts registered in `settings.json`.
 
 | File | Description |
 |------|-------------|
-| [delta-diff.sh](scripts/review/delta-diff.sh) | Injects a local change overview (stats, file list) as markdown context — diffs are read on demand by subagents |
-| [pr-diff.sh](scripts/review/pr-diff.sh) | Injects a branch change overview (stats, file list, commits) as markdown context — diffs are read on demand by subagents |
+| [delta-diff.sh](scripts/review/delta-diff.sh) | Injects a local change overview (stats, file list, current branch) as markdown context — diffs are read on demand by subagents |
+| [pr-diff.sh](scripts/review/pr-diff.sh) | Injects a branch change overview (stats, file list, commits, current branch) as markdown context — diffs are read on demand by subagents |
+| [automated-checks.sh](scripts/review/automated-checks.sh) | Runs `make lint` and `make test` and injects their output as markdown context for the review. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
 | [latest-review.sh](scripts/review/latest-review.sh) | Outputs the path to the newest code review file in `.claude/.code-reviews/` |
 
 ### [settings.json](settings.json)

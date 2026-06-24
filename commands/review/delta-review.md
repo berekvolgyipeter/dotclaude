@@ -4,17 +4,20 @@ description: Technical code review comparing uncommitted local changes against t
 disable-model-invocation: true
 allowed-tools:
   - Bash(bash ~/.claude/scripts/review/delta-diff.sh)
-  - Bash(make lint)
-  - Bash(make lint 2>&1 || echo *)
-  - Bash(make lint 2>&1; echo *)
-  - Bash(make test)
-  - Bash(make test 2>&1 || echo *)
-  - Bash(make test 2>&1; echo *)
+  - Bash(bash ~/.claude/scripts/review/automated-checks.sh)
   - Bash(git diff *)
   - Bash(git show *)
   - Agent(review:code-reviewer)
+hooks:
+  PreToolUse:
+    - matcher: Bash
+      hooks:
+        - type: command
+          command: bash ~/.claude/hooks/block-git-mutations.sh
 ---
 
 !`bash ~/.claude/scripts/review/delta-diff.sh`
+
+!`bash ~/.claude/scripts/review/automated-checks.sh`
 
 @~/.claude/shared/code-review.md

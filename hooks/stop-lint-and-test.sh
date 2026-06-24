@@ -13,10 +13,20 @@
 
 set -euo pipefail
 
-# Opt-out: set DOTCLAUDE_DISABLE_LINT_TEST_HOOK=1 (or true) to skip this hook.
-case "${DOTCLAUDE_DISABLE_LINT_TEST_HOOK:-}" in
-  1|true|True|TRUE|yes|YES) exit 0 ;;
-esac
+# Opt-out: set DOTCLAUDE_DISABLE_AUTO_LINT / DOTCLAUDE_DISABLE_AUTO_TEST to 1 (or true) to skip lint
+# / test respectively.
+is_disabled() {
+  case "${1:-}" in
+    1|true|True|TRUE|yes|YES) return 0 ;;
+  esac
+  return 1
+}
+
+# Exit early if both targets are opted out — nothing to run, so skip the
+# transcript parsing and Makefile discovery below.
+if is_disabled "${DOTCLAUDE_DISABLE_AUTO_LINT:-}" && is_disabled "${DOTCLAUDE_DISABLE_AUTO_TEST:-}"; then
+  exit 0
+fi
 
 INPUT=$(cat)
 
@@ -68,6 +78,10 @@ HAS_LINT=0
 HAS_TEST=0
 make -n lint >/dev/null 2>&1 && HAS_LINT=1
 make -n test >/dev/null 2>&1 && HAS_TEST=1
+
+# Honor per-target opt-outs
+is_disabled "${DOTCLAUDE_DISABLE_AUTO_LINT:-}" && HAS_LINT=0
+is_disabled "${DOTCLAUDE_DISABLE_AUTO_TEST:-}" && HAS_TEST=0
 
 # Exit only if NEITHER target is available; if at least one exists, proceed
 if [ "$HAS_LINT" -eq 0 ] && [ "$HAS_TEST" -eq 0 ]; then
