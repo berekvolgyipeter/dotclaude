@@ -8,7 +8,7 @@ Shared Claude Code configuration repo symlinked into `~/.claude/`. See @README.m
 
 ## Rules for Changes
 
-- **Always update `README.md`** when adding, removing, or changing any rule, command, skill, agent, hook, template, or other configuration. Keep the README in sync with the actual repo contents.
+- **Always update `README.md`** when adding, removing, or changing any rule, command, skill, agent, hook, output style, template, or other configuration. Keep the README in sync with the actual repo contents.
 - **Don't document project-level `.claude/` files in `README.md`** — the README catalogs only the user-level artifacts symlinked from the repo root. Files under this repo's own `.claude/` directory (e.g. `.claude/commands/`, `.claude/settings.json`) are project-level config for this repo only and must not be added to the README tables.
 - **Every command file** (`commands/*.md`) must include `disable-model-invocation: true` in its YAML frontmatter.
 - **Update the rules index** (`shared/rules-index.md`) when adding or removing rule or context-rule files — keep it in sync with the actual files in `rules/` and `context-rules/`.

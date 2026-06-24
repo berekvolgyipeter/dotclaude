@@ -155,6 +155,14 @@ Event-driven shell scripts registered in `settings.json`, or scoped to a single 
 | [block-push-to-main.sh](hooks/block-push-to-main.sh) | `PreToolUse` | Blocks direct `git push` to the `main` branch |
 | [block-git-mutations.sh](hooks/block-git-mutations.sh) | `PreToolUse` | Blocks state-mutating `git` commands. Scoped via the `hooks` frontmatter of the read-only review commands (`pr-review`, `delta-review`, `consistency-review`), so it fires only while one of those is active |
 
+### [Output Styles](output-styles/)
+
+Markdown files that modify Claude Code's system prompt to change its role, tone, and default response format. Activate one via `/config` → **Output style**, or set `outputStyle` in a settings file. Takes effect after `/clear` or a new session.
+
+| Style | Description |
+|-------|-------------|
+| [lean](output-styles/lean.md) | Terse by default, built to be read fast — leads with the answer, cuts filler, pleasantries, sugar coating, and bloated comments; expands only when an idea genuinely needs the room (new concept, a why/how, or a risky action) |
+
 ### [Templates](templates/)
 
 | File | Description |
@@ -231,7 +239,7 @@ make install
 ```
 
 This runs `setup/install.sh`, which symlinks directories and files from this repo into `~/.claude/`:
-- **Directories**: `rules/`, `context-rules/`, `commands/`, `agents/`, `skills/`, `templates/`, `hooks/`, `scripts/`, `shared/`
+- **Directories**: `rules/`, `context-rules/`, `commands/`, `agents/`, `skills/`, `output-styles/`, `templates/`, `hooks/`, `scripts/`, `shared/`
 - **Files**: `settings.json`
 
 If a real (non-symlink) directory or file already exists at the target, the script warns and skips it. Existing files are backed up with a timestamp before being replaced. Safe to re-run.

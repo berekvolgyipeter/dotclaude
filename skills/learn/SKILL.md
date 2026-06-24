@@ -12,7 +12,7 @@ A single offhand correction in an otherwise smooth conversation may not warrant 
 ## Analysis Process
 
 Learnings live at two levels:
-- **User-level** (`~/.claude/`) — shared across all projects (rules, skills, commands, agents, templates)
+- **User-level** (`~/.claude/`) — shared across all projects (rules, skills, commands, agents, output styles, templates)
 - **Project-level** (`.claude/`) — specific to the current project (CLAUDE.md, rules, skills, commands, agents)
 
 ### Step 1: Scan for Learnings
@@ -57,6 +57,7 @@ Decide whether a learning is **universal** (applies to all projects → user-lev
 - **Skill** → `skills/<name>/SKILL.md`
 - **Command** → `commands/<name>.md`
 - **Agent** → `agents/<name>.md`
+- **Output style** → `output-styles/<name>.md` — only when an output style was active and the learning is about its communication contract (verbosity, tone, default response/comment format). Generic communication preferences with no active style belong in a rule file instead.
 
 This includes the learn skill itself — if the learning process was suboptimal, update its SKILL.md.
 
