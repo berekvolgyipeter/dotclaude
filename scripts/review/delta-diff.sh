@@ -7,9 +7,11 @@ set -euo pipefail
 
 STAT=$(git diff --stat HEAD)
 UNTRACKED=$(git ls-files --others --exclude-standard)
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 printf '## Local Change Overview\n\n'
 printf 'DIFF_BASE: HEAD\n\n'
+printf 'CURRENT_BRANCH: %s\n\n' "$BRANCH"
 
 printf '### Changed Files\n\n%s\n\n' "${STAT:-(none)}"
 printf '### Untracked Files\n\n%s\n\n' "${UNTRACKED:-(none)}"

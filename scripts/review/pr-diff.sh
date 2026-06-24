@@ -37,9 +37,11 @@ DIFF_BASE=$(git merge-base HEAD "origin/$TARGET_BRANCH")
 STAT=$(git diff --stat "$DIFF_BASE")
 UNTRACKED=$(git ls-files --others --exclude-standard)
 COMMITS=$(git log "$DIFF_BASE..HEAD" --oneline)
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 printf '## Branch Change Overview\n\n'
 printf 'DIFF_BASE: %s\n\n' "$DIFF_BASE"
+printf 'CURRENT_BRANCH: %s\n\n' "$BRANCH"
 
 printf '### Changed Files\n\n%s\n\n' "${STAT:-(none)}"
 printf '### Untracked Files\n\n%s\n\n' "${UNTRACKED:-(none)}"
