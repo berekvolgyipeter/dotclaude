@@ -4,12 +4,21 @@ The shape of a plan artifact saved under `.claude/plans/`.
 
 Two rules govern the whole document:
 
-- **Sections earn their place.** Keep a section only if this plan has real content for it. A section padded with placeholder prose is worse than an absent one. The first three sections are the floor; the rest appear when material.
+- **Sections earn their place.** Keep a section only if this plan has real content for it. A section padded with placeholder prose is worse than an absent one. Every plan opens with TL;DR, Goal, Requirements, and Module Map — these are the floor; the rest appear when material.
 - **No file paths, no stale code.** Paths and snippets rot fast. The one exception: a snippet that pins a decision more precisely than prose can (a schema, type shape, state machine, or reducer). Inline it, trimmed to the decision-rich part, and note it came from a prototype.
 
 Use the project's domain glossary (`CONTEXT.md`) vocabulary throughout, and respect any ADRs in the area being touched.
 
 <plan-template>
+
+## TL;DR
+
+A fast, human-first digest of the whole plan — written so a reader grasps it at a glance. Three or four tight bullets, leading with the outcome and dropping the jargon:
+
+- **What** — what's being built, in one line.
+- **Why** — the outcome it unlocks or the problem it kills.
+- **How** — the shape of the approach, not the steps.
+- **Scope/risk** — anything a reader must know up front (a big trade-off, a blast radius, a hard dependency). Include only when material.
 
 ## Goal
 

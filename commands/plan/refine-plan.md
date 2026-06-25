@@ -37,11 +37,11 @@ Based on the file types the plan touches (inferred from its Module Map, Key Deci
 
 ## Step 2 — Check the Plan
 
-ULTRATHINK and evaluate the plan against each category. For every issue found, plan the exact edit needed. If the plan omits a section referenced below (e.g. no Glossary, or no ADR area applies), skip that check rather than inventing the section.
+ULTRATHINK and evaluate the plan against each category. For every issue found, plan the exact edit needed. The TL;DR, Goal, Requirements, and Module Map are mandatory — if any is missing, add it. For conditional sections (e.g. no Glossary, or no ADR area applies), skip that check rather than inventing the section.
 
 ### A. Logical Correctness
 
-1. **Internal consistency** — Do the Goal, Requirements, Module Map, Key Decisions, and Testing Strategy agree? Any contradictions between sections?
+1. **Internal consistency** — Do the TL;DR, Goal, Requirements, Module Map, Key Decisions, and Testing Strategy agree? Does the TL;DR accurately summarize the body — outcome, scope, and risks still current? Any contradictions between sections?
 2. **Dependency order** — Can the modules and decisions be executed without backtracking? Are decisions that depend on earlier work ordered correctly?
 3. **Completeness** — Does each requirement have a module or decision that satisfies it? Are any aspects of the solution left unspecified?
 4. **Referenced artifacts exist** — Do the modules, interfaces, patterns, and URLs in the plan actually exist in the codebase or on the web? Use Glob/Grep/Read to verify critical references.

@@ -161,7 +161,7 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 
 | Style | Description |
 |-------|-------------|
-| [lean](output-styles/lean.md) | Terse by default, built to be read fast — leads with the answer, cuts filler, pleasantries, sugar coating, and bloated comments; expands only when an idea genuinely needs the room (new concept, a why/how, or a risky action) |
+| [lean](output-styles/lean.md) | Terse by default, built to be read fast — leads with the answer, cuts filler, pleasantries, sugar coating, and bloated comments; prefers the plainest exact word and concrete phrasing over abstractions; expands only when an idea genuinely needs the room (new concept, a why/how, or a risky action) |
 
 ### [Templates](templates/)
 
