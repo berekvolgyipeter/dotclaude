@@ -4,6 +4,8 @@ description: Process to fix bugs found in manual/AI code review
 disable-model-invocation: true
 allowed-tools:
   - Bash(bash ~/.claude/scripts/review/latest-review.sh)
+  - Bash(bash ~/.claude/scripts/review/remove-latest-review.sh)
+  - AskUserQuestion
 ---
 
 The review file to fix is:
@@ -44,3 +46,7 @@ For each issue, the review already explains the problem and suggests a fix. Your
 2. **Verify** — re-read the changed code to confirm the fix is correct and complete
 
 If a fix would conflict with another issue already fixed, note the conflict and adapt.
+
+## Step 5: Clean Up
+
+Once all fixes are done, use the `AskUserQuestion` tool to ask whether to remove the review file or keep it, with two options: "Remove" and "Keep". Only run `bash ~/.claude/scripts/review/remove-latest-review.sh` if they explicitly choose "Remove" — for "Keep" or any other answer, leave the file in place.

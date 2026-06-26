@@ -129,12 +129,15 @@ After presenting the analysis:
 2. Apply changes to the appropriate file(s)
 3. Ensure formatting is consistent with existing content
 4. Place new rules in the most logical section
+5. **Verify the whole document stays consistent after the edit** — re-read the surrounding rules and confirm the change introduced no contradiction, no duplicated guidance, and no diverging terminology. A refinement that conflicts with a neighbouring rule, or repeats it in different words, is worse than no edit. If the new wording supersedes an existing rule, update or remove that rule too so the document speaks with one voice.
 
 ## Handling Existing Content
 
+**Default to refining existing rules, not adding new ones.** Adding a fresh section or bullet on every invocation bloats rule files until they overflow context and degrade performance. Before writing anything new, genuinely analyze the target document: most learnings belong *inside* an existing rule — as a sharpened wording, an added example, or a broadened scope — not as a standalone addition. Only add a new rule when the learning is truly distinct from everything already there. Adding a new section is the exception, refinement is the norm.
+
 Rule files accumulate institutional knowledge that's hard to reconstruct, so treat existing content carefully:
 
-- **Check for duplicates first** — before adding a new rule, search for similar existing ones. Enhancing an existing rule is better than creating a near-duplicate.
+- **Find the closest existing rule first** — read the whole section the learning relates to and ask "does an existing rule or section already cover this?" Merge into or generalize the closest match rather than appending a near-sibling beside it; this is what keeps you from creating a near-duplicate.
 - **Exact duplicate** → Skip
 - **Similar but incomplete** → Enhance with more detail
 - **Conflicting** → Flag for user review. If a new learning directly supersedes an old rule, propose replacing the old one rather than adding alongside it — stale rules create confusion.

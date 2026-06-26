@@ -57,10 +57,16 @@ Work through each. For every finding, cite `file:line`, quote the rule it breaks
 
 ## Output
 
-List findings ordered by severity (CRITICAL → MAJOR → MINOR). For each: `file:line`, the quoted rule, and the concrete fix, using this format:
+**If there are no findings, do not write a file** — say so plainly in the chat and stop.
 
-### CRITICAL | [README.md:120](README.md#L120) — New `foo` command not documented
+Only when there is at least one finding, save a file to `.claude/.code-reviews/[current-branch-name]--consistency-review.md` using the Write tool directly — do not run `mkdir` first, the Write tool creates parent directories automatically.
+
+Use the `CURRENT_BRANCH` value from the change overview for the branch name — do not look it up with git. Normalize it for the filename: convert to lowercase and replace any character that is not a letter or digit with a dash (`-`).
+
+The file contains **only the findings** — no preamble, no "what was checked" section, no per-check pass list, no summary of clean items. List findings ordered by severity (CRITICAL → MAJOR → MINOR). For each: `file:line`, the quoted rule, and the concrete fix, using this format:
+
+### CRITICAL | [README.md:120](../../README.md#L120) — New `foo` command not documented
 **Rule:** `.claude/CLAUDE.md` → "Always update `README.md` when adding ... any ... command."
 **Fix:** Add a `foo` row to the Commands table, matching the human-readable style of the neighboring entries.
 
-If everything is consistent, say so plainly. Do not report functional bugs or unrelated style nits — keep the scope to consistency.
+Do not report functional bugs or unrelated style nits — keep the scope to consistency.
