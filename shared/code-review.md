@@ -46,6 +46,7 @@ Each subagent prompt must include:
 3. **Standards** — paste the full text of each applicable rule file loaded in Step 1, verbatim (not a reference or filename)
 4. **Automated check failures** — relevant lint/test failures from Step 2, or "None"
 5. **No code execution** — do not run any scripts or code via Bash to test edge cases. Review by reading code only. If behavior is unclear, check whether tests cover it — if not, add a finding.
+6. **No change summaries** — report only issues. Do not describe what each file does, narrate what changed, or confirm that a change is fine. A file with no issues gets no mention.
 
 ## Step 5: Consolidate Findings
 
@@ -65,7 +66,9 @@ For each changed file, check whether documentation needs to be updated:
 
 ## Output Format
 
-Save a new file to `.claude/.code-reviews/[current-branch-name]--review.md` using the Write tool directly — do not run `mkdir` first, the Write tool creates parent directories automatically.
+**If no issues are found, do not write a file** — say "Code review passed. No technical issues detected." in the chat and stop.
+
+Only when there is at least one issue, save a file to `.claude/.code-reviews/[current-branch-name]--review.md` using the Write tool directly — do not run `mkdir` first, the Write tool creates parent directories automatically.
 
 Use the `CURRENT_BRANCH` value from the change overview for the branch name — do not look it up with git. Normalize it for the filename: convert to lowercase and replace any character that is not a letter or digit with a dash (`-`).
 
@@ -87,8 +90,6 @@ Use severity indicators:
 
 Separate each issue with a horizontal rule (`---`).
 
-If no issues found: "Code review passed. No technical issues detected."
-
 ## Important
 
 - Be specific (line numbers, not vague complaints)
@@ -96,3 +97,4 @@ If no issues found: "Code review passed. No technical issues detected."
 - Suggest fixes, don't just complain
 - Flag security issues as CRITICAL
 - Do not list recommendations - only report actual issues
+- Do not summarize or describe the changes - no walkthrough of what each file does, no confirmation that a change is correct. Only issues.

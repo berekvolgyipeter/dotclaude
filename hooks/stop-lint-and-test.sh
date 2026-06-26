@@ -73,34 +73,41 @@ if [ ! -f "$PROJECT_ROOT/Makefile" ] && [ ! -f "$PROJECT_ROOT/makefile" ] && [ !
 fi
 cd "$PROJECT_ROOT"
 
-# Check which targets are available in the Makefile
-HAS_LINT=0
-HAS_TEST=0
-make -n lint >/dev/null 2>&1 && HAS_LINT=1
-make -n test >/dev/null 2>&1 && HAS_TEST=1
+# Decide what to run. A target runs only if it exists in the Makefile and is not
+# opted out; either way it's simply "skipped" — the reason is an internal detail.
+RUN_LINT=0
+RUN_TEST=0
+if ! is_disabled "${DOTCLAUDE_DISABLE_AUTO_LINT:-}" && make -n lint >/dev/null 2>&1; then
+  RUN_LINT=1
+fi
+if ! is_disabled "${DOTCLAUDE_DISABLE_AUTO_TEST:-}" && make -n test >/dev/null 2>&1; then
+  RUN_TEST=1
+fi
 
-# Honor per-target opt-outs
-is_disabled "${DOTCLAUDE_DISABLE_AUTO_LINT:-}" && HAS_LINT=0
-is_disabled "${DOTCLAUDE_DISABLE_AUTO_TEST:-}" && HAS_TEST=0
-
-# Exit only if NEITHER target is available; if at least one exists, proceed
-if [ "$HAS_LINT" -eq 0 ] && [ "$HAS_TEST" -eq 0 ]; then
+# Exit only if NEITHER target will run; if at least one runs, proceed
+if [ "$RUN_LINT" -eq 0 ] && [ "$RUN_TEST" -eq 0 ]; then
   exit 0
 fi
 
 FAILED=0
+LINT_NOTE="SKIPPED"
+TEST_NOTE="SKIPPED"
 
-# Each target runs independently — unavailable targets are skipped, not blocking
-# Output goes directly to stderr so make's streaming output is not buffered
-if [ "$HAS_LINT" -eq 1 ]; then
-  make lint 2>&1 || FAILED=1
+# Each target runs independently — skipped targets never block.
+# Send make's output to stderr (>&2) so on a block (exit 2) Claude receives the
+# full failing log and need not re-run the target to see what broke.
+if [ "$RUN_LINT" -eq 1 ]; then
+  if make lint >&2; then LINT_NOTE="PASSED"; else LINT_NOTE="FAILED"; FAILED=1; fi
 fi
 
-if [ "$HAS_TEST" -eq 1 ]; then
-  make test 2>&1 || FAILED=1
+if [ "$RUN_TEST" -eq 1 ]; then
+  if make test >&2; then TEST_NOTE="PASSED"; else TEST_NOTE="FAILED"; FAILED=1; fi
 fi
+
+# Always emit a one-line summary so it is clear what ran vs what was skipped.
+echo "stop hook — lint: ${LINT_NOTE} | test: ${TEST_NOTE}" >&2
 
 if [ "$FAILED" -ne 0 ]; then
-  echo "Fix all errors above before finishing." >&2
+  echo "Fix the FAILED target above before finishing — skipped targets did not run." >&2
   exit 2
 fi

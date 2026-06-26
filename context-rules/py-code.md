@@ -101,6 +101,8 @@ async def fulfill_order(self, order: Order) -> Receipt:
 - **Classes**: name by **responsibility**, not data shape — what it *does*, not what it *holds*
 - **Variables**: name by **meaning in context**, not type or structure. **Always include the noun** — never name a variable with only an adjective or past participle (`updated`, `discovered`, `extracted`, `filtered`). The name must answer "updated *what*?". Prefer the bare noun when the scope is clear (`orders`); only qualify it (`updated_orders`) when the unqualified name is already taken or genuinely ambiguous in context
 - **Booleans**: must use an intent-revealing prefix — `is_`, `has_`, `does_`, `can_`, `should_`. Applies to both variables and methods that return `bool`
+- **One concept, one name everywhere** — pick a single term for a concept and use it consistently across every name that refers to it: variables, parameters, functions, attributes, types, files. The same thing should not be `email` in one place and `mail` in another, or `fetch_*` here and `get_*` there. When you rename, propagate it to every occurrence in one pass so no synonym lingers.
+- **No ambiguous names** — a name must resolve to exactly one thing in its context. When a bare term could refer to more than one entity — e.g. an `id`/`uuid`/`name` field that could be the object's own *or* a referenced entity's — qualify it with its owner (`owner_id`, `parent_uuid`), and reserve the bare term for the thing's own identity.
 
 ```python
 # ❌ BAD — vague, requires reading the body to understand

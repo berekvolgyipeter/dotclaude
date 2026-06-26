@@ -161,7 +161,7 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 
 | Style | Description |
 |-------|-------------|
-| [lean](output-styles/lean.md) | Terse by default, built to be read fast — leads with the answer, cuts filler, pleasantries, sugar coating, and bloated comments; prefers the plainest exact word and concrete phrasing over abstractions; expands only when an idea genuinely needs the room (new concept, a why/how, or a risky action) |
+| [lean](output-styles/lean.md) | Terse by default, built to be read fast — leads with the answer, cuts filler and bloated comments, expands only when an idea truly needs the room |
 
 ### [Templates](templates/)
 
@@ -184,6 +184,7 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 | [pr-diff.sh](scripts/review/pr-diff.sh) | Injects a branch change overview (stats, file list, commits, current branch) as markdown context — diffs are read on demand by subagents |
 | [automated-checks.sh](scripts/review/automated-checks.sh) | Runs `make lint` and `make test` and injects their output as markdown context for the review. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
 | [latest-review.sh](scripts/review/latest-review.sh) | Outputs the path to the newest code review file in `.claude/.code-reviews/` |
+| [remove-latest-review.sh](scripts/review/remove-latest-review.sh) | Deletes the newest code review file in `.claude/.code-reviews/` |
 
 ### [settings.json](settings.json)
 

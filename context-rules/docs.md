@@ -10,6 +10,7 @@ Documentation should be **timeless and high-level**, focusing on architecture an
    - ✅ GOOD: "The file handler calls `prepare_output_directory()` before writing"
    - ❌ BAD: Including the full function implementation in `CLAUDE.md`
    - **Exception**: Best-practice and guideline docs (e.g., rule files, style guides) — generalized code examples ARE allowed and encouraged to illustrate patterns and conventions
+   - **Exception**: Operational docs (READMEs, setup/install/usage guides) — runnable shell commands and CLI invocations ARE allowed. A setup/run command is stable operational guidance, not a volatile implementation detail like a source reference with a line number
 
 2. **Avoid Volatile Details** - Magic numbers and specifics that frequently change
    - ✅ GOOD: "OpenAI Vision API"
