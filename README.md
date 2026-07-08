@@ -194,7 +194,7 @@ Shared permissions, preferences, and security posture.
 
 **Deny list:**
 - *Destructive commands:* `rm -rf`, `sudo`, `mkfs`, `dd`, `wget ... | bash` (classic supply-chain attack vector)
-- *Irreversible git:* force-push, `git reset --hard`, and destructive `git clean` variants (`-f`, `-d`, `-x`)
+- *Irreversible git:* force-push, `git reset --hard`, destructive `git clean` variants (`-f`, `-d`, `-x`), and un-stashing (`git stash pop`/`apply` — can clobber uncommitted work with conflicts)
 - *Shell config:* `~/.bashrc`, `~/.zshrc` — PATH manipulation and alias injection are off the table
 - *Credential stores:* SSH keys, AWS/Azure/GitHub CLI configs, git-credentials, Docker, Kubernetes, npm/pypi/gem tokens, macOS Keychain, `.env` files — and crypto wallet data (MetaMask, Electrum, Exodus, Phantom, Solflare)
 

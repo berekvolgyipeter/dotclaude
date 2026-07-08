@@ -57,6 +57,8 @@
       "Bash(git clean -f*)",
       "Bash(git clean -d*)",
       "Bash(git clean -x*)",
+      "Bash(git stash pop*)",
+      "Bash(git stash apply*)",
       "Edit(~/.bashrc)",
       "Edit(~/.zshrc)",
       "Edit(~/.ssh/**)",
@@ -165,7 +167,6 @@
       "Bash(launchctl *)"
     ]
   },
-  "model": "opus[1m]",
   "outputStyle": "lean",
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
@@ -253,5 +254,7 @@
     "It is recommended that each repo defines make lint, make test, and make tree targets, as user-level Claude Code workflows rely on them."
   ],
   "plansDirectory": ".claude/plans",
-  "autoMemoryEnabled": false
+  "autoMemoryEnabled": false,
+  "model": "opus[1m]",
+  "effortLevel": "high"
 }
