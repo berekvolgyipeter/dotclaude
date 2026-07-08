@@ -171,6 +171,7 @@ def filter_orders(orders: list[Order], threshold: int) -> list[Order]:
 - **Default to no comments** — well-named identifiers and types document *what*. Only comment when the *why* is non-obvious (hidden constraint, subtle invariant, workaround for a specific bug)
 - **Never restate the code** — if the comment paraphrases the next line, delete it
 - **No task/PR context** — don't reference the current change, ticket, or callers; that belongs in commit messages
+- **A comment doing heavy explaining is a symptom, not a fix** — if a constant, setting, or function needs a comment to explain what it means or how it behaves, the name, design, or docs are wrong; fix those instead of writing the paragraph
 - **One line is almost always enough** — never write multi-paragraph comment blocks
 - **Docstrings**: write one only when the contract is non-obvious from the signature. Single line unless behavior is genuinely complex. Don't restate parameter types or echo the function name in prose
 

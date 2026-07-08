@@ -51,6 +51,7 @@ ALLOWED_READ_SEARCH_DIRS=(
   "$HOME/.claude/templates"
   "$HOME/.claude/hooks"
   "$HOME/.claude/shared"
+  "$HOME/.claude/output-styles"
   "$DOTCLAUDE_REPO/skills"
   "$DOTCLAUDE_REPO/commands"
   "$DOTCLAUDE_REPO/rules"
@@ -59,6 +60,7 @@ ALLOWED_READ_SEARCH_DIRS=(
   "$DOTCLAUDE_REPO/templates"
   "$DOTCLAUDE_REPO/hooks"
   "$DOTCLAUDE_REPO/shared"
+  "$DOTCLAUDE_REPO/output-styles"
 )
 
 # --- Matching helpers ---
