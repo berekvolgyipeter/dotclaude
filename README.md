@@ -57,7 +57,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | File | Description |
 |------|-------------|
 | [shared/rules-index.md](shared/rules-index.md) | Registry of all rule files — what each covers and when to load it |
-| [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis |
+| [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis. Supports two scopes: full (default) and diff-only, selected via a `REVIEW_SCOPE` line set by the including command |
 | [shared/analyze-project.md](shared/analyze-project.md) | Project survey steps, imported by `/overview`, `/init-rules`, and `/refine-rules` |
 | [shared/project-rules/file-writing.md](shared/project-rules/file-writing.md) | Rule-file shape and writing rules, imported by `/init-rules` and `/refine-rules` |
 | [shared/project-rules/claudemd-section.md](shared/project-rules/claudemd-section.md) | CLAUDE.md progressive-disclosure section template, imported by `/init-rules` and `/refine-rules` |
@@ -90,7 +90,9 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | Command | Description |
 |---------|-------------|
 | [/pr-review](commands/review/pr-review.md) | Full technical code review |
+| [/pr-review-diff](commands/review/pr-review-diff.md) | Diff-only review of changes to a target branch — reviews only the diff hunks, skips lint/test checks |
 | [/delta-review](commands/review/delta-review.md) | Review uncommitted changes against latest commit |
+| [/delta-review-diff](commands/review/delta-review-diff.md) | Diff-only review of uncommitted changes — reviews only the diff hunks, skips lint/test checks |
 | [/fix-review](commands/review/fix-review.md) | Fix issues found in a code review |
 | [/skill-review](commands/review/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
 
@@ -140,6 +142,7 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | Agent | Description |
 |-------|-------------|
 | [code-reviewer](agents/review/code-reviewer.md) | Focused code reviewer for batches of changed files, dispatched by review commands |
+| [code-reviewer-diff](agents/review/code-reviewer-diff.md) | Strict diff-only reviewer for batches of changed files — reads only the diff hunks, never the full files; dispatched by the diff-only review commands |
 | [diff-summarizer](agents/review/diff-summarizer.md) | Reads diffs on demand and returns structured change summaries |
 
 ### [Hooks](hooks/)
@@ -153,7 +156,7 @@ Event-driven shell scripts registered in `settings.json`, or scoped to a single 
 | [stop-lint-and-test.sh](hooks/stop-lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools on non-gitignored files. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
 | [block-rm-rf.sh](hooks/block-rm-rf.sh) | `PreToolUse` | Blocks destructive `rm -rf` and `rm -fr` Bash commands |
 | [block-push-to-main.sh](hooks/block-push-to-main.sh) | `PreToolUse` | Blocks direct `git push` to the `main` branch |
-| [block-git-mutations.sh](hooks/block-git-mutations.sh) | `PreToolUse` | Blocks state-mutating `git` commands. Scoped via the `hooks` frontmatter of the read-only review commands (`pr-review`, `delta-review`, `consistency-review`), so it fires only while one of those is active |
+| [block-git-mutations.sh](hooks/block-git-mutations.sh) | `PreToolUse` | Blocks state-mutating `git` commands. Scoped via the `hooks` frontmatter of the read-only review commands (`pr-review`, `pr-review-diff`, `delta-review`, `delta-review-diff`), so it fires only while one of those is active |
 
 ### [Output Styles](output-styles/)
 
