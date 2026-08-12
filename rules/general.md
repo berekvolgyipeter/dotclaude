@@ -42,6 +42,13 @@ Treat documentation as part of the work, not an afterthought: READMEs, inline do
 ❌ BAD: Finishing a feature and moving on, leaving the README describing the old behavior
 ✅ GOOD: After the code change, dispatch the `documentation-manager` agent with the changed files so docs stay accurate
 
+## Temp Files Go Project-Local
+
+Never write temporary/scratch files to the system scratchpad, `/tmp`, `/private/tmp`, or `$TMPDIR` — the sandbox no longer grants write access there. Always create temp files inside the current project at `.claude/tmp/` instead. Create the directory if it doesn't exist, and make sure `.claude/tmp/` is in the project's `.gitignore` before writing into it.
+
+❌ BAD: Writing a scratch script to `$TMPDIR/foo.py` or the session scratchpad
+✅ GOOD: Writing it to `<project-root>/.claude/tmp/foo.py`, after confirming `.claude/tmp/` is gitignored
+
 ## Rules Awareness
 
 When the user asks about rules, coding standards, or conventions — read `~/.claude/shared/rules-index.md` for user-level rules, and check `.claude/rules/` and `.claude/CLAUDE.md` in the current project for project-level rules. Use the index and project files to identify which rules are relevant, then read and answer from those files. Do not guess at rule content from memory.

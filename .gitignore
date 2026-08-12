@@ -3,6 +3,7 @@
 .venv/
 .claude/.code-reviews/
 .claude/.logs/
+.claude/tmp/
 .scratch/
 *cache/
 skills/skill-creator/
