@@ -240,10 +240,7 @@
       "allowAllUnixSockets": true
     },
     "filesystem": {
-      "allowWrite": [
-        "/tmp",
-        "/private/tmp"
-      ],
+      "allowWrite": [],
       "allowRead": [
         "~/.ssh/known_hosts"
       ]
