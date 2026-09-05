@@ -19,4 +19,5 @@ Loaded on demand by the `load-context-rules.sh` hook when Edit/Write targets a m
 | `~/.claude/context-rules/py-code.md`   | Python style, KISS/YAGNI, typing, naming, error handling, code structure | Any `*.py` file is involved                     |
 | `~/.claude/context-rules/py-test.md`   | Testing best practices, fixtures, mocking        | Any `*.py` file under a `test/` or `tests/` directory, or any `test_*.py` / `*_test.py` file |
 | `~/.claude/context-rules/ts-code.md`   | TypeScript style, typing, naming, error handling, code structure | Any `*.ts`, `*.tsx`, `*.mts` or `*.cts` file is involved |
+| `~/.claude/context-rules/ts-test.md`   | Testing best practices, mocking boundaries, determinism | Any `*.test.*` / `*.spec.*` TypeScript file, or any TypeScript file under a `test/`, `tests/` or `e2e/` directory |
 | `~/.claude/context-rules/docs.md`      | Documentation principles, timeless writing       | Any `*.md` documentation file is involved       |
