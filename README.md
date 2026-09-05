@@ -48,6 +48,7 @@ Rule files loaded on demand by the `load-context-rules.sh` hook when Edit/Write 
 |------|-------------|-------------|
 | [py-code.md](context-rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
 | [py-test.md](context-rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
+| [ts-code.md](context-rules/ts-code.md) | TypeScript files | TypeScript style, typing, naming, error handling |
 | [docs.md](context-rules/docs.md) | Markdown files | Documentation principles, timeless writing, avoid volatile details |
 
 ### [Shared](shared/)
