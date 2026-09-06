@@ -180,6 +180,7 @@ function describe(status: OrderStatus): string {
 // App-layer — reads config internally
 async function dispatchPendingOrders(): Promise<void> {
   const threshold = config.orderThreshold;
+  /* ... */
 }
 
 // Pure/utility — takes parameters, no config dependency

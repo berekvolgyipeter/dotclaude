@@ -18,7 +18,7 @@
 - **Max class length: 200 lines**
 - **Max cyclomatic complexity: 10**
 - **Max block nesting depth: 3** — flatten deep nesting with early returns, guard clauses, or extracted helpers
-- **Max function arguments: 4** — if a function needs more, apply one of these in order of preference:
+- **Max function parameters: 4** — if a function needs more, apply one of these in order of preference:
   1. **Introduce a dataclass** — group related parameters into a named object
   2. **Promote to class state** — if the same args recur across methods, make them `__init__` parameters
   3. **Decompose the function** — if parameters belong to distinct concerns, split into smaller functions
