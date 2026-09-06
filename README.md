@@ -129,6 +129,7 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | [grill-with-docs](skills/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
+| [ts-debug](skills/ts-debug/SKILL.md) | TypeScript/Node debugging |
 | [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
 | [agent-harness](skills/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections (Archon, everything-claude-code) |
 

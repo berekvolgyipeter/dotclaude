@@ -16,7 +16,8 @@
 - **Max file length: 500 lines** — split into modules when approaching this limit
 - **Max function length: 50 lines**
 - **Max class length: 200 lines**
-- **Max cyclomatic complexity: 3** — flatten deep nesting with early returns, guard clauses, or extracted helpers
+- **Max cyclomatic complexity: 10**
+- **Max block nesting depth: 3** — flatten deep nesting with early returns, guard clauses, or extracted helpers
 - **Max function parameters: 4** — if a function needs more, apply one of these in order of preference:
   1. **Introduce an options object** — group related parameters into a single named type
   2. **Promote to class state or a closure** — if the same args recur across methods, make them constructor parameters
