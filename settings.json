@@ -247,7 +247,7 @@
     }
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "companyAnnouncements": [
     "It is recommended that each repo defines make lint, make test, and make tree targets, as user-level Claude Code workflows rely on them."
   ],

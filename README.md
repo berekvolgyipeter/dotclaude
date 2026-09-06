@@ -48,6 +48,8 @@ Rule files loaded on demand by the `load-context-rules.sh` hook when Edit/Write 
 |------|-------------|-------------|
 | [py-code.md](context-rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
 | [py-test.md](context-rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
+| [ts-code.md](context-rules/ts-code.md) | TypeScript files | TypeScript style, typing, naming, error handling |
+| [ts-test.md](context-rules/ts-test.md) | TypeScript test files | Vitest conventions, mocking boundaries, determinism, test organization |
 | [docs.md](context-rules/docs.md) | Markdown files | Documentation principles, timeless writing, avoid volatile details |
 
 ### [Shared](shared/)
@@ -127,6 +129,7 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | [grill-with-docs](skills/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
+| [ts-debug](skills/ts-debug/SKILL.md) | TypeScript/Node debugging |
 | [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
 | [agent-harness](skills/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections (Archon, everything-claude-code) |
 

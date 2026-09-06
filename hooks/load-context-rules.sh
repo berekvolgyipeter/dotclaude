@@ -19,11 +19,15 @@ esac
 RULE_NAMES=(
   "py-code"
   "py-test"
+  "ts-code"
+  "ts-test"
   "docs"
 )
 RULE_PATHS=(
   "*.py"
   "*/test/*.py|test/*.py|*/tests/*.py|tests/*.py|*/test_*.py|test_*.py|*_test.py"
+  "*.ts|*.tsx|*.mts|*.cts"
+  "*.test.ts|*.test.tsx|*.test.mts|*.test.cts|*.spec.ts|*.spec.tsx|*.spec.mts|*.spec.cts|*/test/*.ts|test/*.ts|*/tests/*.ts|tests/*.ts|*/e2e/*.ts|e2e/*.ts|*/test/*.tsx|test/*.tsx|*/tests/*.tsx|tests/*.tsx|*/e2e/*.tsx|e2e/*.tsx|*/test/*.mts|test/*.mts|*/tests/*.mts|tests/*.mts|*/e2e/*.mts|e2e/*.mts|*/test/*.cts|test/*.cts|*/tests/*.cts|tests/*.cts|*/e2e/*.cts|e2e/*.cts"
   "*.md"
 )
 
