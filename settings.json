@@ -167,6 +167,7 @@
       "Bash(launchctl *)"
     ]
   },
+  "model": "opus",
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "claude-context",
@@ -248,10 +249,16 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "medium",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    }
+  },
   "companyAnnouncements": [
     "It is recommended that each repo defines make lint, make test, and make tree targets, as user-level Claude Code workflows rely on them."
   ],
   "plansDirectory": ".claude/plans",
+  "tui": "fullscreen",
   "autoMemoryEnabled": false,
-  "model": "opus"
+  "theme": "dark"
 }

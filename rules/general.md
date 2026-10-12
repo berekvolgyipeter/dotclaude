@@ -1,5 +1,12 @@
 # Behavioral Rules
 
+## Do Only What Is Requested
+
+Do exactly what was asked — no extra items, files, or changes. Quantity and scope come from the request.
+
+❌ BAD: Asked to "add a trivia", adding three related bullets
+✅ GOOD: Adding the one bullet asked for; offering more in one line if useful
+
 ## NO GUESSING — USE TOOLS TO FIND EVIDENCE
 
 Never respond with "likely causes", "probably", or speculative answers when the answer can be found with a tool call.
@@ -21,6 +28,13 @@ Before making any edit, read the surrounding context and match its style — for
 
 ❌ BAD: Adding a raw glob pattern (`**/*.py`) to a column that uses human-readable text ("Python files")
 ✅ GOOD: Reading nearby entries first, then writing new content that matches their style
+
+## Dedicated File Tools Over Bash
+
+Read, edit and create files with the Read, Edit and Write tools — never with `cat`, `head`, `tail`, `sed`, `awk`, `echo` or heredocs, even when the harness allows Bash for file work. Bash is for running commands; Grep/Glob for searching.
+
+❌ BAD: `cat notes.md` to read, `cat >> notes.md <<'EOF'` to append
+✅ GOOD: Read `notes.md`, then Edit it to add the line
 
 ## Check Before Implementing
 
