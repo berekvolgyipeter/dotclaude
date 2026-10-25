@@ -107,13 +107,6 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [/refine-plan](commands/plan/refine-plan.md) | Refine a plan in place — check logical correctness and rule compliance, then edit the plan to fix issues |
 | [/execute-plan](commands/plan/execute-plan.md) | Execute a plan test-first — internalize, sequence the work, implement via the tdd red-green-refactor loop, validate, and verify |
 
-**[parallel/](commands/parallel/)**
-
-| Command | Description |
-|---------|-------------|
-| [/prep-parallel](commands/parallel/prep-parallel.md) | Set up worktrees for parallel Claude Code agents |
-| [/execute-parallel](commands/parallel/execute-parallel.md) | Run parallel task execution |
-
 ### [Skills](skills/)
 
 Skills must live flat under `skills/` — Claude Code only discovers a skill whose `SKILL.md` is one level deep, so there are no subdirectories to group by.
@@ -289,8 +282,6 @@ project/.claude/
 ├── rules/                 # project-specific rules only (if any)
 └── skills/                # project-specific skills only (if any)
 ```
-
-Use `template.CLAUDE.md` and `template.mcp.json` from this repo as starters when setting up a new project.
 
 ## Conventions
 
