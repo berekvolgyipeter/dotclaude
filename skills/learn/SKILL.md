@@ -61,6 +61,8 @@ Decide whether a learning is **universal** (applies to all projects → user-lev
 
 This includes the learn skill itself — if the learning process was suboptimal, update its SKILL.md.
 
+**New user-level files:** each entry under `~/.claude/<dir>/` is a symlink into the dotclaude repo, so edits to existing files through `~/.claude/` land in the repo, but a newly created top-level file would not. Create new user-level files at the repo path instead — the repo root is two levels above `readlink -f ~/.claude/skills/learn` — then run `make install` in the repo.
+
 ### Step 4: Formulate Updates
 
 For substantial rewrites of skill, command, or agent instructions, invoke the `prompt-engineering` skill to ensure the new content follows best practices for AI prompt design. For simple additions like a single rule line in CLAUDE.md, just match the existing style — the overhead of invoking another skill isn't worth it for small changes.

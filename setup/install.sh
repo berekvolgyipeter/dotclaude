@@ -2,76 +2,62 @@
 # Abort on any error (-e), undefined variable (-u), or failed pipe (-o pipefail)
 set -euo pipefail
 
-# Resolve the repo root (one level up from this script's directory)
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CLAUDE_DIR="$HOME/.claude"
+# Idempotent: prints only what it changed or what blocks a link, so it is
+# silent when everything is already in place. Also run on every session start
+# by hooks/sync-links.sh, possibly by several sessions at once.
 
-# Directories and files to symlink into ~/.claude/
-DIRS=(rules context-rules commands agents skills output-styles templates hooks scripts shared)
-FILES=(settings.json)
+# shellcheck source=setup/lib/targets.sh
+source "$(dirname "${BASH_SOURCE[0]}")/lib/targets.sh"
 
-# Create ~/.claude/ if it doesn't exist yet
-mkdir -p "$CLAUDE_DIR"
-
-# --- Symlink directories ---
-# Each directory (e.g. skills/) becomes a symlink in ~/.claude/ pointing
-# back to this repo. Because the entire directory is symlinked, any new
-# file added to the repo automatically appears in ~/.claude/.
+# --- Link directory entries ---
+# ~/.claude/<dir>/ is a real directory shared with whatever Claude Code ships
+# there itself (e.g. skills/synced/). Each top-level entry of the repo's <dir>/
+# gets its own symlink inside it, so built-in content is never shadowed.
 for dir in "${DIRS[@]}"; do
-    target="$CLAUDE_DIR/$dir"       # where the symlink will be created
-    source="$REPO_DIR/$dir"         # what the symlink points to
+    target_dir="$CLAUDE_DIR/$dir"
+    mkdir -p "$target_dir"
 
-    # Skip if the directory doesn't exist in this repo
-    if [ ! -d "$source" ]; then
-        echo "SKIP: $source does not exist in repo"
-        continue
-    fi
+    # Remove dangling repo links: entries deleted from the repo
+    for target in "$target_dir"/*; do
+        if [ -L "$target" ] && [ ! -e "$target" ] && links_into_repo "$target"; then
+            rm -f "$target"
+            echo "Removed: ~/.claude/$dir/$(basename "$target")"
+        fi
+    done
 
-    # If a symlink already exists, remove it (we'll recreate it below)
-    if [ -L "$target" ]; then
-        rm "$target"
-    # If it's a real directory (not a symlink), don't overwrite — user must handle it
-    elif [ -d "$target" ]; then
-        echo "WARNING: $target is a real directory, not a symlink. Skipping."
-        echo "  Back it up and remove it manually, then re-run."
-        continue
-    fi
+    # Link each entry (dotfiles are skipped by the glob)
+    for source in "$REPO_DIR/$dir"/*; do
+        name="$(basename "$source")"
+        target="$target_dir/$name"
 
-    # Create the symlink: ~/.claude/skills -> /path/to/dotclaude/skills
-    ln -s "$source" "$target"
-    echo "Linked: $target -> $source"
+        if [ "$(readlink "$target")" = "$source" ]; then
+            continue
+        elif links_into_repo "$target"; then
+            rm -f "$target"
+        elif [ -e "$target" ]; then
+            echo "WARNING: ~/.claude/$dir/$name already exists and is not linked to this repo. Skipping."
+            continue
+        fi
+
+        ln -sfn "$source" "$target"
+        echo "Linked: ~/.claude/$dir/$name"
+    done
 done
 
-# --- Symlink individual files ---
-# Files can live in the repo root (e.g. settings.json) or in setup/.
-# We check both locations.
-SETUP_DIR="$REPO_DIR/setup"
+# --- Link individual files ---
 for file in "${FILES[@]}"; do
-    target="$CLAUDE_DIR/$file"      # where the symlink will be created
+    source="$REPO_DIR/$file"
+    target="$CLAUDE_DIR/$file"
+    [ "$(readlink "$target")" = "$source" ] && continue
 
-    # Find the file: check repo root first, then setup/ directory
-    if [ -f "$REPO_DIR/$file" ]; then
-        source="$REPO_DIR/$file"
-    elif [ -f "$SETUP_DIR/$file" ]; then
-        source="$SETUP_DIR/$file"
-    else
-        echo "SKIP: $file not found in repo"
-        continue
-    fi
-
-    # If a symlink already exists, remove it (we'll recreate it below)
-    if [ -L "$target" ]; then
-        rm "$target"
-    # If it's a real file, back it up with a timestamp before replacing
-    elif [ -f "$target" ]; then
+    # Back up a real file with a timestamp before replacing it
+    if [ -f "$target" ] && [ ! -L "$target" ]; then
         backup="$target.backup.$(date +%Y%m%d%H%M%S)"
-        echo "Backing up existing $target -> $backup"
-        mv "$target" "$backup"
+        # A concurrent run may have already moved it
+        mv "$target" "$backup" 2>/dev/null || [ ! -f "$target" ] || [ -L "$target" ]
+        echo "Backed up: ~/.claude/$file -> $(basename "$backup")"
     fi
 
-    # Create the symlink
-    ln -s "$source" "$target"
-    echo "Linked: $target -> $source"
+    ln -sfn "$source" "$target"
+    echo "Linked: ~/.claude/$file"
 done
-
-echo "Done. All symlinks are in place."

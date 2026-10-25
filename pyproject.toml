@@ -1,0 +1,13 @@
+[project]
+name = "dotclaude"
+version = "0.1.0"
+description = "Shared Claude Code configuration"
+requires-python = ">=3.12"
+dependencies = [
+    "python-dotenv>=1.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.17",
+]

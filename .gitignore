@@ -6,3 +6,4 @@
 .claude/tmp/
 .scratch/
 *cache/
+uv.lock

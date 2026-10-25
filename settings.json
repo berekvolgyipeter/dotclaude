@@ -170,6 +170,17 @@
     "context7"
   ],
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/sync-links.sh"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Read|Grep|Glob",
@@ -208,7 +219,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $HOME/.claude/hooks/stop-lint-and-test.sh"
+            "command": "bash $HOME/.claude/hooks/lint-and-test.sh"
           }
         ]
       }
