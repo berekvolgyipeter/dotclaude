@@ -47,7 +47,7 @@ Work through each. For every finding, cite `file:line`, quote the rule it breaks
 
 ### 3. Claude Code best practices
 
-- Frontmatter and hook/command/agent config use **only valid keys and schemas** — verify against the official docs when unsure (use the `claude-code` skill); do not guess.
+- Frontmatter and hook/command/agent config use **only valid keys and schemas** — verify against the official docs when unsure (use the `claude-code-guide` agent); do not guess.
 - Symlink scope respected: repo root = user-level (symlinked to `~/.claude/`); the `.claude/` directory = project-level for this repo only.
 
 ### 4. Internal consistency

@@ -123,8 +123,6 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
 | [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
 | [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
-| [claude-code](skills/claude-code/SKILL.md) | Claude Code configuration & troubleshooting |
-| [claude-agent-sdk](skills/claude-agent-sdk/SKILL.md) | Agent SDK implementation patterns |
 | [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
 | [grill-with-docs](skills/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
