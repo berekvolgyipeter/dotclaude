@@ -135,7 +135,6 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 
 | Agent | Description |
 |-------|-------------|
-| [validation-gates](agents/validation-gates.md) | Runs tests and iterates on fixes until they pass |
 | [documentation-manager](agents/documentation-manager.md) | Keeps docs in sync with code changes |
 
 **[review/](agents/review/)**
