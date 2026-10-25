@@ -1,6 +1,6 @@
-LINT_EXCLUDE := .git .venv skills/skill-creator
+LINT_EXCLUDE := .git .venv
 
-.PHONY: install uninstall fetch-skill-creator python-deps lint tree
+.PHONY: install uninstall python-deps lint tree
 
 # Symlink dirs and files into ~/.claude/
 install:
@@ -10,11 +10,7 @@ install:
 uninstall:
 	bash setup/uninstall.sh
 
-# Clone skill-creator from anthropics/skills
-fetch-skill-creator:
-	bash setup/fetch-skill-creator.sh
-
-# Install Python dependencies (anthropic, pyyaml, requests, etc.)
+# Install Python dependencies (pyyaml, python-dotenv, ruff)
 python-deps:
 	bash setup/install-python-deps.sh
 

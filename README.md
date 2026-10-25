@@ -115,7 +115,6 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 |-------|-------------|
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
 | [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
-| [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
 | [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
 | [grill-with-docs](skills/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
@@ -249,15 +248,9 @@ make uninstall
 
 Removes only symlinks created by `install.sh`. Real directories and files are left untouched. If a backup exists for a file, the most recent backup is restored.
 
-## Fetching Vendored Skills
+## Python Dependencies
 
-`skill-creator` is gitignored because it's a large vendored skill. To fetch it:
-
-```bash
-make fetch-skill-creator
-```
-
-Some skills require Python dependencies:
+Scripts, linting, and some skills require Python dependencies:
 
 ```bash
 make python-deps

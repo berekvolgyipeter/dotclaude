@@ -2,8 +2,8 @@
 # Abort on any error (-e), undefined variable (-u), or failed pipe (-o pipefail)
 set -euo pipefail
 
-# Python packages needed by skills (e.g. skill-creator uses anthropic + pyyaml)
-DEPS=(anthropic pyyaml requests python-dotenv ruff)
+# Python packages: pyyaml (skill-creator's quick_validate.py), python-dotenv (scripts/index_codebase.py), ruff (make lint)
+DEPS=(pyyaml python-dotenv ruff)
 
 # Try package managers in order of preference: uv (fastest), pip3, pip
 # "command -v" checks if a command exists; "&>/dev/null" hides the output
