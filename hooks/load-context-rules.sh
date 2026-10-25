@@ -57,7 +57,7 @@ done
 [ "$match_found" = true ] || exit 0
 
 # Resolve dotclaude repo path (works even when invoked via ~/.claude/ symlink)
-DOTCLAUDE_REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd "$(pwd -P)/.." && pwd -P)"
+DOTCLAUDE_REPO="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd -P)"
 
 # Format the dedup marker for a given rule name
 rule_marker() {

@@ -35,9 +35,9 @@ approve() {
 
 # --- Whitelists ---
 
-# Resolve the real repo path even when invoked via ~/.claude/hooks/ symlink,
+# Resolve the real repo path even when invoked via the ~/.claude/hooks/ symlink,
 # so paths match regardless of whether Claude uses the symlink or repo path.
-DOTCLAUDE_REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd "$(pwd -P)/.." && pwd -P)"
+DOTCLAUDE_REPO="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd -P)"
 
 # Global ~/.claude/ directories that Read, Grep, and Glob may access.
 # These house the shared config managed by the dotclaude repo.

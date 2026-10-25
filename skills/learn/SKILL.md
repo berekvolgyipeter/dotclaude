@@ -12,7 +12,7 @@ A single offhand correction in an otherwise smooth conversation may not warrant 
 ## Analysis Process
 
 Learnings live at two levels:
-- **User-level** (`~/.claude/`) — shared across all projects (rules, skills, commands, agents, output styles, templates)
+- **User-level** (`~/.claude/`) — shared across all projects (rules, context rules, skills, commands, agents, hooks, output styles, templates)
 - **Project-level** (`.claude/`) — specific to the current project (CLAUDE.md, rules, skills, commands, agents)
 
 ### Step 1: Scan for Learnings
@@ -22,7 +22,7 @@ Examine the conversation for learning signals and identify rule gaps in a single
 - **User corrections**: "Actually, you should...", "No, the correct way is...", "Don't do X, do Y instead" — includes cases where the user had to repeat themselves or rephrase
 - **Agent mistakes**: Repeated errors, wrong assumptions, misunderstandings, or violations of existing rules (needs new rule or emphasis/clarification of existing one)
 - **Emergent patterns**: Something worked well that should be documented, or a workflow crystallized that future sessions would benefit from. Positive learnings go to the same target files as fixes — add them as recommended patterns rather than corrective rules.
-- **Tool invocations**: Instances of `Skill` tool calls (skills/commands) and `Task` tool calls (agents) — these feed into Step 2
+- **Tool invocations**: Instances of `Skill` tool calls (skills/commands) and `Agent` tool calls (agents) — these feed into Step 2
 
 ### Step 2: Evaluate Used Skills, Commands, and Agents
 
@@ -32,7 +32,7 @@ Scan the conversation for any invocations of custom tools:
 
 **Commands** — slash command invocations like `/fix-review`, `/to-plan`, etc., which expand via the `Skill` tool
 
-**Agents** — `Task` tool calls where `subagent_type` matches a name in `~/.claude/agents/` or `.claude/agents/`
+**Agents** — `Agent` tool calls where `subagent_type` matches a name in `~/.claude/agents/` or `.claude/agents/`
 
 Also consider skills that the user *expected* to use but didn't trigger — a missing trigger is itself a learning (update the description to cover the missed context).
 
@@ -60,6 +60,8 @@ Decide whether a learning is **universal** (applies to all projects → user-lev
 - **Output style** → `output-styles/<name>.md` — only when an output style was active and the learning is about its communication contract (verbosity, tone, default response/comment format). Generic communication preferences with no active style belong in a rule file instead.
 
 This includes the learn skill itself — if the learning process was suboptimal, update its SKILL.md.
+
+**New user-level files:** each entry under `~/.claude/<dir>/` is a symlink into the dotclaude repo, so edits to existing files through `~/.claude/` land in the repo, but a newly created top-level file would not. Create new user-level files at the repo path instead — the repo root is two levels above `readlink -f ~/.claude/skills/learn` — then run `make install` in the repo.
 
 ### Step 4: Formulate Updates
 
@@ -150,7 +152,7 @@ Rule files accumulate institutional knowledge that's hard to reconstruct, so tre
 
 **Scenario 1: Agent repeatedly used wrong import pattern**
 - Learning: Agent imported from wrong module despite correction
-- Target: The relevant language-specific rule file (e.g., `~/.claude/rules/<language>.md`)
+- Target: The relevant language-specific context rule (e.g., `~/.claude/context-rules/<language>-code.md`)
 - Update: Add specific import convention with correct example
 
 **Scenario 2: Agent missed project-specific pattern**
