@@ -293,7 +293,7 @@ project/.claude/
 └── skills/                # project-specific skills only (if any)
 ```
 
-Use `template.CLAUDE.md`, `template.mcp.json`, and `template.serena.project.yml` from this repo as starters when setting up a new project.
+Use `template.CLAUDE.md` and `template.mcp.json` from this repo as starters when setting up a new project.
 
 ## Conventions
 
