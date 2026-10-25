@@ -22,6 +22,8 @@ Symlinking into `~/.claude/` and version-controlling everything in git turns thi
 
 ```mermaid
 flowchart LR
+    Start([Session start]) --> Sync[SessionStart hook]
+    Sync -->|link new repo entries| Claude
     User([User prompt]) --> Claude
     Claude -->|tool call| Pre[PreToolUse hooks]
     Pre -->|load context rules<br/>auto-approve reads<br/>block destructive ops| Tool[Tool execution]
@@ -107,13 +109,6 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [/refine-plan](commands/plan/refine-plan.md) | Refine a plan in place — check logical correctness and rule compliance, then edit the plan to fix issues |
 | [/execute-plan](commands/plan/execute-plan.md) | Execute a plan test-first — internalize, sequence the work, implement via the tdd red-green-refactor loop, validate, and verify |
 
-**[parallel/](commands/parallel/)**
-
-| Command | Description |
-|---------|-------------|
-| [/prep-parallel](commands/parallel/prep-parallel.md) | Set up worktrees for parallel Claude Code agents |
-| [/execute-parallel](commands/parallel/execute-parallel.md) | Run parallel task execution |
-
 ### [Skills](skills/)
 
 Skills must live flat under `skills/` — Claude Code only discovers a skill whose `SKILL.md` is one level deep, so there are no subdirectories to group by.
@@ -122,9 +117,6 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 |-------|-------------|
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
 | [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
-| [skill-creator](skills/skill-creator/) | Create & benchmark skills (vendored, gitignored) |
-| [claude-code](skills/claude-code/SKILL.md) | Claude Code configuration & troubleshooting |
-| [claude-agent-sdk](skills/claude-agent-sdk/SKILL.md) | Agent SDK implementation patterns |
 | [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
 | [grill-with-docs](skills/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
@@ -137,7 +129,6 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 
 | Agent | Description |
 |-------|-------------|
-| [validation-gates](agents/validation-gates.md) | Runs tests and iterates on fixes until they pass |
 | [documentation-manager](agents/documentation-manager.md) | Keeps docs in sync with code changes |
 
 **[review/](agents/review/)**
@@ -154,9 +145,10 @@ Event-driven shell scripts registered in `settings.json`, or scoped to a single 
 
 | Hook | Event | Description |
 |------|-------|-------------|
+| [sync-links.sh](hooks/sync-links.sh) | `SessionStart` | Re-runs `setup/install.sh` on session startup/resume so entries added to or removed from the repo are linked into `~/.claude/`. Silent unless a link changed or is blocked by an existing entry |
 | [auto-approve-claude-dir.sh](hooks/auto-approve-claude-dir.sh) | `PreToolUse` | Auto-approves Read, Grep, and Glob operations on `.claude/` paths |
 | [load-context-rules.sh](hooks/load-context-rules.sh) | `PreToolUse` | Loads context rules from `context-rules/` on first Edit/Write per session when the target file matches a rule's glob pattern. Deduplicates via transcript markers. Skipped when `DOTCLAUDE_DISABLE_CONTEXT_RULES_HOOK` is set to `1`/`true` |
-| [stop-lint-and-test.sh](hooks/stop-lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools on non-gitignored files. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
+| [lint-and-test.sh](hooks/lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools on non-gitignored files. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
 | [block-rm-rf.sh](hooks/block-rm-rf.sh) | `PreToolUse` | Blocks destructive `rm -rf` and `rm -fr` Bash commands |
 | [block-push-to-main.sh](hooks/block-push-to-main.sh) | `PreToolUse` | Blocks direct `git push` to the `main` branch |
 | [block-git-mutations.sh](hooks/block-git-mutations.sh) | `PreToolUse` | Blocks state-mutating `git` commands. Scoped via the `hooks` frontmatter of the read-only review commands (`pr-review`, `pr-review-diff`, `delta-review`, `delta-review-diff`), so it fires only while one of those is active |
@@ -245,11 +237,13 @@ The claude-context MCP server (configured in `.mcp.json`) needs:
 make install
 ```
 
-This runs `setup/install.sh`, which symlinks directories and files from this repo into `~/.claude/`:
-- **Directories**: `rules/`, `context-rules/`, `commands/`, `agents/`, `skills/`, `output-styles/`, `templates/`, `hooks/`, `scripts/`, `shared/`
+This runs `setup/install.sh`, which symlinks this repo into `~/.claude/` (the lists live in `setup/lib/targets.sh`):
+- **Directory entries**: each top-level entry of a linked directory gets its own symlink inside a real `~/.claude/<dir>/` (e.g. `~/.claude/skills/tdd -> repo/skills/tdd`). Content Claude Code ships into those directories itself, such as `skills/synced/`, lives alongside and is never touched.
 - **Files**: `settings.json`
 
-If a real (non-symlink) directory or file already exists at the target, the script warns and skips it. Existing files are backed up with a timestamp before being replaced. Safe to re-run.
+Dangling links to entries removed from the repo are pruned; run `make uninstall` before moving the repo, or its old links are left behind. If a non-repo entry with the same name already exists, the script warns and skips it. An existing real `settings.json` is backed up with a timestamp before being replaced.
+
+The script prints only what it changed, so it is safe to re-run — and the `sync-links.sh` `SessionStart` hook re-runs it on every session startup and resume, so new entries are picked up automatically from the next session on.
 
 ## Uninstallation
 
@@ -257,25 +251,23 @@ If a real (non-symlink) directory or file already exists at the target, the scri
 make uninstall
 ```
 
-Removes only symlinks created by `install.sh`. Real directories and files are left untouched. If a backup exists for a file, the most recent backup is restored.
+Removes only symlinks pointing into this repo, then any `~/.claude/<dir>/` left empty. Everything else is left untouched. If a backup exists for a file, the most recent backup is restored.
 
-## Fetching Vendored Skills
+## Development Dependencies
 
-`skill-creator` is gitignored because it's a large vendored skill. To fetch it:
-
-```bash
-make fetch-skill-creator
-```
-
-Some skills require Python dependencies:
+Scripts and linting require Python dependencies, declared in `pyproject.toml` and managed with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-make python-deps
+uv sync
 ```
+
+`make lint` also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`).
 
 ## Editing Workflow
 
-Because `~/.claude/` directories are symlinks into this repo, editing any file in `~/.claude/rules/`, `~/.claude/skills/`, etc. is editing the real file here. Changes are immediately visible in all projects.
+Because the entries in `~/.claude/` are symlinks into this repo, editing any file in `~/.claude/rules/`, `~/.claude/skills/`, etc. is editing the real file here. Changes are immediately visible in all projects.
+
+Create **new** top-level entries (a rule, skill, agent, hook, …) in this repo, not under `~/.claude/` — a file created there is not in the repo. They are linked at the next session start, or immediately with `make install`.
 
 Commit and push from this repo to version-control shared config. No need to touch project repos when updating shared configuration.
 
@@ -292,8 +284,6 @@ project/.claude/
 ├── rules/                 # project-specific rules only (if any)
 └── skills/                # project-specific skills only (if any)
 ```
-
-Use `template.CLAUDE.md`, `template.mcp.json`, and `template.serena.project.yml` from this repo as starters when setting up a new project.
 
 ## Conventions
 

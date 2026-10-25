@@ -30,12 +30,7 @@
       "mcp__claude-context__get_indexing_status",
       "mcp__claude-context__search_code",
       "mcp__context7__query-docs",
-      "mcp__context7__resolve-library-id",
-      "mcp__sequential-thinking__sequentialthinking",
-      "mcp__serena__find_symbol",
-      "mcp__serena__find_referencing_symbols",
-      "mcp__serena__get_symbols_overview",
-      "mcp__serena__search_for_pattern"
+      "mcp__context7__resolve-library-id"
     ],
     "deny": [
       "Bash(rm -rf *)",
@@ -172,11 +167,20 @@
   "enableAllProjectMcpServers": false,
   "enabledMcpjsonServers": [
     "claude-context",
-    "context7",
-    "sequential-thinking",
-    "serena"
+    "context7"
   ],
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/sync-links.sh"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Read|Grep|Glob",
@@ -215,7 +219,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $HOME/.claude/hooks/stop-lint-and-test.sh"
+            "command": "bash $HOME/.claude/hooks/lint-and-test.sh"
           }
         ]
       }
