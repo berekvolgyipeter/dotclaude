@@ -3,41 +3,82 @@
         {
             "github": "coleam00/archon",
             "local_path": "~/.claude/skills-references/agent-harness/coleam00-archon",
-            "description": "Archon is an AI agent that builds, refines, and iterates on other AI agents. It serves as an agentic coding assistant and meta-agent harness — given a description, it generates fully functional agents using the Pydantic AI framework with MCP server support, iterative refinement loops, and a Streamlit-based UI for agent development workflows.",
+            "description": "Archon is a self-hosted workflow engine (\"factory builder\") for AI coding agents. Processes are written as YAML workflow graphs whose nodes are agent prompts, bash commands, scripts, loops, human-approval waits, or child workflows; Archon runs them through existing agent CLIs/SDKs such as Claude Code. Features queues and triggers that keep runs moving, attention items that pause a run only for decisions a human owns, per-run git worktree isolation, approval gates, full event logs, transcripts and cost tracking in a local database, and chat and code-host adapters. Ships a bundled SDLC workflow pack that takes an issue to a merged PR.",
             "topics": [
-                "agent-builder",
-                "meta-agent",
-                "pydantic-ai",
-                "mcp",
+                "workflow-engine",
+                "yaml-workflows",
                 "orchestration",
-                "iterative-refinement",
-                "streamlit"
+                "sdlc",
+                "human-in-the-loop",
+                "git-worktrees",
+                "multi-harness",
+                "self-hosted"
             ],
             "content_types": [
                 "agents",
                 "frameworks",
                 "workflows"
+            ],
+            "sparse": [
+                "/README.md",
+                "/CLAUDE.md",
+                "/AGENTS.md",
+                "/.archon/*.md",
+                "/.archon/commands/",
+                "/.archon/workflows/",
+                "!/.archon/workflows/**/fixtures/",
+                "!/.archon/workflows/e2e-*",
+                "!/.archon/workflows/rasmus-tests/",
+                "/.claude/skills/",
+                "/.claude/agents/",
+                "/.claude/commands/",
+                "/packages/docs-web/src/content/",
+                "/examples/",
+                "/plugins/"
             ]
         },
         {
-            "github": "affaan-m/everything-claude-code",
-            "local_path": "~/.claude/skills-references/agent-harness/affaan-m-everything-claude-code",
-            "description": "A curated collection of Claude Code resources, tips, configurations, and best practices. Aggregates prompts, CLAUDE.md templates, hooks, MCP server setups, workflow patterns, and community knowledge for getting the most out of Claude Code as an AI coding assistant.",
+            "github": "affaan-m/ECC",
+            "local_path": "~/.claude/skills-references/agent-harness/affaan-m-ecc",
+            "description": "ECC (formerly everything-claude-code) by Affaan Mustafa — an \"agent harness operating system\" shipped as a Claude Code plugin. Bundles a large set of agents (planning, review, build repair, security, architecture, domain work), skills (TDD, research, security, docs, frontend, data, ML, operations), command shims, per-language rule sets, hooks and memory with session summaries, continuous learning and instincts, MCP configs, and AgentShield security scanning for prompts, hooks, MCP, permissions, and secrets. Adapters extend it to other agent harnesses; also includes long-form usage and security guides.",
             "topics": [
                 "claude-code",
-                "resources",
-                "prompts",
-                "configuration",
-                "mcp",
+                "agent-harness",
+                "agents",
+                "skills",
                 "hooks",
-                "best-practices",
-                "community"
+                "rules",
+                "memory",
+                "continuous-learning",
+                "security-scanning",
+                "multi-harness"
             ],
             "content_types": [
-                "resources",
-                "templates",
+                "agents",
+                "skills",
+                "commands",
+                "hooks",
+                "rules",
                 "configurations",
                 "guides"
+            ],
+            "sparse": [
+                "/.claude-plugin/",
+                "/agents/",
+                "/skills/",
+                "/commands/",
+                "/rules/",
+                "/hooks/",
+                "/contexts/",
+                "/mcp-configs/",
+                "/docs/*.md",
+                "/docs/architecture/",
+                "/docs/security/",
+                "/docs/design/",
+                "/the-*-guide.md",
+                "/README.md",
+                "/CLAUDE.md",
+                "/AGENTS.md"
             ]
         }
     ]

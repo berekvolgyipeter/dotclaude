@@ -9,16 +9,12 @@ The skill uses local clones of curated repos for semantic search. Run the two se
 ### 1. Clone reference repos
 
 ```sh
-bash ~/.claude/skills/agent-harness/scripts/clone-references.sh
+bash ~/.claude/skills/agent-harness/scripts/sync-references.sh
 ```
 
-This clones all tracked repositories into `~/.claude/skills-references/agent-harness/`. Each repo is cloned with sparse checkout, excluding irrelevant content (CI configs, license files, etc.) to keep the index lean.
+This clones every repo listed in `references/catalog.json` into `~/.claude/skills-references/agent-harness/`, or pulls it if already present. Each catalog entry's `sparse` patterns limit the checkout to content worth searching (skills, agents, docs) and leave out noise such as tests, CI, and source code; an entry without `sparse` is checked out in full. The patterns are reapplied on every run.
 
-To add or update an individual repo, run its script directly:
-
-```sh
-bash ~/.claude/skills/agent-harness/scripts/clone-references/clone-coleam00-archon.sh
-```
+To add a repo, add an entry to the catalog and re-run the script.
 
 ### 2. Index for semantic search
 
@@ -32,9 +28,12 @@ This indexes the cloned repos via the `claude-context` MCP server, making them a
 
 ## Updating
 
-Re-run both scripts to pull the latest content and rebuild the index:
+Run `/refresh-references` every once in a while. It syncs the repos, audits them against upstream, refines the catalog's sparse patterns and descriptions, and re-indexes.
+
+To only check for upstream layout changes, run the audit:
 
 ```sh
-bash ~/.claude/skills/agent-harness/scripts/clone-references.sh
-bash ~/.claude/skills/agent-harness/scripts/index-references.sh
+bash ~/.claude/skills/agent-harness/scripts/audit-references.sh
 ```
+
+It reports stale sparse patterns, top-level entries added or removed since the previous audit with their checked-out/excluded file counts, and clones no catalog entry owns.

@@ -109,6 +109,12 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [/refine-plan](commands/plan/refine-plan.md) | Refine a plan in place — check logical correctness and rule compliance, then edit the plan to fix issues |
 | [/execute-plan](commands/plan/execute-plan.md) | Execute a plan test-first — internalize, sequence the work, implement via the tdd red-green-refactor loop, validate, and verify |
 
+**[skill-references/](commands/skill-references/)**
+
+| Command | Description |
+|---------|-------------|
+| [/refresh-references](commands/skill-references/refresh-references.md) | Sync and audit the plugin-browser and agent-harness reference repos against upstream, then refine each catalog's sparse patterns and descriptions and re-index |
+
 ### [Skills](skills/)
 
 Skills must live flat under `skills/` — Claude Code only discovers a skill whose `SKILL.md` is one level deep, so there are no subdirectories to group by.
@@ -123,7 +129,7 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
 | [ts-debug](skills/ts-debug/SKILL.md) | TypeScript/Node debugging |
 | [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
-| [agent-harness](skills/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections (Archon, everything-claude-code) |
+| [agent-harness](skills/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections from multiple indexed repos |
 
 ### [Agents](agents/)
 
@@ -171,6 +177,7 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 |------|-------------|
 | [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
 | [index_codebase.py](scripts/index_codebase.py) | Indexes codebase for the claude-context MCP server |
+| [skill_references.py](scripts/skill_references.py) | Syncs a skill's catalog-listed reference repos with their sparse patterns, or audits them for upstream layout changes |
 
 **[review/](scripts/review/)**
 
@@ -286,7 +293,7 @@ project/.claude/
 - [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns; interface-as-contract documentation
 - [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern
 - [coleam00/archon](https://github.com/coleam00/archon) — agent-harness skill reference repo
-- [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) — agent-harness skill reference repo
+- [affaan-m/ECC](https://github.com/affaan-m/ECC) — agent-harness skill reference repo
 - [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills (tdd, grill-with-docs, improve-codebase-architecture) and the `/to-plan` command
 - [ghostsecurity/skills](https://github.com/ghostsecurity/skills) — codebase exploration heuristics
 - [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns
