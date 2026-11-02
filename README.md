@@ -26,7 +26,7 @@ flowchart LR
     Sync -->|link new repo entries| Claude
     User([User prompt]) --> Claude
     Claude -->|tool call| Pre[PreToolUse hooks]
-    Pre -->|load context rules<br/>auto-approve reads<br/>block destructive ops| Tool[Tool execution]
+    Pre -->|load context rules<br/>block destructive ops| Tool[Tool execution]
     Tool --> Claude
     Claude -.turn ends.-> Stop[Stop hook]
     Stop -->|make lint + make test| Claude
@@ -152,7 +152,6 @@ Event-driven shell scripts registered in `settings.json`, or scoped to a single 
 | Hook | Event | Description |
 |------|-------|-------------|
 | [sync-links.sh](hooks/sync-links.sh) | `SessionStart` | Re-runs `setup/install.sh` on session startup/resume so entries added to or removed from the repo are linked into `~/.claude/`. Silent unless a link changed or is blocked by an existing entry |
-| [auto-approve-claude-dir.sh](hooks/auto-approve-claude-dir.sh) | `PreToolUse` | Auto-approves Read, Grep, and Glob operations on `.claude/` paths |
 | [load-context-rules.sh](hooks/load-context-rules.sh) | `PreToolUse` | Loads context rules from `context-rules/` on first Edit/Write per session when the target file matches a rule's glob pattern. Deduplicates via transcript markers. Skipped when `DOTCLAUDE_DISABLE_CONTEXT_RULES_HOOK` is set to `1`/`true` |
 | [lint-and-test.sh](hooks/lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools on non-gitignored files. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
 | [block-git-mutations.sh](hooks/block-git-mutations.sh) | `PreToolUse` | Blocks state-mutating `git` commands. Scoped via the `hooks` frontmatter of the read-only review commands (`pr-review`, `pr-review-diff`, `delta-review`, `delta-review-diff`), so it fires only while one of those is active |
@@ -198,7 +197,7 @@ Shared permissions, preferences, and security posture. Built for auto mode: the 
 - **The machine stays untouched** — system settings, services, shell config, and package installs outside the project prompt or are denied.
 - **No phoning home** — telemetry and error reporting are off.
 
-Tools that can't work inside the sandbox run outside it, and Claude's package caches are kept separate from yours.
+Only a listed set of tools that can't work inside the sandbox run outside it — Claude can't take any other command out of the sandbox on its own — and Claude's package caches are kept separate from yours. Skill reference repos under `~/.claude/skills-references/` are readable and writable from the sandbox, so their sync and audit scripts run from any project.
 
 ## How It Works
 

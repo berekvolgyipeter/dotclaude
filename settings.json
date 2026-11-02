@@ -104,7 +104,6 @@
       "Read(~/.netrc)"
     ],
     "ask": [
-      "Bash(dangerouslyDisableSandbox:true)",
       "Bash(git push *)",
       "Bash(git remote *)",
       "Bash(git filter-branch *)",
@@ -180,15 +179,6 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Read|Grep|Glob",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $HOME/.claude/hooks/auto-approve-claude-dir.sh"
-          }
-        ]
-      },
-      {
         "matcher": "Edit|Write",
         "hooks": [
           {
@@ -219,8 +209,9 @@
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
-    "allowUnsandboxedCommands": true,
+    "allowUnsandboxedCommands": false,
     "excludedCommands": [
+      "make install",
       "git fetch *",
       "git pull *",
       "git push *",
@@ -248,9 +239,12 @@
       "allowAllUnixSockets": false
     },
     "filesystem": {
-      "allowWrite": [],
+      "allowWrite": [
+        "~/.claude/skills-references"
+      ],
       "allowRead": [
-        "~/.ssh/known_hosts"
+        "~/.ssh/known_hosts",
+        "~/.claude/skills-references"
       ]
     },
     "credentials": {
