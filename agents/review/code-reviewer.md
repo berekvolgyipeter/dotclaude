@@ -4,8 +4,8 @@ description: "Focused code reviewer for batches of changed files. Reads diffs an
 model: sonnet
 tools:
   - "Read"
-  - "Grep"
-  - "Glob"
+  - "Bash(grep *)"
+  - "Bash(find *)"
   - "Bash(git diff *)"
   - "Bash(git show *)"
 ---

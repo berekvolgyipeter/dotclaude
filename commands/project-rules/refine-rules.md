@@ -3,7 +3,7 @@ name: refine-rules
 description: Audit existing `.claude/rules/*.md` files and apply a minimal delta — modify, split, merge, remove, or add — keeping the CLAUDE.md progressive-disclosure table in sync
 disable-model-invocation: true
 model: opus
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash(make *), Bash(ls *), Bash(rm *), AskUserQuestion
+allowed-tools: Read, Write, Edit, Bash(grep *), Bash(find *), Bash(make *), Bash(ls *), Bash(rm *), AskUserQuestion
 ---
 
 # Refine Per-Module Rule Files
@@ -14,13 +14,13 @@ Audit the existing `.claude/rules/*.md` files, propose a **minimal delta** again
 
 **These files are prompts, not docs.** Each rule is read by Claude Code, and once loaded its contents stay in context for the rest of the session. Every line is a recurring token cost on every following turn. Treat each rule file with the discipline of a system prompt: ruthlessly concise, architectural, and free of anything a future reader could derive from the source.
 
-**Mode check.** This command assumes existing rule files. If `.claude/rules/` doesn't exist or `Glob` on `.claude/rules/*.md` returns nothing, stop and tell the user to run `/init-rules` instead.
+**Mode check.** This command assumes existing rule files. If `.claude/rules/` doesn't exist or `.claude/rules/*.md` matches nothing, stop and tell the user to run `/init-rules` instead.
 
 Reference: https://code.claude.com/docs/en/memory.md#organize-rules-with-claude/rules/
 
 ## Stage 0 — Read existing rules
 
-`Glob` `.claude/rules/*.md` and read every file. Also read the current `## Rule Files — Progressive Disclosure` section in `.claude/CLAUDE.md` (if present) to see how the existing rules are advertised. The goal is a **minimal delta**, not a rewrite: keep curated content unless it is stale, wrong, or violates the writing rules.
+List `.claude/rules/*.md` and read every file. Also read the current `## Rule Files — Progressive Disclosure` section in `.claude/CLAUDE.md` (if present) to see how the existing rules are advertised. The goal is a **minimal delta**, not a rewrite: keep curated content unless it is stale, wrong, or violates the writing rules.
 
 ## Stage 1 — Analyze (lightly)
 

@@ -2,8 +2,8 @@
 name: plugin-browser
 description: Browse and discover Claude Code skills, agents, commands, and plugins from community and official repositories. Use when the user wants to find, explore, or learn about existing skills, agents, commands, or plugins — e.g., "what plugins are available?", "is there a skill for code review?", "show me community agents", "find a plugin for testing", "browse the plugin marketplace". Also use when the user wants to learn what a community plugin does.
 allowed-tools:
-  - Glob
-  - Grep
+  - Bash(grep *)
+  - Bash(find *)
   - Read
   - mcp__claude-context__search_code
 ---
@@ -28,7 +28,7 @@ Each repo lives at the `local_path` specified in the catalog (e.g., `~/.claude/s
 
 ## Search
 
-**Always start with semantic search** — it combines semantic understanding with BM25 keyword matching, so it surfaces conceptually relevant results even when exact keywords differ. Only fall back to Grep if semantic search returns no results or the index is unavailable.
+**Always start with semantic search** — it combines semantic understanding with BM25 keyword matching, so it surfaces conceptually relevant results even when exact keywords differ. Only fall back to keyword search if semantic search returns no results or the index is unavailable.
 
 **Primary — semantic search:**
 
@@ -39,25 +39,24 @@ mcp__claude-context__search_code(
 )
 ```
 
-**Fallback — keyword search** (only when semantic search fails or is unavailable):
+**Fallback — keyword search** (only when semantic search fails or is unavailable). Use `grep` and `find` through Bash: they also search hidden folders such as `.claude-plugin/`, where plugin manifests live.
 
-```
-Grep(pattern="<keyword>", path="~/.claude/skills-references/plugin-browser/", glob="*.md")
+```sh
+grep -ril --include='*.md' "<keyword>" ~/.claude/skills-references/plugin-browser/
 ```
 
 ## Browse
 
 To list contents of a specific plugin or repo:
 
-```
-Glob(~/.claude/skills-references/plugin-browser/<repo-dir>/**/*.md)
+```sh
+find ~/.claude/skills-references/plugin-browser/<repo-dir> -name '*.md' -not -path '*/.git/*'
 ```
 
 For structured plugin repos (like wshobson-agents), check for a `marketplace.json` or `plugin.json` for richer metadata:
 
-```
-Glob(~/.claude/skills-references/plugin-browser/<repo-dir>/**/*marketplace*.json)
-Glob(~/.claude/skills-references/plugin-browser/<repo-dir>/**/*plugin*.json)
+```sh
+find ~/.claude/skills-references/plugin-browser/<repo-dir> \( -name 'marketplace.json' -o -name 'plugin.json' \) -not -path '*/.git/*'
 ```
 
 ## Workflow

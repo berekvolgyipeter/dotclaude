@@ -4,7 +4,7 @@ description: Discover and document a module's architecture, functionality, and c
 disable-model-invocation: true
 argument-hint: "[module-path]"
 model: opus
-allowed-tools: Read, Grep, Glob, Edit, Write, Bash(make tree), Bash(ls *), Bash(mkdir *)
+allowed-tools: Read, Bash(grep *), Bash(find *), Edit, Write, Bash(make tree), Bash(ls *), Bash(mkdir *)
 ---
 
 # Architecture Discovery

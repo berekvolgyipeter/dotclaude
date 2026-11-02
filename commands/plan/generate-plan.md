@@ -18,7 +18,7 @@ $ARGUMENTS
 ## Step 1 — Research
 
 ### 1a. Codebase Analysis
-- Explore the area of the codebase the request targets. Use Glob and Grep to find similar features/patterns, and read the relevant modules to understand the current state.
+- Explore the area of the codebase the request targets. Use `grep` and `find` to find similar features/patterns, and read the relevant modules to understand the current state.
 - If present, locate and read the domain documentation for the target area: a root `CONTEXT.md` glossary (or, if a `CONTEXT-MAP.md` exists at the root, the per-context `CONTEXT.md` it points to), and any Architecture Decision Records under `docs/adr/`. Use that glossary's vocabulary throughout the plan and respect the documented decisions.
 - Identify the modules you'll build or modify, the existing conventions to follow, and the test patterns already in use.
 

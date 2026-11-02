@@ -4,8 +4,8 @@ description: "Reads diffs on demand and returns a structured summary of what cha
 model: haiku
 tools:
   - "Read"
-  - "Grep"
-  - "Glob"
+  - "Bash(grep *)"
+  - "Bash(find *)"
   - "Bash(git diff *)"
 ---
 
