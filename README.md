@@ -12,7 +12,7 @@ Manage rules, skills, commands, agents, hooks, and templates in one place instea
 
 Symlinking into `~/.claude/` and version-controlling everything in git turns this repo into the substrate for the `learn` skill: when Claude updates a rule, skill, or command based on session feedback, the change goes live in every project immediately and shows up as a reviewable git diff — making self-improvement auditable rather than a black box.
 
-**Security-first defaults.** Telemetry and error reporting are disabled, OS-level sandboxing isolates every bash command, and a layered deny/ask permission model plus PreToolUse hooks block destructive operations (`rm -rf`, force-push to `main`) and gate access to credentials, shell config, and cloud tokens — see [settings.json](#settingsjson) for the full posture.
+**Security-first defaults.** Claude runs smoothly inside a sandbox but can't read your secrets, change your machine, or touch remotes without asking — see [settings.json](#settingsjson).
 
 **Scope.** This repo configures Claude Code — it does not bundle a linter or test runner. The Stop hook delegates to whatever the host project uses (`make lint`, `make test`); it skips gracefully when those targets aren't defined.
 
@@ -149,8 +149,6 @@ Event-driven shell scripts registered in `settings.json`, or scoped to a single 
 | [auto-approve-claude-dir.sh](hooks/auto-approve-claude-dir.sh) | `PreToolUse` | Auto-approves Read, Grep, and Glob operations on `.claude/` paths |
 | [load-context-rules.sh](hooks/load-context-rules.sh) | `PreToolUse` | Loads context rules from `context-rules/` on first Edit/Write per session when the target file matches a rule's glob pattern. Deduplicates via transcript markers. Skipped when `DOTCLAUDE_DISABLE_CONTEXT_RULES_HOOK` is set to `1`/`true` |
 | [lint-and-test.sh](hooks/lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools on non-gitignored files. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
-| [block-rm-rf.sh](hooks/block-rm-rf.sh) | `PreToolUse` | Blocks destructive `rm -rf` and `rm -fr` Bash commands |
-| [block-push-to-main.sh](hooks/block-push-to-main.sh) | `PreToolUse` | Blocks direct `git push` to the `main` branch |
 | [block-git-mutations.sh](hooks/block-git-mutations.sh) | `PreToolUse` | Blocks state-mutating `git` commands. Scoped via the `hooks` frontmatter of the read-only review commands (`pr-review`, `pr-review-diff`, `delta-review`, `delta-review-diff`), so it fires only while one of those is active |
 
 ### [Output Styles](output-styles/)
@@ -186,26 +184,14 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 
 ### [settings.json](settings.json)
 
-Shared permissions, preferences, and security posture.
+Shared permissions, preferences, and security posture. Built for auto mode: the sandbox and the auto mode classifier handle routine safety, so Claude works without prompt fatigue, while explicit rules hold a few hard lines:
 
-**Privacy:** Three env flags disable telemetry, error reporting, and the feedback survey — Claude doesn't phone home by default. Override per-project if needed.
+- **Secrets stay unreadable** — credential files, keychain, `.env` files, and tokens in the environment.
+- **Remote changes need your OK** — pushes and forge writes prompt; forge deletions are denied; reads run freely.
+- **The machine stays untouched** — system settings, services, shell config, and package installs outside the project prompt or are denied.
+- **No phoning home** — telemetry and error reporting are off.
 
-**Deny list:**
-- *Destructive commands:* `rm -rf`, `sudo`, `mkfs`, `dd`, `wget ... | bash` (classic supply-chain attack vector)
-- *Irreversible git:* force-push, `git reset --hard`, destructive `git clean` variants (`-f`, `-d`, `-x`), and un-stashing (`git stash pop`/`apply` — can clobber uncommitted work with conflicts)
-- *Shell config:* `~/.bashrc`, `~/.zshrc` — PATH manipulation and alias injection are off the table
-- *Credential stores:* SSH keys, AWS/Azure/GitHub CLI configs, git-credentials, Docker, Kubernetes, npm/pypi/gem tokens, macOS Keychain, `.env` files — and crypto wallet data (MetaMask, Electrum, Exodus, Phantom, Solflare)
-
-**Ask list** (allowed but requires confirmation):
-- *Root-equivalent access:* `docker`, `curl --unix-socket`, `socat *UNIX*`, `nc -U`, `ncat --unixsock` — the Docker socket and arbitrary Unix sockets grant host-level control
-- *Permission/ownership:* `chmod`, `chown`
-- *Network/data transfer:* `ssh`, `scp`, `rsync` — outbound sessions and file exfiltration vectors
-- *Git write operations:* pushing, pulling, merging, rebasing, resetting, branch switching, cleaning, stashing, history rewriting — all state-mutating git commands (the JSON is the source of truth for the exact list)
-- *Process control:* `pkill`, `kill`, `launchctl` — killing processes or managing macOS services
-
-**Hooks:** `block-rm-rf.sh` and `block-push-to-main.sh` fire on every `Bash` call as a `PreToolUse` hook, independent of the permission system. If a permission rule is misconfigured, the hook still blocks it.
-
-**Sandboxing:** OS-level filesystem and network isolation for all bash commands and their subprocesses. Bash commands within sandbox boundaries are auto-approved — reducing prompt fatigue while maintaining security. The escape hatch is disabled; commands must run sandboxed or be explicitly excluded. Deny permission rules and sandbox isolation complement each other for defense in depth. `allowAllUnixSockets` and read access to `~/.ssh/known_hosts` are carve-outs for git-over-SSH (agent socket, host-key verification).
+Tools that can't work inside the sandbox run outside it, and Claude's package caches are kept separate from yours.
 
 ## How It Works
 
