@@ -4,7 +4,7 @@ description: Explore and summarize a project's structure, purpose, key files, de
 disable-model-invocation: true
 model: haiku
 context: fork
-allowed-tools: Read, Grep, Glob, Bash(make *), Bash(ls *)
+allowed-tools: Read, Bash(grep *), Bash(find *), Bash(make *), Bash(ls *)
 ---
 
 # Project Overview

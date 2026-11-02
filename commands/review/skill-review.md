@@ -5,8 +5,8 @@ disable-model-invocation: true
 argument-hint: "@path/to/SKILL.md or @path/to/command.md"
 allowed-tools:
   - Read
-  - Glob
-  - Grep
+  - Bash(grep *)
+  - Bash(find *)
   - Skill
 ---
 
@@ -19,7 +19,7 @@ $ARGUMENTS
 Use the **skill-creator** skill for structural checks (anatomy, progressive disclosure, writing patterns) and the **prompt-engineering** skill for instruction quality (over-constraining, example gaps, vague action language). Do not modify anything.
 
 Detect the type from the `$ARGUMENTS` reference:
-- **Directory reference** — treat as a skill; use Glob to find `SKILL.md` inside it and review that file
+- **Directory reference** — treat as a skill; use `find` to locate `SKILL.md` inside it and review that file
 - **`SKILL.md` filename** — treat as a skill
 - **Any other `.md` file** — treat as a command
 

@@ -3,7 +3,7 @@ name: init-rules
 description: Decompose a fresh project into modules and write per-module `.claude/rules/*.md` files with `paths` frontmatter, plus a progressive-disclosure table in CLAUDE.md
 disable-model-invocation: true
 model: opus
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash(make *), Bash(ls *), AskUserQuestion
+allowed-tools: Read, Write, Edit, Bash(grep *), Bash(find *), Bash(make *), Bash(ls *), AskUserQuestion
 ---
 
 # Initialize Per-Module Rule Files
@@ -14,7 +14,7 @@ Decompose this project into well-separable modules, write one rule file per modu
 
 **These files are prompts, not docs.** Each rule is read by Claude Code, and once loaded its contents stay in context for the rest of the session. Every line is a recurring token cost on every following turn. Treat each rule file with the discipline of a system prompt: ruthlessly concise, architectural, and free of anything a future reader could derive from the source.
 
-**Mode check.** This command assumes no rule files exist yet. If `Glob` on `.claude/rules/*.md` returns any files, stop and tell the user to run `/refine-rules` instead.
+**Mode check.** This command assumes no rule files exist yet. If `.claude/rules/*.md` matches any files, stop and tell the user to run `/refine-rules` instead.
 
 Reference: https://code.claude.com/docs/en/memory.md#organize-rules-with-claude/rules/
 

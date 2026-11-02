@@ -5,8 +5,8 @@ disable-model-invocation: true
 argument-hint: "@plan-file"
 allowed-tools:
   - Read
-  - Glob
-  - Grep
+  - Bash(grep *)
+  - Bash(find *)
 ---
 
 # Refine Plan
@@ -44,7 +44,7 @@ ULTRATHINK and evaluate the plan against each category. For every issue found, p
 1. **Internal consistency** — Do the TL;DR, Goal, Requirements, Module Map, Key Decisions, and Testing Strategy agree? Does the TL;DR accurately summarize the body — outcome, scope, and risks still current? Any contradictions between sections?
 2. **Dependency order** — Can the modules and decisions be executed without backtracking? Are decisions that depend on earlier work ordered correctly?
 3. **Completeness** — Does each requirement have a module or decision that satisfies it? Are any aspects of the solution left unspecified?
-4. **Referenced artifacts exist** — Do the modules, interfaces, patterns, and URLs in the plan actually exist in the codebase or on the web? Use Glob/Grep/Read to verify critical references.
+4. **Referenced artifacts exist** — Do the modules, interfaces, patterns, and URLs in the plan actually exist in the codebase or on the web? Use `grep`/`find`/Read to verify critical references.
 5. **Out of Scope is honored** — Do any modules or decisions stray into work the plan declared out of scope?
 6. **Glossary alignment** — Does the plan use the project's canonical terms (`CONTEXT.md`, or the per-context `CONTEXT.md` a root `CONTEXT-MAP.md` points to)? Flag any term that conflicts with the documented glossary.
 7. **ADR compliance** — Do the Key Decisions respect the Architecture Decision Records in the area being touched (`docs/adr/`)? Flag any decision that silently reopens an ADR; if reopening is warranted, ensure it is called out and justified rather than assumed.
@@ -84,7 +84,7 @@ Use the `Edit` tool (or `Write` for a full rewrite when many sections change) on
 
 - **Rewrite ambiguous or contradictory text** to be concrete and consistent.
 - **Reorder modules and decisions** so dependencies are respected.
-- **Fix wrong module names, interfaces, or references** after verifying the correct values via Glob/Grep/Read.
+- **Fix wrong module names, interfaces, or references** after verifying the correct values via `grep`/`find`/Read.
 - **Add missing context** (references, gotchas, patterns) inline in the relevant section.
 - **Align with rules** — rename symbols, adjust any snippet style, fix error-handling and testing approaches to match the loaded rules.
 - **Cut anti-patterns** — delete speculative scope, unneeded abstractions, and invented patterns.

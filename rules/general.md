@@ -31,7 +31,7 @@ Before making any edit, read the surrounding context and match its style — for
 
 ## Dedicated File Tools Over Bash
 
-Read, edit and create files with the Read, Edit and Write tools — never with `cat`, `head`, `tail`, `sed`, `awk`, `echo` or heredocs, even when the harness allows Bash for file work. Bash is for running commands; Grep/Glob for searching.
+Read, edit and create files with the Read, Edit and Write tools — never with `cat`, `head`, `tail`, `sed`, `awk`, `echo` or heredocs, even when the harness allows Bash for file work. Bash is for running commands and for searching with `grep` and `find`.
 
 ❌ BAD: `cat notes.md` to read, `cat >> notes.md <<'EOF'` to append
 ✅ GOOD: Read `notes.md`, then Edit it to add the line
@@ -45,7 +45,7 @@ Before planning or implementing anything, always audit what already exists:
 3. When something new must be added, identify the established pattern and place it accordingly
 
 ❌ BAD: Writing a new helper without checking if one already exists
-✅ GOOD: Grep/Glob for related code first, reuse or extend what's found, only create new files/functions when truly needed
+✅ GOOD: `grep`/`find` for related code first, reuse or extend what's found, only create new files/functions when truly needed
 
 ## Keep Documentation Up-to-Date
 
