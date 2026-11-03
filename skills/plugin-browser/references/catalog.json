@@ -101,6 +101,7 @@
                 "/.claude-plugin/",
                 "/skills/",
                 "/docs/guides/",
+                "/docs/install/",
                 "/README.md",
                 "/CONCEPTS.md",
                 "/plugin.json"
@@ -203,7 +204,7 @@
         {
             "github": "coreyhaines31/marketingskills",
             "local_path": "~/.claude/skills-references/plugin-browser/coreyhaines31-marketingskills",
-            "description": "Corey Haines' marketing skills for AI coding agents, covering CRO, copywriting and editing, SEO, analytics and attribution, A/B testing, paid ads and creative, app store optimization, email and SMS, content and social, launches, pricing and paywalls, onboarding and signup, referrals, competitor research, sales enablement, PR, and marketing planning. Works across multiple agent harnesses.",
+            "description": "Corey Haines' marketing skills for AI coding agents, covering CRO, copywriting and editing, SEO, analytics and attribution, A/B testing, paid ads and creative, app store optimization, email and SMS, content and social, launches, pricing and paywalls, onboarding and signup, referrals, competitor research, sales enablement, PR, and marketing planning, backed by a registry of marketing-tool integration guides (APIs, MCP servers, CLIs) that the skills draw on. Works across multiple agent harnesses.",
             "topics": [
                 "marketing",
                 "seo",
@@ -219,6 +220,8 @@
             "sparse": [
                 "/.claude-plugin/",
                 "/skills/",
+                "/tools/REGISTRY.md",
+                "/tools/integrations/",
                 "/README.md"
             ]
         },
@@ -306,6 +309,10 @@
                 "/hooks/",
                 "/references/",
                 "/skills/",
+                "/docs/getting-started.md",
+                "/docs/adoption-guide.md",
+                "/docs/agents.md",
+                "/docs/skill-anatomy.md",
                 "/README.md",
                 "/CLAUDE.md",
                 "/plugin.json"
@@ -333,6 +340,7 @@
                 "/agents/",
                 "/skills/",
                 "/docs/guide/*.md",
+                "/docs/harness/claude-code.md",
                 "/README.md",
                 "/plugin.json"
             ]

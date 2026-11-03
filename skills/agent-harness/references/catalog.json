@@ -40,7 +40,7 @@
         {
             "github": "affaan-m/ECC",
             "local_path": "~/.claude/skills-references/agent-harness/affaan-m-ecc",
-            "description": "ECC (formerly everything-claude-code) by Affaan Mustafa — an \"agent harness operating system\" shipped as a Claude Code plugin. Bundles a large set of agents (planning, review, build repair, security, architecture, domain work), skills (TDD, research, security, docs, frontend, data, ML, operations), command shims, per-language rule sets, hooks and memory with session summaries, continuous learning and instincts, MCP configs, and AgentShield security scanning for prompts, hooks, MCP, permissions, and secrets. Adapters extend it to other agent harnesses; also includes long-form usage and security guides.",
+            "description": "ECC (formerly everything-claude-code) by Affaan Mustafa — an \"agent harness operating system\" shipped as a Claude Code plugin. Bundles a large set of agents (planning, review, build repair, security, architecture, domain work), skills (TDD, research, security, docs, frontend, data, ML, operations), command shims, per-language rule sets, hooks and memory with session summaries, continuous learning and instincts, MCP configs, and AgentShield security scanning for prompts, hooks, MCP, permissions, and secrets. Adapters extend it to other agent harnesses; also includes long-form usage and security guides and example per-stack CLAUDE.md configurations.",
             "topics": [
                 "claude-code",
                 "agent-harness",
@@ -75,6 +75,8 @@
                 "/docs/architecture/",
                 "/docs/security/",
                 "/docs/design/",
+                "/docs/examples/",
+                "/examples/*.md",
                 "/the-*-guide.md",
                 "/README.md",
                 "/CLAUDE.md",
