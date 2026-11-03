@@ -175,6 +175,14 @@
             "command": "bash $HOME/.claude/hooks/sync-links.sh"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '\"IMPORTANT: run each of these as the ONLY command in its Bash call — no |, &&, ||, ;, cd, $() or redirects; otherwise it is sandboxed and fails: \" + (.sandbox.excludedCommands | join(\", \"))' $HOME/.claude/settings.json"
+          }
+        ]
       }
     ],
     "PreToolUse": [
@@ -184,6 +192,15 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/load-context-rules.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/standalone-excluded-commands.sh"
           }
         ]
       }
