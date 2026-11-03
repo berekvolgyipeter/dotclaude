@@ -25,6 +25,16 @@
       "Bash(git status)",
       "Bash(gh api *)",
       "Bash(glab api *)",
+      "Read(~/.claude/agents/**)",
+      "Read(~/.claude/commands/**)",
+      "Read(~/.claude/context-rules/**)",
+      "Read(~/.claude/hooks/**)",
+      "Read(~/.claude/output-styles/**)",
+      "Read(~/.claude/rules/**)",
+      "Read(~/.claude/scripts/**)",
+      "Read(~/.claude/shared/**)",
+      "Read(~/.claude/skills/**)",
+      "Read(~/.claude/templates/**)",
       "Skill",
       "WebSearch",
       "WebFetch(domain:github.com)",
@@ -104,8 +114,10 @@
       "Read(~/.netrc)"
     ],
     "ask": [
+      "Bash(git commit *)",
       "Bash(git push *)",
       "Bash(git remote *)",
+      "Bash(git worktree *)",
       "Bash(git filter-branch *)",
       "Bash(git filter-repo *)",
       "Bash(gh pr create *)",
@@ -233,7 +245,9 @@
       "make install",
       "git fetch *",
       "git pull *",
+      "git commit *",
       "git push *",
+      "git worktree *",
       "bash ~/.claude/scripts/review/pr-diff.sh *",
       "gh *",
       "glab *",
@@ -263,14 +277,33 @@
       ],
       "allowRead": [
         "~/.ssh/known_hosts",
-        "~/.claude/skills-references"
+        "~/.claude/skills-references",
+        "~/.claude/agents",
+        "~/.claude/commands",
+        "~/.claude/context-rules",
+        "~/.claude/hooks",
+        "~/.claude/output-styles",
+        "~/.claude/rules",
+        "~/.claude/scripts",
+        "~/.claude/shared",
+        "~/.claude/skills",
+        "~/.claude/templates"
       ]
     },
     "credentials": {
       "envVars": [
-        { "name": "GITHUB_TOKEN", "mode": "deny" },
-        { "name": "GH_TOKEN", "mode": "deny" },
-        { "name": "GITLAB_TOKEN", "mode": "deny" }
+        {
+          "name": "GITHUB_TOKEN",
+          "mode": "deny"
+        },
+        {
+          "name": "GH_TOKEN",
+          "mode": "deny"
+        },
+        {
+          "name": "GITLAB_TOKEN",
+          "mode": "deny"
+        }
       ]
     }
   },
