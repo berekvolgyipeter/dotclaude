@@ -156,7 +156,9 @@
       "Bash(networksetup *)",
       "Bash(pmset *)",
       "Bash(scutil *)",
-      "Bash(osascript *)"
+      "Bash(osascript *)",
+      "mcp__claude-context__index_codebase",
+      "mcp__claude-context__clear_index"
     ]
   },
   "model": "opus",
