@@ -198,7 +198,7 @@ Shared permissions, preferences, and security posture. Built for auto mode: the 
 - **The machine stays untouched** — system settings, services, shell config, and package installs outside the project prompt or are denied.
 - **No phoning home** — telemetry and error reporting are off.
 
-Only a listed set of tools that can't work inside the sandbox run outside it — Claude can't take any other command out of the sandbox on its own — and Claude's package caches are kept separate from yours. Skill reference repos under `~/.claude/skills-references/` are readable and writable from the sandbox, so their sync and audit scripts run from any project.
+Only a listed set of tools that can't work inside the sandbox run outside it — Claude can't take any other command out of the sandbox on its own — and Claude's package caches are kept separate from yours. Skill reference repos under `~/.claude/skills-references/` are readable and writable from the sandbox, so their sync and audit scripts run from any project. The linked `~/.claude/` directories (rules, skills, agents, commands, …) are readable without a prompt and from the sandbox, in any project.
 
 ## How It Works
 
