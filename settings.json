@@ -194,7 +194,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '\"IMPORTANT: run each of these as the ONLY command in its Bash call — no |, &&, ||, ;, cd, $() or redirects; otherwise it is sandboxed and fails: \" + (.sandbox.excludedCommands | join(\", \"))' $HOME/.claude/settings.json"
+            "command": "bash $HOME/.claude/hooks/list-excluded-commands.sh"
           }
         ]
       }
@@ -241,21 +241,6 @@
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
     "allowUnsandboxedCommands": false,
-    "excludedCommands": [
-      "make install",
-      "git fetch *",
-      "git pull *",
-      "git commit *",
-      "git push *",
-      "git worktree *",
-      "bash ~/.claude/scripts/review/pr-diff.sh *",
-      "gh *",
-      "glab *",
-      "go mod download *",
-      "go mod tidy *",
-      "go get *",
-      "agent-browser *"
-    ],
     "network": {
       "allowedDomains": [
         "github.com",
@@ -305,7 +290,22 @@
           "mode": "deny"
         }
       ]
-    }
+    },
+    "excludedCommands": [
+      "make install",
+      "git fetch *",
+      "git pull *",
+      "git commit *",
+      "git push *",
+      "git worktree *",
+      "bash ~/.claude/scripts/review/pr-diff.sh *",
+      "gh *",
+      "glab *",
+      "go mod download *",
+      "go mod tidy *",
+      "go get *",
+      "agent-browser *"
+    ]
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "medium",
