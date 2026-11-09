@@ -5,6 +5,7 @@ disable-model-invocation: true
 context: fork
 argument-hint: "[repo] [base-branch] [focus]"
 allowed-tools:
+  - Bash(git fetch *)
   - Bash(git -C * fetch *)
   - Agent(review:code-reviewer)
 ---

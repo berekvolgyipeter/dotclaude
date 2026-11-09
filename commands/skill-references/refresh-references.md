@@ -46,7 +46,13 @@ For each repo whose contents changed, check its catalog `description`, `topics`,
 
 Edit the `sparse` lists and descriptions in the catalogs, then re-run sync and audit until no `STALE` patterns remain and the checkout matches your decisions. If the repo list or catalog fields changed, update `README.md` accordingly.
 
-Finish by re-indexing both skills for semantic search: call `mcp__claude-context__index_codebase` with the absolute path of `~/.claude/skills-references/<skill>`, `splitter: "ast"` and `force: true`, then poll `mcp__claude-context__get_indexing_status` for that path until it reports indexed or failed.
+Finish by bringing each skill's semantic-search index up to date. For the absolute path of `~/.claude/skills-references/<skill>`, check `mcp__claude-context__get_indexing_status`:
+
+- **Not indexed** → call `mcp__claude-context__index_codebase` with that path and `splitter: "ast"`.
+- **Indexed, and this run changed the checkout** (sync pulled new commits, or sparse patterns changed) → call it with `force: true` as well; a forced run rebuilds the whole index.
+- **Indexed and nothing changed** → skip it.
+
+After any index call, poll `get_indexing_status` until it reports indexed or failed.
 
 Indexing needs the `claude-context` MCP server; if it is unavailable, say so and leave indexing to the user.
 

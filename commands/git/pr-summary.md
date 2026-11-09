@@ -7,6 +7,7 @@ context: fork
 background: false
 argument-hint: "[repo] [target-branch]"
 allowed-tools:
+  - Bash(git fetch *)
   - Bash(git -C * fetch *)
 ---
 

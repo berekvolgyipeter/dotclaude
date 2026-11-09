@@ -94,6 +94,15 @@ check "edits only before the last user prompt run nothing" 0 ""
 
 new_case
 new_repo "$WORK/app" lint test
+user_prompt "use a skill to change it"
+edit Edit "$WORK/app/main.py"
+jq -cn '{type: "user", isMeta: true, message: {role: "user", content: [{type: "text", text: "skill body"}]}}' >>"$TRANSCRIPT"
+jq -cn '{type: "user", message: {role: "user", content: null}}' >>"$TRANSCRIPT"
+run_hook
+check "meta and empty user entries after an edit are not prompts" 0 "app:lint app:test"
+
+new_case
+new_repo "$WORK/app" lint test
 mkdir -p "$WORK/elsewhere"
 git -C "$WORK/app" add Makefile
 git -C "$WORK/app" -c user.name=t -c user.email=t@t commit -q -m init

@@ -18,7 +18,7 @@ To add a repo, add an entry to the catalog and re-run the command.
 
 ### 2. Index for semantic search
 
-Ask Claude to index `~/.claude/skills-references/plugin-browser` with the `claude-context` MCP server's `index_codebase` tool, or run `/refresh-references`, which indexes as its last step.
+Ask Claude to index the absolute path of `~/.claude/skills-references/plugin-browser` with the `claude-context` MCP server's `index_codebase` tool.
 
 > Requires the `claude-context` MCP server (`make mcp`). See the project README.
 

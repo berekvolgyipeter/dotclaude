@@ -29,7 +29,7 @@ command -v make >/dev/null 2>&1 || exit 0
 # (skill bodies, reminders) also carry role "user" but are not prompts.
 EDITED=$(jq -rs '
   def prompt: .type == "user" and (.isMeta | not)
-    and (.message.content | type == "string" or any(.[]; .type != "tool_result"));
+    and ((.message.content // []) | type == "string" or any(.[]; .type != "tool_result"));
   (map(prompt) | rindex(true) // -1) as $last
   | .[$last + 1:][] | select(.message.role? == "assistant") | .message.content[]?
   | select(.type == "tool_use" and (.name == "Edit" or .name == "Write")) | .input.file_path // empty' \

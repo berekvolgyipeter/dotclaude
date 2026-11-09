@@ -40,7 +40,7 @@ Rule files discovered automatically by Claude Code. A rule without `paths:` fron
 
 | File | Loaded when | Description |
 |------|-------------|-------------|
-| [general.md](rules/general.md) | Always | No-guessing policy, consistency, check-before-implementing, rules awareness |
+| [general.md](rules/general.md) | Always | No-guessing policy, consistency, check-before-implementing, docs sync, rules awareness |
 | [py-code.md](rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
 | [py-test.md](rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
 | [ts-code.md](rules/ts-code.md) | TypeScript files | TypeScript style, typing, naming, error handling |
