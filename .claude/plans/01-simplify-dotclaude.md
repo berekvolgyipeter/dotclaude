@@ -30,7 +30,8 @@ Each phase is one commit (or a few), leaving the repo working.
 0. **Gating tests** — record both results in this plan before phase 2/3.
    - **0a. Native path rule on Write:** one test rule in the user-level rules dir with `paths:`; new session; Write a new matching file; confirm load (log via an `InstructionsLoaded` hook). Open issue #21858 claims user-level `paths:` is ignored.
    - **0b. Fork + Agent:** a throwaway `context: fork` command that dispatches a subagent; confirm the `Agent` tool exists and the subagent runs. Critical for the review pipeline.
-1. **Hooks** — delete the `block-git-mutations` hook (and the review commands' `hooks:` frontmatter), `sync-links`, `standalone-excluded-commands`; rewrite the lint/test gate; drop install concurrency handling; add `make test`.
+   - **Results (2026-11-09, Claude Code 2.1.319):** 0a **PASS** — Write of a new `*.gatetest` file fired `InstructionsLoaded` for the user-level rule with `load_reason: path_glob_match`. 0b **PASS** — a background `context: fork` command had `Agent`, dispatched a `general-purpose` subagent, and its reply arrived in the session. After migration, all 5 rules' `paths:` globs verified with one session per sample file (18 cases: brace expansion, `test`/`tests`/`e2e` dirs, root-level and deeply nested files, one non-matching `.js`) — all loaded exactly the expected rules.
+1. **Hooks** — delete the `block-git-mutations` hook (and the review commands' `hooks:` frontmatter), `sync-links`; rewrite the lint/test gate; drop install concurrency handling; add `make test`.
 2. **Rules** (only if 0a passes) — move the 5 context rules into the user rules dir with `paths:`; delete the context-rules hook, its dir, its env opt-out and the rules index; switch index consumers (`learn`, `refine-plan`, review protocol, "Rules Awareness") to listing the rules dir; remove `context-rules` from both linked-dir settings lists and the install targets.
 3. **Review + git** — add Change-set discovery; rewrite `/delta-review`, `/pr-review` as forked thin commands over the review protocol; delete the `-diff` variants, `/fix-review`, `REVIEW_SCOPE:`, `code-reviewer-diff`, `diff-summarizer`, all review helper scripts and the saved-review-file convention; rewrite `/commit-msg`, `/pr-summary` as forked; remove `pr-diff.sh` from `sandbox.excludedCommands`.
 4. **References + MCP** — add the MCP installer + `make mcp`; delete the repo-root `.mcp.json`, `enabledMcpjsonServers`, the custom indexer + its wrappers, the sync/audit wrappers, `python-dotenv`; move `index_codebase` from `ask` to `allow`; update `/refresh-references` and both skill READMEs.
@@ -62,7 +63,7 @@ Each phase is one commit (or a few), leaving the repo working.
 
 ## Key Decisions
 
-- **Hooks only for silent or costly failures not covered by permissions/sandbox:** settles dropping the git-mutation guard, link sync and the compound-command guard; keeps the excluded-commands session notice.
+- **Hooks only for silent or costly failures not covered by permissions/sandbox:** settles dropping the git-mutation guard and link sync; keeps the excluded-commands session notice and the compound-command guard (denies before a sandboxed failure, clearer than the error it prevents).
 - **Lint/test gate is a deliberate exception:** valued as a deterministic gate for unplanned work; opt-outs kept for never-linted monoliths.
 - **Custom review over built-in `/code-review`:** used often, improvable via `learn`; the built-in is a bundled skill with no editable file.
 - **One slash command per review target:** typing a target argument is the cost being avoided; `-diff` variants unused.

@@ -12,7 +12,7 @@ A single offhand correction in an otherwise smooth conversation may not warrant 
 ## Analysis Process
 
 Learnings live at two levels:
-- **User-level** (`~/.claude/`) — shared across all projects (rules, context rules, skills, commands, agents, hooks, output styles, templates)
+- **User-level** (`~/.claude/`) — shared across all projects (rules, skills, commands, agents, hooks, output styles, templates)
 - **Project-level** (`.claude/`) — specific to the current project (CLAUDE.md, rules, skills, commands, agents)
 
 ### Step 1: Scan for Learnings
@@ -30,7 +30,7 @@ Scan the conversation for any invocations of custom tools:
 
 **Skills** — `Skill` tool calls where the `skill` parameter matches a name in `~/.claude/skills/` or `.claude/skills/`
 
-**Commands** — slash command invocations like `/fix-review`, `/to-plan`, etc., which expand via the `Skill` tool
+**Commands** — slash command invocations like `/delta-review`, `/to-plan`, etc., which expand via the `Skill` tool
 
 **Agents** — `Agent` tool calls where `subagent_type` matches a name in `~/.claude/agents/` or `.claude/agents/`
 
@@ -47,7 +47,7 @@ For each one found (or expected but missing), read its current definition file, 
 
 Decide whether a learning is **universal** (applies to all projects → user-level `~/.claude/`) or **project-specific** (→ project-level `.claude/`).
 
-**Rule files (user-level `~/.claude/`):** @~/.claude/shared/rules-index.md
+**Rule files (user-level `~/.claude/`):** list `~/.claude/rules/` — each file's name and H1 name its topic, and its `paths:` frontmatter (if any) names the files it applies to. Pick the rule whose topic and paths fit the learning.
 
 **Rule files (project-level `.claude/`):**
 - **Project specific details** → `.claude/CLAUDE.md`
@@ -152,7 +152,7 @@ Rule files accumulate institutional knowledge that's hard to reconstruct, so tre
 
 **Scenario 1: Agent repeatedly used wrong import pattern**
 - Learning: Agent imported from wrong module despite correction
-- Target: The relevant language-specific context rule (e.g., `~/.claude/context-rules/<language>-code.md`)
+- Target: The relevant language-specific rule (e.g., `~/.claude/rules/<language>-code.md`)
 - Update: Add specific import convention with correct example
 
 **Scenario 2: Agent missed project-specific pattern**

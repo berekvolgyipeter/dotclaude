@@ -6,6 +6,8 @@ allowed-tools:
   - Bash
   - Read
   - Edit
+  - mcp__claude-context__index_codebase
+  - mcp__claude-context__get_indexing_status
 ---
 
 # Refresh Skill References
@@ -19,8 +21,8 @@ Work through both skills: `~/.claude/skills/plugin-browser` and `~/.claude/skill
 Run, per skill:
 
 ```sh
-bash ~/.claude/skills/<skill>/scripts/sync-references.sh
-bash ~/.claude/skills/<skill>/scripts/audit-references.sh
+python3 ~/.claude/scripts/skill_references.py sync ~/.claude/skills/<skill>
+python3 ~/.claude/scripts/skill_references.py audit ~/.claude/skills/<skill>
 ```
 
 The audit prints, per repo: the last upstream commit date, any `sparse` pattern that matches nothing upstream (`STALE`), and every top-level entry with its checked-out/excluded file counts — marked `NEW` or `REMOVED` relative to the previous audit — plus clones that no catalog entry owns (`ORPHAN`).
@@ -44,11 +46,7 @@ For each repo whose contents changed, check its catalog `description`, `topics`,
 
 Edit the `sparse` lists and descriptions in the catalogs, then re-run sync and audit until no `STALE` patterns remain and the checkout matches your decisions. If the repo list or catalog fields changed, update `README.md` accordingly.
 
-Finish by re-indexing both skills for semantic search:
-
-```sh
-bash ~/.claude/skills/<skill>/scripts/index-references.sh
-```
+Finish by re-indexing both skills for semantic search: call `mcp__claude-context__index_codebase` with the absolute path of `~/.claude/skills-references/<skill>`, `splitter: "ast"` and `force: true`, then poll `mcp__claude-context__get_indexing_status` for that path until it reports indexed or failed.
 
 Indexing needs the `claude-context` MCP server; if it is unavailable, say so and leave indexing to the user.
 

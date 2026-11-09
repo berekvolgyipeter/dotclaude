@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*.py"
+---
+
 # Python Developer Rules
 
 ## Core Development Philosophy

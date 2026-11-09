@@ -1,3 +1,10 @@
+---
+paths:
+  - "**/{test,tests}/**/*.py"
+  - "**/test_*.py"
+  - "**/*_test.py"
+---
+
 # Python Testing Rules
 
 ## Core Principle

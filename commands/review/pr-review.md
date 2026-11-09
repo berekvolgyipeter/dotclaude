@@ -1,24 +1,16 @@
 ---
 name: pr-review
-description: Technical code review for quality and bugs for changes to a target branch. If no target branch is passed, it defaults to the default branch.
+description: Technical code review of a branch's changes against its base branch (default branch unless one is named), run in the background — findings arrive in the session when done
 disable-model-invocation: true
-argument-hint: "[target-branch]"
+context: fork
+argument-hint: "[repo] [base-branch] [focus]"
 allowed-tools:
-  - Bash(bash ~/.claude/scripts/review/pr-diff.sh *)
-  - Bash(bash ~/.claude/scripts/review/automated-checks.sh)
-  - Bash(git diff *)
-  - Bash(git show *)
+  - Bash(git -C * fetch *)
   - Agent(review:code-reviewer)
-hooks:
-  PreToolUse:
-    - matcher: Bash
-      hooks:
-        - type: command
-          command: bash ~/.claude/hooks/block-git-mutations.sh
 ---
 
-!`bash ~/.claude/scripts/review/pr-diff.sh $ARGUMENTS`
+**Mode: PR.** Arguments: `$ARGUMENTS` — may name the Project repo to review and a base branch; any other text is a focus hint.
 
-!`bash ~/.claude/scripts/review/automated-checks.sh`
+@~/.claude/shared/change-set.md
 
 @~/.claude/shared/code-review.md

@@ -1,23 +1,15 @@
 ---
 name: delta-review
-description: Technical code review comparing uncommitted local changes against the latest commit on the current branch
+description: Technical code review of uncommitted changes against the latest commit, run in the background — findings arrive in the session when done
 disable-model-invocation: true
+context: fork
+argument-hint: "[repo] [focus]"
 allowed-tools:
-  - Bash(bash ~/.claude/scripts/review/delta-diff.sh)
-  - Bash(bash ~/.claude/scripts/review/automated-checks.sh)
-  - Bash(git diff *)
-  - Bash(git show *)
   - Agent(review:code-reviewer)
-hooks:
-  PreToolUse:
-    - matcher: Bash
-      hooks:
-        - type: command
-          command: bash ~/.claude/hooks/block-git-mutations.sh
 ---
 
-!`bash ~/.claude/scripts/review/delta-diff.sh`
+**Mode: delta.** Arguments: `$ARGUMENTS` — may name the Project repo to review; any other text is a focus hint.
 
-!`bash ~/.claude/scripts/review/automated-checks.sh`
+@~/.claude/shared/change-set.md
 
 @~/.claude/shared/code-review.md

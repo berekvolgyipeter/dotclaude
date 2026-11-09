@@ -27,7 +27,6 @@
       "Bash(glab api *)",
       "Read(~/.claude/agents/**)",
       "Read(~/.claude/commands/**)",
-      "Read(~/.claude/context-rules/**)",
       "Read(~/.claude/hooks/**)",
       "Read(~/.claude/output-styles/**)",
       "Read(~/.claude/rules/**)",
@@ -44,6 +43,7 @@
       "WebFetch(domain:docs.claude.com)",
       "mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram",
       "mcp__claude-context__get_indexing_status",
+      "mcp__claude-context__index_codebase",
       "mcp__claude-context__search_code",
       "mcp__context7__query-docs",
       "mcp__context7__resolve-library-id"
@@ -169,27 +169,13 @@
       "Bash(pmset *)",
       "Bash(scutil *)",
       "Bash(osascript *)",
-      "mcp__claude-context__index_codebase",
       "mcp__claude-context__clear_index"
     ]
   },
   "model": "opus",
   "enableAllProjectMcpServers": false,
-  "enabledMcpjsonServers": [
-    "claude-context",
-    "context7"
-  ],
   "hooks": {
     "SessionStart": [
-      {
-        "matcher": "startup|resume",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $HOME/.claude/hooks/sync-links.sh"
-          }
-        ]
-      },
       {
         "hooks": [
           {
@@ -200,15 +186,6 @@
       }
     ],
     "PreToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash $HOME/.claude/hooks/load-context-rules.sh"
-          }
-        ]
-      },
       {
         "matcher": "Bash",
         "hooks": [
@@ -265,7 +242,6 @@
         "~/.claude/skills-references",
         "~/.claude/agents",
         "~/.claude/commands",
-        "~/.claude/context-rules",
         "~/.claude/hooks",
         "~/.claude/output-styles",
         "~/.claude/rules",
@@ -298,7 +274,7 @@
       "git commit *",
       "git push *",
       "git worktree *",
-      "bash ~/.claude/scripts/review/pr-diff.sh *",
+      "git -C * fetch *",
       "gh *",
       "glab *",
       "go mod download *",

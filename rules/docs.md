@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*.md"
+---
+
 # Documentation Rules
 
 Best practices for writing and maintaining project documentation.

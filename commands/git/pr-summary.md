@@ -3,21 +3,20 @@ name: pr-summary
 description: Generate a brief PR summary of branch changes compared to a target branch. If no target branch is passed, it defaults to the default branch.
 disable-model-invocation: true
 model: haiku
-argument-hint: "[target-branch]"
+context: fork
+background: false
+argument-hint: "[repo] [target-branch]"
 allowed-tools:
-  - Bash(bash ~/.claude/scripts/review/pr-diff.sh *)
-  - Agent(review:diff-summarizer)
+  - Bash(git -C * fetch *)
 ---
 
-!`bash ~/.claude/scripts/review/pr-diff.sh $ARGUMENTS`
+**Mode: PR.** Arguments: `$ARGUMENTS` — may name the Project repo to describe and a target (base) branch.
 
-The branch change overview above contains the DIFF_BASE, changed files, commits, and untracked files.
+@~/.claude/shared/change-set.md
 
 ## Task
 
-Dispatch a `review:diff-summarizer` subagent with the file list, untracked files, and DIFF_BASE from the overview above. The agent will read per-file diffs and return a structured summary.
-
-Using the subagent's summary, generate a concise, human-readable PR summary of what changed on this branch compared to the target branch.
+Read the commits and each changed file's diff, then generate a concise, human-readable PR summary of what changed on this branch compared to the target branch.
 
 ## Output Format
 
@@ -41,7 +40,7 @@ summary on what was done
 
 ## Rules
 
-- Your ENTIRE response is the fenced code block — nothing else
+- Your ENTIRE response is the fenced code block — nothing else, unless finding the Change set stopped with a list or a "no changes" note
 - Keep it very short — a quick glance should tell the reader what happened
 - Use short `##` sections grouped by area/feature as shown in the template
 - Focus on *what* and *why*, not file-by-file details
