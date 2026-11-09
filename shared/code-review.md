@@ -13,7 +13,7 @@ This review must not modify anything under review — no file edits, and no work
 
 ## Focus Hint
 
-Command arguments that don't name a repo or base branch are a **focus hint** from the user: an area to look at especially closely. Pass it to every subagent. It does not narrow the review — every changed file is still reviewed on every dimension.
+Arguments that don't name a repo or base branch are a **focus hint** from the user: an area to look at especially closely. Pass it to every subagent. It does not narrow the review — every changed file is still reviewed on every dimension.
 
 ## Step 1: Load Standards
 

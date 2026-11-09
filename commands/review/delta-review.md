@@ -1,15 +1,19 @@
 ---
 name: delta-review
-description: Technical code review of uncommitted changes against the latest commit, run in the background — findings arrive in the session when done
+description: Technical code review of uncommitted changes against the latest commit, run by a background reviewer — the session then evaluates the findings and fixes what holds up
 disable-model-invocation: true
-context: fork
 argument-hint: "[repo] [focus]"
 allowed-tools:
-  - Agent(review:code-reviewer)
+  - Agent
 ---
 
-**Mode: delta.** Arguments: `$ARGUMENTS` — may name the Project repo to review; any other text is a focus hint.
+Dispatch one `general-purpose` subagent in the background with exactly this prompt, and add nothing about this session's work — the reviewer must judge the code independently:
 
-@~/.claude/shared/change-set.md
+> Mode: delta. Arguments: `$ARGUMENTS`. Read `~/.claude/shared/change-set.md` and `~/.claude/shared/code-review.md` and follow them exactly: find the Change set, then review it. Your final reply is the review output they specify.
 
-@~/.claude/shared/code-review.md
+Then say the review is running and stop; continue with whatever the user asks meanwhile.
+
+When the review arrives:
+
+- **Findings** — evaluate each one against what you know about this change. Fix those that hold up; for each one you skip, give the reason in one line.
+- **A list of candidates, no changes, or a passed review** — relay it as is.

@@ -12,7 +12,7 @@ Deduplicate by path.
 
 ### 2. Read the arguments
 
-Split the command arguments into tokens:
+Split the arguments into tokens:
 
 - A token matching a candidate's path or directory name → the **repo** to use.
 - In PR mode, a token naming a branch that exists on origin (`git -C <root> rev-parse --verify --quiet origin/<token>`) → the **base** branch.

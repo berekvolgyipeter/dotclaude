@@ -76,7 +76,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 | Command | Description |
 |---------|-------------|
-| [/pr-review](commands/review/pr-review.md) | Technical code review of a branch against its base branch. Runs in the background without seeing the session's context; numbered findings arrive in the session when done. Trailing text is a focus hint. Runs `make lint` / `make test`, honoring the same `DOTCLAUDE_DISABLE_AUTO_LINT` / `DOTCLAUDE_DISABLE_AUTO_TEST` opt-outs as the Stop hook |
+| [/pr-review](commands/review/pr-review.md) | Technical code review of a branch against its base branch. A background reviewer that doesn't see the session's context runs it; when its numbered findings arrive, the session evaluates them and fixes the ones that hold up. Trailing text is a focus hint. Runs `make lint` / `make test`, honoring the same `DOTCLAUDE_DISABLE_AUTO_LINT` / `DOTCLAUDE_DISABLE_AUTO_TEST` opt-outs as the Stop hook |
 | [/delta-review](commands/review/delta-review.md) | Same review for uncommitted changes against the latest commit |
 | [/skill-review](commands/review/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
 
