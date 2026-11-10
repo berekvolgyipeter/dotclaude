@@ -1,24 +1,19 @@
 ---
 name: pr-review
-description: Technical code review for quality and bugs for changes to a target branch. If no target branch is passed, it defaults to the default branch.
+description: Technical code review of a branch's changes against its base branch (default branch unless one is named), run by a background reviewer — the session then evaluates the findings and fixes what holds up
 disable-model-invocation: true
-argument-hint: "[target-branch]"
+argument-hint: "[repo] [base-branch] [focus]"
 allowed-tools:
-  - Bash(bash ~/.claude/scripts/review/pr-diff.sh *)
-  - Bash(bash ~/.claude/scripts/review/automated-checks.sh)
-  - Bash(git diff *)
-  - Bash(git show *)
-  - Agent(review:code-reviewer)
-hooks:
-  PreToolUse:
-    - matcher: Bash
-      hooks:
-        - type: command
-          command: bash ~/.claude/hooks/block-git-mutations.sh
+  - Agent
 ---
 
-!`bash ~/.claude/scripts/review/pr-diff.sh $ARGUMENTS`
+Dispatch one `general-purpose` subagent in the background with exactly this prompt, and add nothing about this session's work — the reviewer must judge the code independently:
 
-!`bash ~/.claude/scripts/review/automated-checks.sh`
+> Mode: PR. Arguments: `$ARGUMENTS`. Read `~/.claude/shared/change-set.md` and `~/.claude/shared/code-review.md` and follow them exactly: find the Change set, then review it. Your final reply is the review output they specify.
 
-@~/.claude/shared/code-review.md
+Then say the review is running and stop; continue with whatever the user asks meanwhile.
+
+When the review arrives:
+
+- **Findings** — evaluate each one against what you know about this change. Fix those that hold up; for each one you skip, give the reason in one line.
+- **A list of candidates, no changes, or a passed review** — relay it as is.

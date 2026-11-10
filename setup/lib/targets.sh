@@ -7,7 +7,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 CLAUDE_DIR="$HOME/.claude"
 
 # Directories whose top-level entries are linked one by one into ~/.claude/<dir>/
-DIRS=(rules context-rules commands agents skills output-styles templates hooks scripts shared)
+DIRS=(rules commands agents skills output-styles templates hooks scripts shared)
 
 # Files linked directly into ~/.claude/
 FILES=(settings.json)

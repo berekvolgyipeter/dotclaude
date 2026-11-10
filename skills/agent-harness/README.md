@@ -4,27 +4,23 @@ Browse and explore agent harness frameworks and Claude Code resource collections
 
 ## First-time setup
 
-The skill uses local clones of curated repos for semantic search. Run the two setup scripts once before using the skill.
+The skill uses local clones of curated repos for semantic search. Clone and index them once before using the skill.
 
 ### 1. Clone reference repos
 
 ```sh
-bash ~/.claude/skills/agent-harness/scripts/sync-references.sh
+python3 ~/.claude/scripts/skill_references.py sync ~/.claude/skills/agent-harness
 ```
 
 This clones every repo listed in `references/catalog.json` into `~/.claude/skills-references/agent-harness/`, or pulls it if already present. Each catalog entry's `sparse` patterns limit the checkout to content worth searching (skills, agents, docs) and leave out noise such as tests, CI, and source code; an entry without `sparse` is checked out in full. The patterns are reapplied on every run.
 
-To add a repo, add an entry to the catalog and re-run the script.
+To add a repo, add an entry to the catalog and re-run the command.
 
 ### 2. Index for semantic search
 
-```sh
-bash ~/.claude/skills/agent-harness/scripts/index-references.sh
-```
+Ask Claude to index the absolute path of `~/.claude/skills-references/agent-harness` with the `claude-context` MCP server's `index_codebase` tool.
 
-This indexes the cloned repos via the `claude-context` MCP server, making them available for semantic search during skill lookup.
-
-> Requires the `claude-context` MCP server to be configured. See the project README for MCP setup.
+> Requires the `claude-context` MCP server (`make mcp`). See the project README.
 
 ## Updating
 
@@ -33,7 +29,7 @@ Run `/refresh-references` every once in a while. It syncs the repos, audits them
 To only check for upstream layout changes, run the audit:
 
 ```sh
-bash ~/.claude/skills/agent-harness/scripts/audit-references.sh
+python3 ~/.claude/scripts/skill_references.py audit ~/.claude/skills/agent-harness
 ```
 
 It reports stale sparse patterns, top-level entries added or removed since the previous audit with their checked-out/excluded file counts, and clones no catalog entry owns.

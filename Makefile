@@ -1,10 +1,14 @@
 LINT_EXCLUDE := .git .venv
 
-.PHONY: install uninstall lint tree
+.PHONY: install mcp uninstall lint test tree
 
 # Symlink repo entries and files into ~/.claude/
 install:
 	bash setup/install.sh
+
+# Register the claude-context and context7 MCP servers at user scope (interactive)
+mcp:
+	bash setup/install-mcp.sh
 
 # Remove symlinks from ~/.claude/
 uninstall:
@@ -19,3 +23,7 @@ lint:
 	shellcheck $$(find . -name '*.sh' $(foreach d,$(LINT_EXCLUDE),-not -path './$(d)/*'))
 	uv run ruff check --fix $$(find . -name '*.py' $(foreach d,$(LINT_EXCLUDE),-not -path './$(d)/*'))
 	uv run ruff format $$(find . -name '*.py' $(foreach d,$(LINT_EXCLUDE),-not -path './$(d)/*'))
+
+# Run the hook behavior tests
+test:
+	bash tests/lint-and-test.sh
