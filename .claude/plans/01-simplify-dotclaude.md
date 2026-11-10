@@ -52,7 +52,7 @@ Each phase is one commit (or a few), leaving the repo working.
   - **Interface:** forked, foreground (`background: false`) → one message per invocation for the chosen **Change set**; `/commit-msg` keeps `model: haiku` and its single-code-block output.
   - **Depth:** shallow by design; the fork replaces the summarizer agent as the context-isolation seam.
 - **MCP installer** (`make mcp`)
-  - **Interface:** interactive; asks embedding provider. OpenAI → key read at launch from this repo's `.env` via an absolute path written at install time (no key in config). Ollama → asks model and host (defaults `qwen3-embedding:4b`, `http://127.0.0.1:11434`). Both → `MILVUS_ADDRESS=localhost:19531`, `@latest`. Registers `claude-context` and `context7` with `claude mcp add --scope user`; removes an existing entry first (idempotent).
+  - **Interface:** interactive; asks embedding provider. OpenAI → key read at launch from this repo's `.env` via an absolute path written at install time (no key in config). Ollama → asks model and host (defaults `qwen3-embedding:0.6b` — revised from `4b`, which indexed too slowly locally — `http://127.0.0.1:11434`). Both → `MILVUS_ADDRESS=localhost:19531`, `@latest`. Registers `claude-context` and `context7` with `claude mcp add --scope user`; removes an existing entry first (idempotent).
   - **Depth:** moderate — hides `claude mcp` invocation and per-provider env.
 - **Path-scoped rules** (native, config only)
   - **Interface:** each user rule file carries `paths:` globs (or none = always loaded); filename + H1 name the topic. Consumers find rules by listing the rules dir.

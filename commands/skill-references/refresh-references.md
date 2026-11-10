@@ -50,9 +50,10 @@ Finish by bringing each skill's semantic-search index up to date. For the absolu
 
 - **Not indexed** → call `mcp__claude-context__index_codebase` with that path and `splitter: "ast"`.
 - **Indexed, and this run changed the checkout** (sync pulled new commits, or sparse patterns changed) → call it with `force: true` as well; a forced run rebuilds the whole index.
+- **Indexing failed** → call it with `force: true`; the failed run may have left a partial index behind.
 - **Indexed and nothing changed** → skip it.
 
-After any index call, poll `get_indexing_status` until it reports indexed or failed.
+After any index call, poll until the run is done. `get_indexing_status` can report "completed" with partial counts while indexing continues, so don't stop at the first "completed": the run is done when the status reads indexed and its chunk count stays the same across polls a few minutes apart.
 
 Indexing needs the `claude-context` MCP server; if it is unavailable, say so and leave indexing to the user.
 
