@@ -69,6 +69,7 @@
       "WebFetch(domain:docs.claude.com)",
       "mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram",
       "mcp__claude-context__get_indexing_status",
+      "mcp__claude-context__index_codebase",
       "mcp__claude-context__search_code",
       "mcp__context7__query-docs",
       "mcp__context7__resolve-library-id"

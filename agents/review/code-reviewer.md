@@ -4,7 +4,10 @@ description: "Focused code reviewer for batches of changed files. Reads diffs an
 model: sonnet
 tools:
   - "Read"
-  - "Bash"
+  - "Bash(git -C * diff *)"
+  - "Bash(git -C * show *)"
+  - "Bash(grep *)"
+  - "Bash(find *)"
 ---
 
 You are a focused code reviewer. You receive a batch of files to review, read their diffs and source on demand, and report any real issues found.

@@ -123,6 +123,14 @@ run_hook
 check "an edit to a gitignored file only runs nothing" 0 ""
 
 new_case
+mkdir -p "$WORK/scratch"
+printf 'lint:\n\t@echo scratch:lint >> %s\n' "$RAN" >"$WORK/scratch/Makefile"
+user_prompt "write a scratch file"
+edit Write "$WORK/scratch/notes.md"
+run_hook
+check "an edit outside any git repo runs nothing" 0 ""
+
+new_case
 new_repo "$WORK/app" test
 user_prompt "change it"
 edit Edit "$WORK/app/main.py"

@@ -33,7 +33,7 @@ From the overview, take the changed files, untracked files, and DIFF_BASE. Group
 
 ## Step 4: Dispatch Review Subagents
 
-For each batch, launch a **parallel `review:code-reviewer` subagent** using the Agent tool. Dispatch all batches in parallel.
+For each batch, launch a **parallel `code-reviewer` subagent** using the Agent tool. Dispatch all batches in parallel.
 
 Each subagent prompt must include:
 

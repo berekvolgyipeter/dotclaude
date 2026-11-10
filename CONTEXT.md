@@ -19,7 +19,7 @@ An additional git worktree of a **Project repo**, checked out in its own directo
 _Avoid_: checkout, clone
 
 **Change set**:
-The changes under review or description in exactly one **Project repo** or **Project worktree** — never spanning several.
+The changes being reviewed or described, in exactly one **Project repo** or **Project worktree** — never spanning several.
 _Avoid_: diff (for the whole set)
 
 ## Example dialogue
