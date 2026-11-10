@@ -102,7 +102,7 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | Skill | Description |
 |-------|-------------|
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
-| [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
+| [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback and permission prompts |
 | [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
 | [grill-with-docs](skills/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
@@ -160,7 +160,7 @@ Shared permissions, preferences, and security posture. Built for auto mode: the 
 
 - **Secrets stay unreadable** — credential files, keychain, `.env` files, tokens in the environment, and forge auth tokens and CI secrets.
 - **Git history changes need your OK** — commits, merges, rebases, resets, and other history rewrites prompt; worktree management runs freely.
-- **Remote changes need your OK** — pushes and forge writes prompt; forge deletions are denied; reads run freely.
+- **Remote changes need your OK** — pushes and forge writes prompt; forge deletions are denied; reads run freely. In auto mode, opening MRs/PRs and routine collaboration on them (editing the description, commenting, replying to and resolving discussions) runs without a prompt, while forge configuration changes stay blocked.
 - **The machine stays untouched** — system settings, services, shell config, and package installs outside the project prompt or are denied.
 - **No phoning home** — telemetry and error reporting are off.
 

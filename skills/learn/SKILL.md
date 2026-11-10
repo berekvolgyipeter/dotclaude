@@ -1,6 +1,6 @@
 ---
 name: learn
-description: Analyze conversation and update CLAUDE.md, rule files, and/or any skills, commands, or agents that were used — based on user feedback vs agent behavior. Use this skill at the end of any conversation where corrections, misunderstandings, or new patterns emerged, especially when a skill, command, or agent underperformed or needed repeated guidance. Also use when the user says things like "save what we learned", "remember this for next time", "update the rules", "let's wrap up and capture this", or any variation of wanting to persist lessons from the current session.
+description: Analyze conversation and update CLAUDE.md, rule files, any skills, commands, or agents that were used, and permission settings — based on user feedback vs agent behavior and on the permission prompts the user had to answer. Use this skill at the end of any conversation where corrections, misunderstandings, or new patterns emerged, especially when a skill, command, or agent underperformed or needed repeated guidance, or when Claude kept asking for permission for harmless actions. Also use when the user says things like "save what we learned", "remember this for next time", "update the rules", "stop asking me for this", "let's wrap up and capture this", or any variation of wanting to persist lessons from the current session.
 ---
 
 ## Triage first
@@ -23,6 +23,7 @@ Examine the conversation for learning signals and identify rule gaps in a single
 - **Agent mistakes**: Repeated errors, wrong assumptions, misunderstandings, or violations of existing rules (needs new rule or emphasis/clarification of existing one)
 - **Emergent patterns**: Something worked well that should be documented, or a workflow crystallized that future sessions would benefit from. Positive learnings go to the same target files as fixes — add them as recommended patterns rather than corrective rules.
 - **Tool invocations**: Instances of `Skill` tool calls (skills/commands) and `Agent` tool calls (agents) — these feed into Step 2
+- **Permission friction**: Prompts the user approved, actions auto mode blocked, or remarks like "you could have just done that" — these feed into Step 3
 
 ### Step 2: Evaluate Used Skills, Commands, and Agents
 
@@ -43,7 +44,31 @@ For each one found (or expected but missing), read its current definition file, 
 - Did the user correct the output in a way that reveals a missing instruction?
 - Did the description cause it to trigger at the wrong time (or fail to trigger)?
 
-### Step 3: Determine Target File(s)
+### Step 3: Review Permission Prompts
+
+The prompts the user approved are not visible in the conversation — read them from the session transcript, the newest file under `~/.claude/projects/`. Each tool result there records how its permission was decided: `user_temporary` means the user approved a prompt once, `user_permanent` means they chose "don't ask again". Run `scripts/permission-prompts.sh` to list those calls; pass a transcript path to read another session.
+
+Also take from the conversation itself the calls auto mode blocked (the notice names the matched rule in brackets, e.g. `[Data Exfiltration]`) and the calls the user declined.
+
+For each recurring or plainly harmless prompt, find why it prompted — an `ask` rule that matched (often too broadly), no `allow` rule outside auto mode, or a classifier block — then pick the narrowest fix:
+
+| Cause | Fix |
+|-------|-----|
+| An `ask` pattern catches a harmless call | Narrow or drop that `ask` entry |
+| A fixed, safe command with no rule | `permissions.allow` entry for that exact command shape |
+| Auto mode blocks a routine action | Prose rule in `autoMode.allow`, written as a description for a new engineer |
+| Auto mode treats a destination you trust as external | `autoMode.environment` entry naming the host, repo, or bucket |
+
+Guardrails — propose none of these:
+
+- Loosening a `deny` entry, or anything that reads credentials or secrets
+- An `autoMode` list without the literal `"$defaults"` entry — omitting it discards the built-in rules
+- Broad allows like `Bash(*)` or a bare interpreter — auto mode drops them anyway
+- Allowing a call the user declined, or one that changes system settings, git history, or a remote beyond what the user approved
+
+Permission changes go to the user's settings file `~/.claude/settings.json` — `autoMode` is read only there. A permission that fits only the current project goes to `.claude/settings.local.json`. Keep machine-specific paths out of a settings file that is shared.
+
+### Step 4: Determine Target File(s)
 
 Decide whether a learning is **universal** (applies to all projects → user-level `~/.claude/`) or **project-specific** (→ project-level `.claude/`).
 
@@ -63,7 +88,7 @@ This includes the learn skill itself — if the learning process was suboptimal,
 
 **New user-level files:** each entry under `~/.claude/<dir>/` is a symlink into the dotclaude repo, so edits to existing files through `~/.claude/` land in the repo, but a newly created top-level file would not. Create new user-level files at the repo path instead — the repo root is two levels above `readlink -f ~/.claude/skills/learn` — then run `make install` in the repo.
 
-### Step 4: Formulate Updates
+### Step 5: Formulate Updates
 
 For substantial rewrites of skill, command, or agent instructions, invoke the `prompt-engineering` skill to ensure the new content follows best practices for AI prompt design. For simple additions like a single rule line in CLAUDE.md, just match the existing style — the overhead of invoking another skill isn't worth it for small changes.
 
@@ -97,6 +122,13 @@ For 3+ learnings, use this structured template:
    - Context: [What happened when it ran]
    - Issue: [What was missing, wrong, or redundant in the instructions]
    - File: [`~/.claude/` or `.claude/` path to the definition file]
+
+### Permission Updates
+
+1. [Command or action that prompted] — [count] prompts
+   - Cause: [matching `ask` rule, missing `allow`, or auto mode rule name]
+   - Change: [exact entry to add, narrow, or drop]
+   - File: [settings file]
 ```
 
 **Example (filled in):**
@@ -117,6 +149,13 @@ For 3+ learnings, use this structured template:
    - Context: User ran /pr-review on a 2000-line PR; the command tried to review every file and hit context limits
    - Issue: No guidance on handling large diffs — should summarize by file first, then deep-dive on request
    - File: `~/.claude/commands/review/pr-review.md`
+
+### Permission Updates
+
+1. `mycli api` reads with a path containing `-f` — 12 prompts
+   - Cause: `ask` entry `Bash(mycli api *-f*)` meant for a write flag also matches `-f` inside a path
+   - Change: drop it; let auto mode judge API writes
+   - File: `~/.claude/settings.json`
 ```
 
 ## Implementation

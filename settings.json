@@ -32,7 +32,6 @@
       "Bash(git -C * pull *)",
       "Bash(git worktree *)",
       "Bash(git -C * worktree *)",
-      "Bash(gh api *)",
       "Bash(gh pr view*)",
       "Bash(gh pr list*)",
       "Bash(gh pr diff*)",
@@ -41,7 +40,6 @@
       "Bash(gh issue list*)",
       "Bash(gh run view*)",
       "Bash(gh run list*)",
-      "Bash(glab api *)",
       "Bash(glab mr view*)",
       "Bash(glab mr list*)",
       "Bash(glab mr diff*)",
@@ -69,7 +67,6 @@
       "WebFetch(domain:docs.claude.com)",
       "mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram",
       "mcp__claude-context__get_indexing_status",
-      "mcp__claude-context__index_codebase",
       "mcp__claude-context__search_code",
       "mcp__context7__query-docs",
       "mcp__context7__resolve-library-id"
@@ -179,11 +176,8 @@
       "Bash(git -C * remote *)",
       "Bash(git -C * filter-branch *)",
       "Bash(git -C * filter-repo *)",
-      "Bash(gh pr create *)",
       "Bash(gh pr merge *)",
-      "Bash(gh pr edit *)",
       "Bash(gh pr close *)",
-      "Bash(gh pr comment *)",
       "Bash(gh pr review *)",
       "Bash(gh issue create *)",
       "Bash(gh issue comment *)",
@@ -194,15 +188,7 @@
       "Bash(gh workflow run *)",
       "Bash(gh release *)",
       "Bash(gh repo *)",
-      "Bash(gh api *-X*)",
-      "Bash(gh api *--method*)",
-      "Bash(gh api *-f*)",
-      "Bash(gh api *-F*)",
-      "Bash(gh api *--input*)",
-      "Bash(glab mr create *)",
       "Bash(glab mr merge *)",
-      "Bash(glab mr update *)",
-      "Bash(glab mr note *)",
       "Bash(glab mr approve *)",
       "Bash(glab mr close *)",
       "Bash(glab mr reopen *)",
@@ -215,11 +201,6 @@
       "Bash(glab ci retry *)",
       "Bash(glab ci cancel *)",
       "Bash(glab release *)",
-      "Bash(glab api *-X*)",
-      "Bash(glab api *--method*)",
-      "Bash(glab api *-f*)",
-      "Bash(glab api *-F*)",
-      "Bash(glab api *--input*)",
       "Bash(npx *)",
       "Bash(npm exec*)",
       "Bash(uvx *)",
@@ -240,6 +221,16 @@
       "Bash(scutil *)",
       "Bash(osascript *)",
       "mcp__claude-context__clear_index"
+    ]
+  },
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Forge MR/PR collaboration: updating a merge request's or pull request's title or description, posting comments on it, replying to its review discussions, and resolving or unresolving those discussions, via glab/gh subcommands or glab api/gh api (REST or GraphQL). Does not cover merging, approving, closing, reopening, changing the target or base branch, or deleting anything."
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Forge configuration changes: changing GitLab project or GitHub repo settings, protected branches or tags, members or permissions, webhooks, deploy keys, CI/CD variables or secrets, or pipeline schedules, via glab/gh or their APIs."
     ]
   },
   "model": "opus",
