@@ -3,8 +3,7 @@
 set -euo pipefail
 
 # Idempotent: prints only what it changed or what blocks a link, so it is
-# silent when everything is already in place. Also run on every session start
-# by hooks/sync-links.sh, possibly by several sessions at once.
+# silent when everything is already in place.
 
 # shellcheck source=setup/lib/targets.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib/targets.sh"
@@ -53,8 +52,7 @@ for file in "${FILES[@]}"; do
     # Back up a real file with a timestamp before replacing it
     if [ -f "$target" ] && [ ! -L "$target" ]; then
         backup="$target.backup.$(date +%Y%m%d%H%M%S)"
-        # A concurrent run may have already moved it
-        mv "$target" "$backup" 2>/dev/null || [ ! -f "$target" ] || [ -L "$target" ]
+        mv "$target" "$backup"
         echo "Backed up: ~/.claude/$file -> $(basename "$backup")"
     fi
 

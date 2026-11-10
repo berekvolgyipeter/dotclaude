@@ -6,6 +6,8 @@ allowed-tools:
   - Bash
   - Read
   - Edit
+  - mcp__claude-context__index_codebase
+  - mcp__claude-context__get_indexing_status
 ---
 
 # Refresh Skill References
@@ -19,8 +21,8 @@ Work through both skills: `~/.claude/skills/plugin-browser` and `~/.claude/skill
 Run, per skill:
 
 ```sh
-bash ~/.claude/skills/<skill>/scripts/sync-references.sh
-bash ~/.claude/skills/<skill>/scripts/audit-references.sh
+python3 ~/.claude/scripts/skill_references.py sync ~/.claude/skills/<skill>
+python3 ~/.claude/scripts/skill_references.py audit ~/.claude/skills/<skill>
 ```
 
 The audit prints, per repo: the last upstream commit date, any `sparse` pattern that matches nothing upstream (`STALE`), and every top-level entry with its checked-out/excluded file counts — marked `NEW` or `REMOVED` relative to the previous audit — plus clones that no catalog entry owns (`ORPHAN`).
@@ -44,11 +46,14 @@ For each repo whose contents changed, check its catalog `description`, `topics`,
 
 Edit the `sparse` lists and descriptions in the catalogs, then re-run sync and audit until no `STALE` patterns remain and the checkout matches your decisions. If the repo list or catalog fields changed, update `README.md` accordingly.
 
-Finish by re-indexing both skills for semantic search:
+Finish by bringing each skill's semantic-search index up to date. For the absolute path of `~/.claude/skills-references/<skill>`, check `mcp__claude-context__get_indexing_status`:
 
-```sh
-bash ~/.claude/skills/<skill>/scripts/index-references.sh
-```
+- **Not indexed** → call `mcp__claude-context__index_codebase` with that path and `splitter: "ast"`.
+- **Indexed, and this run changed the checkout** (sync pulled new commits, or sparse patterns changed) → call it with `force: true` as well; a forced run rebuilds the whole index.
+- **Indexing failed** → call it with `force: true`; the failed run may have left a partial index behind.
+- **Indexed and nothing changed** → skip it.
+
+After any index call, poll until the run is done. `get_indexing_status` can report "completed" with partial counts while indexing continues, so don't stop at the first "completed": the run is done when the status reads indexed and its chunk count stays the same across polls a few minutes apart.
 
 Indexing needs the `claude-context` MCP server; if it is unavailable, say so and leave indexing to the user.
 

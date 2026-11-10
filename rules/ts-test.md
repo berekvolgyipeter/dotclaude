@@ -1,3 +1,9 @@
+---
+paths:
+  - "**/*.{test,spec}.{ts,tsx,mts,cts}"
+  - "**/{test,tests,e2e}/**/*.{ts,tsx,mts,cts}"
+---
+
 # TypeScript Testing Rules
 
 ## Core Principle

@@ -22,11 +22,11 @@ Symlinking into `~/.claude/` and version-controlling everything in git turns thi
 
 ```mermaid
 flowchart LR
-    Start([Session start]) --> Sync[SessionStart hook]
-    Sync -->|link new repo entries| Claude
+    Start([Session start]) --> Notice[SessionStart hook]
+    Notice -->|list excluded commands| Claude
     User([User prompt]) --> Claude
     Claude -->|tool call| Pre[PreToolUse hooks]
-    Pre -->|load context rules<br/>block destructive ops| Tool[Tool execution]
+    Pre -->|deny mixed excluded commands| Tool[Tool execution]
     Tool --> Claude
     Claude -.turn ends.-> Stop[Stop hook]
     Stop -->|make lint + make test| Claude
@@ -36,23 +36,16 @@ flowchart LR
 
 ### [Rules](rules/)
 
-Always-loaded rule files discovered automatically by Claude Code.
-
-| File | Scope | Description |
-|------|-------|-------------|
-| [general.md](rules/general.md) | All files | No-guessing policy, consistency, check-before-implementing, rules awareness |
-
-### [Context Rules](context-rules/)
-
-Rule files loaded on demand by the `load-context-rules.sh` hook when Edit/Write targets a matching file pattern. Not auto-discovered by Claude Code — the hook controls when they enter context.
+Rule files discovered automatically by Claude Code. A rule without `paths:` frontmatter is always loaded; a rule with `paths:` loads when Claude reads, edits, or creates a matching file.
 
 | File | Loaded when | Description |
 |------|-------------|-------------|
-| [py-code.md](context-rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
-| [py-test.md](context-rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
-| [ts-code.md](context-rules/ts-code.md) | TypeScript files | TypeScript style, typing, naming, error handling |
-| [ts-test.md](context-rules/ts-test.md) | TypeScript test files | Vitest conventions, mocking boundaries, determinism, test organization |
-| [docs.md](context-rules/docs.md) | Markdown files | Documentation principles, timeless writing, avoid volatile details |
+| [general.md](rules/general.md) | Always | No-guessing policy, consistency, check-before-implementing, docs sync, rules awareness |
+| [py-code.md](rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
+| [py-test.md](rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
+| [ts-code.md](rules/ts-code.md) | TypeScript files | TypeScript style, typing, naming, error handling |
+| [ts-test.md](rules/ts-test.md) | TypeScript test files | Vitest conventions, mocking boundaries, determinism, test organization |
+| [docs.md](rules/docs.md) | Markdown files | Documentation principles, timeless writing, avoid volatile details |
 
 ### [Shared](shared/)
 
@@ -60,11 +53,8 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 | File | Description |
 |------|-------------|
-| [shared/rules-index.md](shared/rules-index.md) | Registry of all rule files — what each covers and when to load it |
-| [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis. Supports two scopes: full (default) and diff-only, selected via a `REVIEW_SCOPE` line set by the including command |
-| [shared/analyze-project.md](shared/analyze-project.md) | Project survey steps, imported by `/overview`, `/init-rules`, and `/refine-rules` |
-| [shared/project-rules/file-writing.md](shared/project-rules/file-writing.md) | Rule-file shape and writing rules, imported by `/init-rules` and `/refine-rules` |
-| [shared/project-rules/claudemd-section.md](shared/project-rules/claudemd-section.md) | CLAUDE.md progressive-disclosure section template, imported by `/init-rules` and `/refine-rules` |
+| [shared/change-set.md](shared/change-set.md) | Finds the one Change set to work on — from a Project repo, a Project worktree, or an Index repo — and gathers its overview (root, branch, diff base, changed files); lists the candidates and stops when there are several |
+| [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis, lint/test checks, and numbered findings reported in the session |
 
 ### [Commands](commands/)
 
@@ -75,29 +65,19 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [/overview](commands/explore/overview.md) | Build a lightweight, high-level overview of a project |
 | [/architecture](commands/explore/architecture.md) | Discover a module's architecture, functionality, and communication interfaces, saved to `docs/architecture/` — excludes tests and CI/CD |
 
-**[project-rules/](commands/project-rules/)**
-
-| Command | Description |
-|---------|-------------|
-| [/init-rules](commands/project-rules/init-rules.md) | Decompose a fresh project into modules, write per-module `.claude/rules/*.md` files with a `paths` frontmatter, and add a progressive-disclosure table to CLAUDE.md |
-| [/refine-rules](commands/project-rules/refine-rules.md) | Audit existing `.claude/rules/*.md` files and apply a minimal delta — modify, split, merge, remove, or add — keeping the CLAUDE.md table in sync |
-
 **[git/](commands/git/)**
 
 | Command | Description |
 |---------|-------------|
-| [/commit-msg](commands/git/commit-msg.md) | Generate a suggested conventional commit message for the current changes |
-| [/pr-summary](commands/git/pr-summary.md) | Brief PR summary grouped by feature/area |
+| [/commit-msg](commands/git/commit-msg.md) | Generate a suggested conventional commit message for the current changes. Runs in an isolated subagent, so diffs stay out of the session |
+| [/pr-summary](commands/git/pr-summary.md) | Brief PR summary grouped by feature/area. Runs in an isolated subagent, so diffs stay out of the session |
 
 **[review/](commands/review/)**
 
 | Command | Description |
 |---------|-------------|
-| [/pr-review](commands/review/pr-review.md) | Full technical code review |
-| [/pr-review-diff](commands/review/pr-review-diff.md) | Diff-only review of changes to a target branch — reviews only the diff hunks, skips lint/test checks |
-| [/delta-review](commands/review/delta-review.md) | Review uncommitted changes against latest commit |
-| [/delta-review-diff](commands/review/delta-review-diff.md) | Diff-only review of uncommitted changes — reviews only the diff hunks, skips lint/test checks |
-| [/fix-review](commands/review/fix-review.md) | Fix issues found in a code review |
+| [/pr-review](commands/review/pr-review.md) | Technical code review of a branch against its base branch. A background reviewer that doesn't see the session's context runs it; when its numbered findings arrive, the session evaluates them and fixes the ones that hold up. Trailing text is a focus hint. Runs `make lint` / `make test`, honoring the same `DOTCLAUDE_DISABLE_AUTO_LINT` / `DOTCLAUDE_DISABLE_AUTO_TEST` opt-outs as the Stop hook |
+| [/delta-review](commands/review/delta-review.md) | Same review for uncommitted changes against the latest commit |
 | [/skill-review](commands/review/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
 
 **[plan/](commands/plan/)**
@@ -122,7 +102,7 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | Skill | Description |
 |-------|-------------|
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
-| [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback |
+| [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback and permission prompts |
 | [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
 | [grill-with-docs](skills/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
@@ -142,21 +122,16 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | Agent | Description |
 |-------|-------------|
 | [code-reviewer](agents/review/code-reviewer.md) | Focused code reviewer for batches of changed files, dispatched by review commands |
-| [code-reviewer-diff](agents/review/code-reviewer-diff.md) | Strict diff-only reviewer for batches of changed files — reads only the diff hunks, never the full files; dispatched by the diff-only review commands |
-| [diff-summarizer](agents/review/diff-summarizer.md) | Reads diffs on demand and returns structured change summaries |
 
 ### [Hooks](hooks/)
 
-Event-driven shell scripts registered in `settings.json`, or scoped to a single command via its `hooks` frontmatter.
+Event-driven shell scripts registered in `settings.json`.
 
 | Hook | Event | Description |
 |------|-------|-------------|
-| [sync-links.sh](hooks/sync-links.sh) | `SessionStart` | Re-runs `setup/install.sh` on session startup/resume so entries added to or removed from the repo are linked into `~/.claude/`. Silent unless a link changed or is blocked by an existing entry |
-| [load-context-rules.sh](hooks/load-context-rules.sh) | `PreToolUse` | Loads context rules from `context-rules/` on first Edit/Write per session when the target file matches a rule's glob pattern. Deduplicates via transcript markers. Skipped when `DOTCLAUDE_DISABLE_CONTEXT_RULES_HOOK` is set to `1`/`true` |
 | [standalone-excluded-commands.sh](hooks/standalone-excluded-commands.sh) | `PreToolUse` | Denies Bash calls that mix a `sandbox.excludedCommands` entry with other commands, since those run sandboxed. `list-excluded-commands.sh` lists these commands up front |
 | [list-excluded-commands.sh](hooks/list-excluded-commands.sh) | `SessionStart` | Lists the `sandbox.excludedCommands` entries and how to call them so they run unsandboxed: alone, with no pipes, `$()`, backticks or redirects |
-| [lint-and-test.sh](hooks/lint-and-test.sh) | `Stop` | Runs `make lint` and `make test` after any session that used Edit or Write tools on non-gitignored files. Exits with code 2 to block and prompt Claude to fix failures; skips gracefully when no Makefile or `make` is found; skips individual `lint`/`test` targets that are not defined. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
-| [block-git-mutations.sh](hooks/block-git-mutations.sh) | `PreToolUse` | Blocks state-mutating `git` commands. Scoped via the `hooks` frontmatter of the read-only review commands (`pr-review`, `pr-review-diff`, `delta-review`, `delta-review-diff`), so it fires only while one of those is active |
+| [lint-and-test.sh](hooks/lint-and-test.sh) | `Stop` | For non-gitignored files changed by Edit or Write since the last user prompt, runs `make lint` and `make test` in each file's git root — so edits in several repos or worktrees each run their own targets. Exits with code 2 to block and prompt Claude to fix failures; skips files outside a git repo and targets the root's Makefile doesn't define. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
 
 ### [Output Styles](output-styles/)
 
@@ -177,29 +152,19 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 | File | Description |
 |------|-------------|
 | [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
-| [index_codebase.py](scripts/index_codebase.py) | Indexes codebase for the claude-context MCP server |
 | [skill_references.py](scripts/skill_references.py) | Syncs a skill's catalog-listed reference repos with their sparse patterns, or audits them for upstream layout changes |
-
-**[review/](scripts/review/)**
-
-| File | Description |
-|------|-------------|
-| [delta-diff.sh](scripts/review/delta-diff.sh) | Injects a local change overview (stats, file list, current branch) as markdown context — diffs are read on demand by subagents |
-| [pr-diff.sh](scripts/review/pr-diff.sh) | Injects a branch change overview (stats, file list, commits, current branch) as markdown context — diffs are read on demand by subagents |
-| [automated-checks.sh](scripts/review/automated-checks.sh) | Runs `make lint` and `make test` and injects their output as markdown context for the review. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
-| [latest-review.sh](scripts/review/latest-review.sh) | Outputs the path to the newest code review file in `.claude/.code-reviews/` |
-| [remove-latest-review.sh](scripts/review/remove-latest-review.sh) | Deletes the newest code review file in `.claude/.code-reviews/` |
 
 ### [settings.json](settings.json)
 
 Shared permissions, preferences, and security posture. Built for auto mode: the sandbox and the auto mode classifier handle routine safety, so Claude works without prompt fatigue, while explicit rules hold a few hard lines:
 
-- **Secrets stay unreadable** — credential files, keychain, `.env` files, and tokens in the environment.
-- **Remote changes need your OK** — pushes and forge writes prompt; forge deletions are denied; reads run freely.
+- **Secrets stay unreadable** — credential files, keychain, `.env` files, tokens in the environment, and forge auth tokens and CI secrets.
+- **Git history changes need your OK** — commits, merges, rebases, resets, and other history rewrites prompt; worktree management runs freely.
+- **Remote changes need your OK** — pushes and forge writes prompt; forge deletions are denied; reads run freely. In auto mode, opening MRs/PRs and routine collaboration on them (editing the description, commenting, replying to and resolving discussions) runs without a prompt, while forge configuration changes stay blocked.
 - **The machine stays untouched** — system settings, services, shell config, and package installs outside the project prompt or are denied.
 - **No phoning home** — telemetry and error reporting are off.
 
-Only a listed set of tools that can't work inside the sandbox run outside it — Claude can't take any other command out of the sandbox on its own — and Claude's package caches are kept separate from yours. Skill reference repos under `~/.claude/skills-references/` are readable and writable from the sandbox, so their sync and audit scripts run from any project. The linked `~/.claude/` directories (rules, skills, agents, commands, …) are readable without a prompt and from the sandbox, in any project.
+Only a listed set of tools that can't work inside the sandbox run outside it — Claude can't take any other command out of the sandbox on its own — and Claude's package caches are kept separate from yours. This repo's linked config is readable without a prompt and from the sandbox in any project, and skill reference repos are writable from it too, so their maintenance scripts run anywhere.
 
 ## How It Works
 
@@ -220,8 +185,8 @@ Array settings (e.g. `permissions.allow`) concatenate across levels. Project-lev
 
 ### claude-context
 
-The claude-context MCP server (configured in `.mcp.json`) needs:
-- an `OPENAI_API_KEY` set in project root `.env`
+The claude-context MCP server (registered by `make mcp`) needs:
+- an embedding provider: OpenAI, with `OPENAI_API_KEY` set in this repo's `.env`, or a local Ollama
 - a locally running instance of Milvus vector db
     - check out [this repo](https://github.com/berekvolgyipeter/milvus) to run Milvus via Docker Compose
 
@@ -237,7 +202,15 @@ This runs `setup/install.sh`, which symlinks this repo into `~/.claude/` (the li
 
 Dangling links to entries removed from the repo are pruned; run `make uninstall` before moving the repo, or its old links are left behind. If a non-repo entry with the same name already exists, the script warns and skips it. An existing real `settings.json` is backed up with a timestamp before being replaced.
 
-The script prints only what it changed, so it is safe to re-run — and the `sync-links.sh` `SessionStart` hook re-runs it on every session startup and resume, so new entries are picked up automatically from the next session on.
+The script prints only what it changed, so it is safe to re-run. Re-run it after adding or removing a top-level entry so the change is linked.
+
+### MCP servers
+
+```bash
+make mcp
+```
+
+Registers the `claude-context` and `context7` MCP servers at user scope, so they are available in every project. It asks for the embedding provider: OpenAI reads the key from this repo's `.env` at server launch, so no key is stored in Claude Code's config; Ollama asks for the model and host. Safe to re-run — existing entries are replaced.
 
 ## Uninstallation
 
@@ -249,19 +222,19 @@ Removes only symlinks pointing into this repo, then any `~/.claude/<dir>/` left 
 
 ## Development Dependencies
 
-Scripts and linting require Python dependencies, declared in `pyproject.toml` and managed with [uv](https://docs.astral.sh/uv/):
+Linting requires Python dev dependencies, declared in `pyproject.toml` and managed with [uv](https://docs.astral.sh/uv/):
 
 ```bash
 uv sync
 ```
 
-`make lint` also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`).
+`make lint` also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`).
 
 ## Editing Workflow
 
 Because the entries in `~/.claude/` are symlinks into this repo, editing any file in `~/.claude/rules/`, `~/.claude/skills/`, etc. is editing the real file here. Changes are immediately visible in all projects.
 
-Create **new** top-level entries (a rule, skill, agent, hook, …) in this repo, not under `~/.claude/` — a file created there is not in the repo. They are linked at the next session start, or immediately with `make install`.
+Create **new** top-level entries (a rule, skill, agent, hook, …) in this repo, not under `~/.claude/` — a file created there is not in the repo. Link them with `make install`.
 
 Commit and push from this repo to version-control shared config. No need to touch project repos when updating shared configuration.
 
@@ -282,7 +255,7 @@ project/.claude/
 ## Conventions
 
 - **No project-specific content here.** Rules, commands, or skills referencing a specific project's paths belong in that project's `.claude/`.
-- **Context rules** (`context-rules/`) are loaded by the `load-context-rules.sh` hook on Edit/Write — not auto-discovered. Add new context rules there and register their patterns in the hook script.
+- **File-type rules** go in `rules/` with a `paths:` frontmatter listing the globs they apply to.
 - **Templates** should be referenced via absolute path: `~/.claude/templates/plan-template.md`.
 - **`make lint` / `make test`** in shared commands are acceptable — all projects are assumed to use a Makefile.
 

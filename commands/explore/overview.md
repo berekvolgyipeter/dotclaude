@@ -13,7 +13,11 @@ Efficiently explore this project and produce a concise summary. Minimize file re
 
 ## Steps
 
-@~/.claude/shared/analyze-project.md
+1. Run `make tree` to get the project structure.
+2. Find and read the project's top-level docs — agent instructions (e.g. `CLAUDE.md`, `AGENTS.md`) and overview docs (e.g. `README`, `docs/`) — wherever this project keeps them, for its purpose, conventions, setup, and architecture.
+3. Identify entry points and key source files from the directory structure — read only the most important 3-5 files, not everything.
+4. Check for dependency manifests (`package.json`, `requirements.txt`, `go.mod`, `Cargo.toml`, etc.) and note key dependencies.
+5. Check for configuration files (CI/CD, linting, build config) and note any non-obvious setup.
 
 ## Output format
 

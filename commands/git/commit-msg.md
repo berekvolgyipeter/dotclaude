@@ -3,23 +3,24 @@ name: commit-msg
 description: Generate a suggested conventional commit message for the current changes.
 disable-model-invocation: true
 model: haiku
-allowed-tools:
-  - Bash(bash ~/.claude/scripts/review/delta-diff.sh)
-  - Bash(git log *)
-  - Agent(review:diff-summarizer)
+context: fork
+background: false
+argument-hint: "[repo]"
 ---
 
-!`bash ~/.claude/scripts/review/delta-diff.sh`
+**Mode: delta.** Arguments: `$ARGUMENTS` — may name the Project repo to describe.
 
 Generate a concise, conventional commit message for the current changes.
 
-## Step 1: Summarize Changes
+@~/.claude/shared/change-set.md
 
-Dispatch a `review:diff-summarizer` subagent with the file list, untracked files, and DIFF_BASE from the overview above. The agent will read per-file diffs and return a structured summary including change type, scope, and description.
+## Step 1: Read the Changes
+
+Read each changed file's diff and each untracked file. Note the change type, the area it touches, and what it does.
 
 ## Step 2: Derive the Commit Message
 
-Using the summary from the subagent, produce **one short commit message** following [Conventional Commits](https://www.conventionalcommits.org/):
+Produce **one short commit message** following [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
 <type>(<optional scope>): <imperative summary>
@@ -71,6 +72,6 @@ Use this exact format:
 
 ## Rules
 
-- Your ENTIRE response is the fenced code block — nothing else
+- Your ENTIRE response is the fenced code block — nothing else, unless finding the Change set stopped with a list or a "no changes" note
 - Do not stage, commit, or run any git write commands
 - Do not editorialize or suggest improvements — just output the message

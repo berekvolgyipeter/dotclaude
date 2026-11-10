@@ -21,19 +21,17 @@ $ARGUMENTS
 
 ### User-Level Rules
 
-Read the rules index, then read every rule file referenced in it — both always-loaded rules and context rules whose file patterns match the plan's target files:
-
-@~/.claude/shared/rules-index.md
+List `~/.claude/rules/`, then read every rule file there that applies — rules without `paths:` frontmatter always apply; rules with `paths:` apply when their globs match the plan's target files.
 
 ### Project-Level Rules
 
 Check for `.claude/rules/` in the current project and read any rule files found there. Also read `.claude/CLAUDE.md` for project-specific instructions.
 
-### Determine Applicable Context Rules
+### Determine Applicable Path Rules
 
 Based on the file types the plan touches (inferred from its Module Map, Key Decisions, and Testing Strategy):
-- **Always apply**: all `rules/` files and `.claude/CLAUDE.md`
-- **Conditionally apply**: context rules whose globs match the plan's target files (e.g. `py-code.md` for `.py` files, `py-test.md` for test files, `docs.md` for `.md` files)
+- **Always apply**: rule files without `paths:` and `.claude/CLAUDE.md`
+- **Conditionally apply**: rule files whose `paths:` globs match the plan's target files (e.g. `py-code.md` for `.py` files, `py-test.md` for test files, `docs.md` for `.md` files)
 
 ## Step 2 — Check the Plan
 

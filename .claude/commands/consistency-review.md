@@ -3,26 +3,18 @@ name: consistency-review
 description: Review uncommitted changes for consistency with this repo's conventions, structure, and engineering philosophy
 disable-model-invocation: true
 allowed-tools:
-  - Bash(bash ~/.claude/scripts/review/delta-diff.sh)
+  - Bash(git status *)
   - Bash(git diff *)
-hooks:
-  PreToolUse:
-    - matcher: Bash
-      hooks:
-        - type: command
-          command: bash ~/.claude/hooks/block-git-mutations.sh
 ---
 
-!`bash ~/.claude/scripts/review/delta-diff.sh`
-
-The overview above lists the changed files and stats — not the diffs themselves. For each changed file, read its diff on demand with `git diff HEAD -- <file>` (read untracked files directly). Review those changes for **consistency** with this repo (dotclaude): not functional bugs, but alignment with its documented conventions, structure, and engineering philosophy.
+List the uncommitted changes with `git status --short` and `git diff HEAD --stat`. For each changed file, read its diff on demand with `git diff HEAD -- <file>` (read untracked files directly). Review those changes for **consistency** with this repo (dotclaude): not functional bugs, but alignment with its documented conventions, structure, and engineering philosophy.
 
 ## Load the source of truth
 
 Read these before judging — quote the specific rule you're checking against, never paraphrase from memory:
 
 1. `.claude/CLAUDE.md` — the **Rules for Changes** and **Engineering Philosophy** sections.
-2. `README.md` and `shared/rules-index.md` — to check whether they are in sync with the change.
+2. `README.md` — to check whether it is in sync with the change.
 3. For each changed file, read the file and its **neighbors** (sibling entries, surrounding lines) to judge whether the new content matches their style.
 
 ## Checks
@@ -33,8 +25,6 @@ Work through each. For every finding, cite `file:line`, quote the rule it breaks
 
 - **README sync** — was `README.md` updated for every added/removed/changed rule, command, skill, agent, hook, output style, template, or script?
 - **Command frontmatter** — does every new or changed command file carry `disable-model-invocation: true`?
-- **Rules index sync** — was `shared/rules-index.md` updated when a rule or context-rule *file* was added or removed?
-- **Context-rule placement** — do on-demand rule files live in `context-rules/` (not `rules/`) and have their glob registered in `load-context-rules.sh`?
 - **Source acknowledgment** — if content was drawn from a `plugin-browser` source, is the repo listed under README *Acknowledgments*?
 - **Script placement** — are hook scripts in `hooks/` and helper scripts in `scripts/`?
 - **No irrelevant cross-references / no leaked internals** — is every artifact named one the reader actually reads, applies, or invokes? Is every env var, flag, or script detail one the reader actually sets or reacts to?
@@ -57,16 +47,12 @@ Work through each. For every finding, cite `file:line`, quote the rule it breaks
 
 ## Output
 
-**If there are no findings, do not write a file** — say so plainly in the chat and stop.
+**If there are no findings**, say so plainly and stop.
 
-Only when there is at least one finding, save a file to `.claude/.code-reviews/[current-branch-name]--consistency-review.md` using the Write tool directly — do not run `mkdir` first, the Write tool creates parent directories automatically.
+Otherwise reply with **only the findings** — no preamble, no "what was checked" section, no per-check pass list, no summary of clean items. Number them, ordered by severity (CRITICAL → MAJOR → MINOR). For each: `file:line`, the quoted rule, and the concrete fix, using this format:
 
-Use the `CURRENT_BRANCH` value from the change overview for the branch name — do not look it up with git. Normalize it for the filename: convert to lowercase and replace any character that is not a letter or digit with a dash (`-`).
-
-The file contains **only the findings** — no preamble, no "what was checked" section, no per-check pass list, no summary of clean items. List findings ordered by severity (CRITICAL → MAJOR → MINOR). For each: `file:line`, the quoted rule, and the concrete fix, using this format:
-
-### CRITICAL | [README.md:120](../../README.md#L120) — New `foo` command not documented
-**Rule:** `.claude/CLAUDE.md` → "Always update `README.md` when adding ... any ... command."
-**Fix:** Add a `foo` row to the Commands table, matching the human-readable style of the neighboring entries.
+1. **CRITICAL** | [README.md:120](README.md#L120) — New `foo` command not documented
+   **Rule:** `.claude/CLAUDE.md` → "Always update `README.md` when adding ... any ... command."
+   **Fix:** Add a `foo` row to the Commands table, matching the human-readable style of the neighboring entries.
 
 Do not report functional bugs or unrelated style nits — keep the scope to consistency.

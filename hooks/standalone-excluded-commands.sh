@@ -10,7 +10,8 @@ grep -qE '[|;&<>`]|\$\(|(^|[[:space:]])cd[[:space:]]' <<< "$S" || [[ "$S" == *$'
 
 jq -r '.sandbox.excludedCommands[]' "$SETTINGS" | while read -r p; do
   p="${p% \*}"
-  if grep -qE "(^|[|;&(\`]|\\\$\\()[[:space:]]*$(sed -E 's/[][\.^$*+?(){}|/]/\\&/g' <<< "$p")([[:space:]]|$)" <<< "$S"; then
+  # Escape regex metacharacters; a `*` inside an entry (e.g. `git -C * fetch`) matches one argument
+  if grep -qE "(^|[|;&(\`]|\\\$\\()[[:space:]]*$(sed -E 's/[][\.^$+?(){}|/]/\\&/g; s/\*/[^[:space:]]*/g' <<< "$p")([[:space:]]|$)" <<< "$S"; then
     jq -n --arg p "$p" '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "deny",
       permissionDecisionReason: ("`" + $p + "` must be the ONLY command in its Bash call — no |, &&, ||, ;, cd, $() or redirects. Run it alone.")}}'
     break
