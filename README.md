@@ -158,7 +158,8 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 
 Shared permissions, preferences, and security posture. Built for auto mode: the sandbox and the auto mode classifier handle routine safety, so Claude works without prompt fatigue, while explicit rules hold a few hard lines:
 
-- **Secrets stay unreadable** — credential files, keychain, `.env` files, and tokens in the environment.
+- **Secrets stay unreadable** — credential files, keychain, `.env` files, tokens in the environment, and forge auth tokens and CI secrets.
+- **Git history changes need your OK** — commits, merges, rebases, resets, and other history rewrites prompt; worktree management runs freely.
 - **Remote changes need your OK** — pushes and forge writes prompt; forge deletions are denied; reads run freely.
 - **The machine stays untouched** — system settings, services, shell config, and package installs outside the project prompt or are denied.
 - **No phoning home** — telemetry and error reporting are off.
