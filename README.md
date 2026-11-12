@@ -135,11 +135,11 @@ Event-driven shell scripts registered in `settings.json`.
 
 ### [Output Styles](output-styles/)
 
-Markdown files that modify Claude Code's system prompt to change its role, tone, and default response format. Activate one via `/config` → **Output style**, or set `outputStyle` in a settings file. Takes effect after `/clear` or a new session.
+Markdown files that modify Claude Code's system prompt to change its role, tone, and default response format. Activate one with `/output-style <name>`, via `/config` → **Output style**, or set `outputStyle` in a settings file. Takes effect from the next message; restart Claude Code after editing a style file.
 
 | Style | Description |
 |-------|-------------|
-| [lean](output-styles/lean.md) | Terse by default, built to be read fast — leads with the answer, trades grammar for concision in replies, cuts filler and bloated comments, holds its ground under pushback, expands only when an idea truly needs the room |
+| [lean](output-styles/lean.md) | Terse by default — hard length caps, leads with the answer, holds its ground under pushback, expands only on request |
 
 ### [Templates](templates/)
 
