@@ -37,11 +37,13 @@ case "$provider" in
     openai|OpenAI)
         # The key stays in this repo's .env; the server reads it at launch, so no key lands in config.
         env_file="$REPO_DIR/.env"
-        [ -f "$env_file" ] || echo "WARNING: $env_file not found — create it from .env.example before using claude-context."
+        [ -f "$env_file" ] \
+            || echo "WARNING: $env_file not found — create it from .env.example before using claude-context."
         register claude-context claude-context \
             -e MILVUS_ADDRESS="$MILVUS_ADDRESS" \
             -e npm_config_cache="$NPM_CACHE" \
-            -- sh -c "set -a; . $(printf %q "$env_file"); set +a; : \"\${OPENAI_API_KEY:?missing in $env_file}\"; exec npx --yes $CLAUDE_CONTEXT_PKG"
+            -- sh -c "set -a; . $(printf %q "$env_file"); set +a;
+                : \"\${OPENAI_API_KEY:?missing in $env_file}\"; exec npx --yes $CLAUDE_CONTEXT_PKG"
         ;;
     ollama|Ollama)
         model="$(ask "Ollama embedding model" "qwen3-embedding:0.6b")"

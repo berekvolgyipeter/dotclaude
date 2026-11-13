@@ -229,7 +229,7 @@ Linting requires Python dev dependencies, declared in `pyproject.toml` and manag
 uv sync
 ```
 
-`make lint` fails on any line longer than 120 characters in tracked or untracked (non-ignored) text files.
+`make lint` fails on any line longer than 120 characters in tracked or untracked (non-ignored) `.sh` and `.py` files.
 It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`).
 
 ## Editing Workflow

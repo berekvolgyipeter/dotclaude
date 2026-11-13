@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # Claude Code status line script
-# Shows: masked email (blue) | current directory (white) + branch (light yellow) | model (orange) + effort level (magenta) + context usage (green/yellow/red)
+# Shows: masked email (blue) | current directory (white) + branch (light yellow)
+#        | model (orange) + effort level (magenta) + context usage (green/yellow/red)
 
 # Claude Code passes session data as JSON on stdin
 input=$(cat)

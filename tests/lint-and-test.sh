@@ -30,7 +30,8 @@ new_repo() {
   : >"$dir/Makefile"
   for t in "$@"; do
     if [[ "$t" == !* ]]; then
-      printf '%s:\n\t@echo %s:%s >> %s\n\t@echo "%s broke" >&2; exit 1\n' "${t#!}" "$name" "${t#!}" "$RAN" "${t#!}" >>"$dir/Makefile"
+      printf '%s:\n\t@echo %s:%s >> %s\n\t@echo "%s broke" >&2; exit 1\n' \
+        "${t#!}" "$name" "${t#!}" "$RAN" "${t#!}" >>"$dir/Makefile"
     else
       printf '%s:\n\t@echo %s:%s >> %s\n' "$t" "$name" "$t" "$RAN" >>"$dir/Makefile"
     fi
@@ -43,8 +44,10 @@ user_prompt() {
 
 edit() {
   jq -cn --arg tool "$1" --arg p "$2" \
-    '{type: "assistant", message: {role: "assistant", content: [{type: "tool_use", id: "x", name: $tool, input: {file_path: $p}}]}}' >>"$TRANSCRIPT"
-  jq -cn '{type: "user", message: {role: "user", content: [{type: "tool_result", tool_use_id: "x", content: "ok"}]}}' >>"$TRANSCRIPT"
+    '{type: "assistant", message: {role: "assistant",
+      content: [{type: "tool_use", id: "x", name: $tool, input: {file_path: $p}}]}}' >>"$TRANSCRIPT"
+  jq -cn '{type: "user", message: {role: "user",
+    content: [{type: "tool_result", tool_use_id: "x", content: "ok"}]}}' >>"$TRANSCRIPT"
 }
 
 # run_hook [stop_hook_active] — sets STATUS and ERR
@@ -96,7 +99,8 @@ new_case
 new_repo "$WORK/app" lint test
 user_prompt "use a skill to change it"
 edit Edit "$WORK/app/main.py"
-jq -cn '{type: "user", isMeta: true, message: {role: "user", content: [{type: "text", text: "skill body"}]}}' >>"$TRANSCRIPT"
+jq -cn '{type: "user", isMeta: true,
+  message: {role: "user", content: [{type: "text", text: "skill body"}]}}' >>"$TRANSCRIPT"
 jq -cn '{type: "user", message: {role: "user", content: null}}' >>"$TRANSCRIPT"
 run_hook
 check "meta and empty user entries after an edit are not prompts" 0 "app:lint app:test"
