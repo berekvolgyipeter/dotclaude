@@ -23,7 +23,6 @@
       "~/.claude/rules",
       "~/.claude/shared",
       "~/.claude/skills",
-      "~/.claude/templates",
       "/tmp",
       "/private/tmp"
     ],
@@ -70,7 +69,6 @@
       "Read(~/.claude/scripts/**)",
       "Read(~/.claude/shared/**)",
       "Read(~/.claude/skills/**)",
-      "Read(~/.claude/templates/**)",
       "Skill",
       "WebSearch",
       "WebFetch(domain:github.com)",
@@ -259,7 +257,12 @@
       "Bash(osascript *)",
       "mcp__claude-context__clear_index",
       "Edit(//**/dotclaude/hooks/**)",
-      "Edit(//**/dotclaude/scripts/**)"
+      "Edit(//**/dotclaude/scripts/**)",
+      "Bash(rm *)",
+      "Bash(git rm -f*)",
+      "Bash(git rm --force*)",
+      "Bash(git -C * rm -f*)",
+      "Bash(git -C * rm --force*)"
     ]
   },
   "autoMode": {
@@ -351,8 +354,7 @@
         "~/.claude/rules",
         "~/.claude/scripts",
         "~/.claude/shared",
-        "~/.claude/skills",
-        "~/.claude/templates"
+        "~/.claude/skills"
       ]
     },
     "credentials": {

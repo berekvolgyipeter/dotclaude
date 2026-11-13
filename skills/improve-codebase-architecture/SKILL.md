@@ -1,6 +1,6 @@
 ---
 name: improve-codebase-architecture
-description: Find deepening opportunities in a codebase, informed by the domain language in CONTEXT.md and the decisions in docs/adr/. Use when the user wants to improve architecture, find refactoring opportunities, consolidate tightly-coupled modules, or make a codebase more testable and AI-navigable.
+description: Find deepening opportunities in a codebase, informed by the domain language in GLOSSARY.md and the decisions in docs/adr/. Use when the user wants to improve architecture, find refactoring opportunities, consolidate tightly-coupled modules, or make a codebase more testable and AI-navigable.
 ---
 
 # Improve Codebase Architecture
@@ -28,11 +28,19 @@ Key principles (see [language.md](references/language.md) for the full list):
 
 This skill is _informed_ by the project's domain model. The domain language gives names to good seams; ADRs record decisions the skill should not re-litigate.
 
+## Scoped mode
+
+When invoked on a design or plan rather than the whole codebase, review only what it touches, then stop:
+
+1. Read the design or plan, its goal, and the glossary and ADRs in its area, found where section 1 of `~/.claude/shared/domain-docs.md` says. Write no domain docs in this mode — the calling skill owns them.
+2. Explore only the modules it builds or modifies and their direct callers, as in step 1 below.
+3. Reply in text — no HTML report, no grilling loop. For each deepening opportunity: the modules involved, the friction, the deepening, its recommendation strength (`Strong`, `Worth exploring`, `Speculative`), and what the design should do about it — take it now because the change touches it anyway, avoid making it worse, or leave it for later. Lead with any place where the design itself adds a shallow module or a hypothetical seam. Reply "no findings" when there are none.
+
 ## Process
 
 ### 1. Explore
 
-Read the project's domain glossary and any ADRs in the area you're touching first.
+First ask the domain-docs question in section 2 of `~/.claude/shared/domain-docs.md`. Then read the glossary and any ADRs in the area you're touching, found where section 1 of that file says.
 
 Then use the Agent tool with `subagent_type=Explore` to walk the codebase. Don't follow rigid heuristics — explore organically and note where you experience friction:
 
@@ -50,7 +58,7 @@ Write a self-contained HTML file to the OS temp directory so nothing lands in th
 
 The report uses **Tailwind via CDN** for layout and styling, and **Mermaid via CDN** for diagrams where a graph/flow/sequence reliably communicates the structure. Mix Mermaid with hand-crafted CSS/SVG visuals — use Mermaid when relationships are graph-shaped (call graphs, dependencies, sequences), and hand-built divs/SVG when you want something more editorial (mass diagrams, cross-sections, collapse animations). Each candidate gets a **before/after visualisation**. Be visual.
 
-For each candidate, the same template as before, but rendered as a card:
+Render each candidate as a card with:
 
 - **Files** — which files/modules are involved
 - **Problem** — why the current architecture is causing friction
@@ -61,7 +69,7 @@ For each candidate, the same template as before, but rendered as a card:
 
 End the report with a **Top recommendation** section: which candidate you'd tackle first and why.
 
-**Use CONTEXT.md vocabulary for the domain, and [language.md](references/language.md) vocabulary for the architecture.** If `CONTEXT.md` defines "Order," talk about "the Order intake module" — not "the FooBarHandler," and not "the Order service."
+**Use GLOSSARY.md vocabulary for the domain, and [language.md](references/language.md) vocabulary for the architecture.** If `GLOSSARY.md` defines "Order," talk about "the Order intake module" — not "the FooBarHandler," and not "the Order service."
 
 **ADR conflicts**: if a candidate contradicts an existing ADR, only surface it when the friction is real enough to warrant revisiting the ADR. Mark it clearly in the card (e.g. a warning callout: _"contradicts ADR-0007 — but worth reopening because…"_). Don't list every theoretical refactor an ADR forbids.
 
@@ -73,9 +81,8 @@ Do NOT propose interfaces yet. After the file is written, ask the user: "Which o
 
 Once the user picks a candidate, drop into a grilling conversation. Walk the design tree with them — constraints, dependencies, the shape of the deepened module, what sits behind the seam, what tests survive.
 
-Side effects happen inline as decisions crystallize:
+When the user said yes to domain docs at the start, record these inline as decisions crystallize:
 
-- **Naming a deepened module after a concept not in `CONTEXT.md`?** Add the term to `CONTEXT.md` — same discipline as `/grill-with-docs` (see [context-format.md](~/.claude/skills/grill-with-docs/references/context-format.md)). Create the file lazily if it doesn't exist.
-- **Sharpening a fuzzy term during the conversation?** Update `CONTEXT.md` right there.
-- **User rejects the candidate with a load-bearing reason?** Offer an ADR, framed as: _"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"_ Only offer when the reason would actually be needed by a future explorer to avoid re-suggesting the same thing — skip ephemeral reasons ("not worth it right now") and self-evident ones. See [adr-format.md](~/.claude/skills/grill-with-docs/references/adr-format.md).
+- **Naming a deepened module after a concept not in the glossary, or sharpening a fuzzy term?** Add or update the term in the glossary.
+- **User rejects the candidate with a load-bearing reason?** Write an ADR, so future architecture reviews don't re-suggest it — only when a future explorer would need the reason; skip ephemeral reasons ("not worth it right now") and self-evident ones.
 - **Want to explore alternative interfaces for the deepened module?** See [interface-design.md](references/interface-design.md).

@@ -1,6 +1,6 @@
 ## Find the Change Set
 
-Work on exactly one **Change set**: the changes in one Project repo or Project worktree. The working directory may be a Project repo, a Project worktree, or an Index repo (a folder whose direct children are Project repos), so find the candidates yourself — never assume the working directory is the repo.
+Work on exactly one change set: the changes in one git repo or worktree. The working directory may be a repo, a worktree, or a folder whose direct children are repos, so find the candidates yourself — never assume the working directory is the repo.
 
 ### 1. Collect candidates
 

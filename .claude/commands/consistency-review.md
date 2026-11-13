@@ -33,7 +33,7 @@ Work through each. For every finding, cite `file:line`, quote the rule it breaks
 
 - Uses the exact vocabulary from `improve-codebase-architecture` (*module, interface, implementation, depth, seam, adapter, leverage, locality*) — not "component/service/boundary"?
 - Tests framed as behavior-through-interface, not implementation detail?
-- The `commands/plan/` pipeline still aligned with the skills it builds on?
+- The planning pipeline (`design-change`, `write-plan`, `execute-plan`) still aligned with the skills it builds on?
 
 ### 3. Claude Code best practices
 

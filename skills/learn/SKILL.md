@@ -12,7 +12,7 @@ A single offhand correction in an otherwise smooth conversation may not warrant 
 ## Analysis Process
 
 Learnings live at two levels:
-- **User-level** (`~/.claude/`) — shared across all projects (rules, skills, commands, agents, hooks, output styles, templates)
+- **User-level** (`~/.claude/`) — shared across all projects (rules, skills, commands, agents, hooks, output styles)
 - **Project-level** (`.claude/`) — specific to the current project (CLAUDE.md, rules, skills, commands, agents)
 
 ### Step 1: Scan for Learnings
@@ -31,7 +31,7 @@ Scan the conversation for any invocations of custom tools:
 
 **Skills** — `Skill` tool calls where the `skill` parameter matches a name in `~/.claude/skills/` or `.claude/skills/`
 
-**Commands** — slash command invocations like `/delta-review`, `/to-plan`, etc., which expand via the `Skill` tool
+**Commands** — slash command invocations like `/delta-review`, `/write-plan`, etc., which expand via the `Skill` tool
 
 **Agents** — `Agent` tool calls where `subagent_type` matches a name in `~/.claude/agents/` or `.claude/agents/`
 
