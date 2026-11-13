@@ -1,6 +1,6 @@
 # Deepening
 
-How to deepen a cluster of shallow modules safely, given its dependencies. Assumes the vocabulary in [language.md](references/language.md) — **module**, **interface**, **seam**, **adapter**.
+How to deepen a cluster of shallow modules safely, given its dependencies. Assumes the vocabulary in [language.md](language.md) — **module**, **interface**, **seam**, **adapter**.
 
 ## Dependency categories
 

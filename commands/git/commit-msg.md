@@ -8,7 +8,7 @@ background: false
 argument-hint: "[repo]"
 ---
 
-**Mode: delta.** Arguments: `$ARGUMENTS` — may name the Project repo to describe.
+**Mode: delta.** Arguments: `$ARGUMENTS` — may name the repo to describe.
 
 Generate a concise, conventional commit message for the current changes.
 
@@ -72,6 +72,6 @@ Use this exact format:
 
 ## Rules
 
-- Your ENTIRE response is the fenced code block — nothing else, unless finding the Change set stopped with a list or a "no changes" note
+- Your ENTIRE response is the fenced code block — nothing else, unless finding the change set stopped with a list or a "no changes" note
 - Do not stage, commit, or run any git write commands
 - Do not editorialize or suggest improvements — just output the message

@@ -1,15 +1,19 @@
 # Plan Template
 
-The shape of a plan artifact saved under `.claude/plans/`.
+The shape of a plan saved in a change folder — one plan per repo.
 
 Two rules govern the whole document:
 
 - **Sections earn their place.** Keep a section only if this plan has real content for it. A section padded with placeholder prose is worse than an absent one. Every plan opens with TL;DR, Goal, Requirements, and Module Map — these are the floor; the rest appear when material.
-- **No file paths, no stale code.** Paths and snippets rot fast. The one exception: a snippet that pins a decision more precisely than prose can (a schema, type shape, state machine, or reducer). Inline it, trimmed to the decision-rich part, and note it came from a prototype.
+- **No file paths, no stale code.** Paths and snippets rot fast. Two exceptions: the origin line below, and a snippet that pins a decision more precisely than prose can (a schema, type shape, state machine, or reducer). Inline such a snippet, trimmed to the decision-rich part.
 
-Use the project's domain glossary (`CONTEXT.md`) vocabulary throughout, and respect any ADRs in the area being touched.
+Use the glossary's vocabulary throughout, and respect the ADRs in the area being touched.
+
+When the plan builds on a design, it links the design docs for the goal, background and set-aside options instead of restating them, and carries what they don't: modules, code-level decisions, testable requirements, tests to mirror, and what the executor needs to start.
 
 <plan-template>
+
+**Origin:** <links to the design docs next to this plan — only when the plan builds on a design>
 
 ## TL;DR
 
@@ -23,6 +27,10 @@ A fast, human-first digest of the whole plan — written so a reader grasps it a
 ## Goal
 
 The problem and the solution in 1–3 lines, from the user's perspective. What does this let someone do that they couldn't before?
+
+## Before You Start
+
+Include when material. What the executor must know before writing code: the branch and what it starts from, how the work ships (one commit, one MR, several), and constraints on rollout such as older clients that must keep working or a deploy order.
 
 ## Requirements
 
@@ -40,9 +48,13 @@ For each module:
 - **Interface** — what callers depend on. Describe the contract, not the code.
 - **Depth** — one line on the deletion test: if this module vanished, what complexity reappears across its callers? A deep module concentrates a lot behind a small interface. If a module is deliberately shallow, say why it still earns its seam.
 
+## Phases
+
+Include only when the work ships in several commits or MRs. One numbered line per phase: what it delivers, which phases it depends on, and that the system still works after it.
+
 ## Key Decisions
 
-The load-bearing choices that constrain implementation, each as `<decision>: <rationale>`. Include only what shapes the work: schema changes, API contracts, architectural decisions, a developer's clarification, an existing pattern being mirrored. Respect documented ADRs; flag and justify any decision that reopens one.
+The load-bearing choices that constrain implementation, each as `<decision>: <rationale>`. Include only what shapes the work: schema changes, API contracts, architectural decisions, a developer's clarification, an existing pattern being mirrored. Respect documented ADRs; flag and justify any decision that reopens one. Link an ADR recorded for this change instead of restating it.
 
 ## Testing Strategy
 
@@ -55,5 +67,9 @@ Include when scope is contested or there are tempting non-goals worth pinning. W
 ## Notes & Sources
 
 Include when material. Research URLs and library gotchas (the *why*, not just the *what*), and any open questions that block implementation.
+
+## Execution Record
+
+Left out when planning; written during execution. Each deviation from the plan with its reason, and the results of gating or manual tests.
 
 </plan-template>

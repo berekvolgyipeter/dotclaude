@@ -9,7 +9,7 @@ allowed-tools:
 
 Dispatch one `general-purpose` subagent in the background with exactly this prompt, and add nothing about this session's work — the reviewer must judge the code independently:
 
-> Mode: delta. Arguments: `$ARGUMENTS`. Read `~/.claude/shared/change-set.md` and `~/.claude/shared/code-review.md` and follow them exactly: find the Change set, then review it. Your final reply is the review output they specify.
+> Mode: delta. Arguments: `$ARGUMENTS`. Read `~/.claude/shared/change-set.md` and `~/.claude/shared/code-review.md` and follow them exactly: find the change set, then review it. Your final reply is the review output they specify.
 
 Then say the review is running and stop; continue with whatever the user asks meanwhile.
 

@@ -8,7 +8,7 @@ background: false
 argument-hint: "[repo] [target-branch]"
 ---
 
-**Mode: PR.** Arguments: `$ARGUMENTS` — may name the Project repo to describe and a target (base) branch.
+**Mode: PR.** Arguments: `$ARGUMENTS` — may name the repo to describe and a target (base) branch.
 
 @~/.claude/shared/change-set.md
 
@@ -38,7 +38,7 @@ summary on what was done
 
 ## Rules
 
-- Your ENTIRE response is the fenced code block — nothing else, unless finding the Change set stopped with a list or a "no changes" note
+- Your ENTIRE response is the fenced code block — nothing else, unless finding the change set stopped with a list or a "no changes" note
 - Keep it very short — a quick glance should tell the reader what happened
 - Use short `##` sections grouped by area/feature as shown in the template
 - Focus on *what* and *why*, not file-by-file details

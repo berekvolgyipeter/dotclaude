@@ -2,7 +2,7 @@
 
 Shared [Claude Code](https://docs.anthropic.com/en/docs/claude-code) configuration repo, symlinked into `~/.claude/` so edits here propagate to every project automatically.
 
-Manage rules, skills, commands, agents, hooks, and templates in one place instead of duplicating them across every project.
+Manage rules, skills, commands, agents, and hooks in one place instead of duplicating them across every project.
 
 > **Note:** This repo contains scripts that modify files on your system. Please review the contents before use.
 >
@@ -16,7 +16,7 @@ Symlinking into `~/.claude/` and version-controlling everything in git turns thi
 
 **Scope.** This repo configures Claude Code — it does not bundle a linter or test runner. The Stop hook delegates to whatever the host project uses (`make lint`, `make test`); it skips gracefully when those targets aren't defined.
 
-**Engineering philosophy.** A single stance runs through the engineering artifacts here: deep modules behind simple interfaces, behavior-first testing, and design grounded in the project's domain language.
+**Engineering philosophy.** A single stance runs through the engineering artifacts here: deep modules behind simple interfaces, behavior-first testing, design grounded in the project's domain language, every step anchored to the user's goal and validated before hand-off, and sessions pitched at the user's level of understanding.
 
 ## Runtime Flow
 
@@ -30,6 +30,20 @@ flowchart LR
     Tool --> Claude
     Claude -.turn ends.-> Stop[Stop hook]
     Stop -->|make lint + make test| Claude
+```
+
+## Planning Workflows
+
+```mermaid
+flowchart LR
+    Idea([Idea]) -->|clear enough| WP["/write-plan"]
+    Idea -->|naming or decisions to settle| Grill[grill-me]
+    Idea -->|find refactoring candidates| ICA[improve-codebase-architecture]
+    Idea -->|change to an existing system| DC[design-change]
+    Grill -->|conversation, glossary, ADRs| WP
+    ICA -->|grilled candidate, glossary, ADRs| WP
+    DC -->|design.md, evidence.md| WP
+    WP -->|plan.md| EP["/execute-plan"]
 ```
 
 ## What's Included
@@ -53,7 +67,10 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 | File | Description |
 |------|-------------|
-| [shared/change-set.md](shared/change-set.md) | Finds the one Change set to work on — from a Project repo, a Project worktree, or an Index repo — and gathers its overview (root, branch, diff base, changed files); lists the candidates and stops when there are several |
+| [shared/change-set.md](shared/change-set.md) | Finds the one change set to work on — from a repo, a worktree, or a folder of repos — and gathers its overview (root, branch, diff base, changed files); lists the candidates and stops when there are several |
+| [shared/planning-context.md](shared/planning-context.md) | Glossary, ADR and rule loading plus the change folder layout, shared by the planning artifacts |
+| [shared/domain-docs.md](shared/domain-docs.md) | Where the glossary and ADRs live, when to write them, and their formats — for every skill that records them |
+| [shared/meet-the-user.md](shared/meet-the-user.md) | How interactive design, grilling and planning sessions pitch explanations and questions at the user's current level |
 | [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis, lint/test checks, and numbered findings reported in the session |
 
 ### [Commands](commands/)
@@ -80,15 +97,6 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [/delta-review](commands/review/delta-review.md) | Same review for uncommitted changes against the latest commit |
 | [/skill-review](commands/review/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
 
-**[plan/](commands/plan/)**
-
-| Command | Description |
-|---------|-------------|
-| [/to-plan](commands/plan/to-plan.md) | Synthesize the current conversation into a plan saved under `.claude/plans/` — pairs with the `grill-with-docs` skill |
-| [/generate-plan](commands/plan/generate-plan.md) | Generate a plan from a short prompt by researching the target area of the codebase autonomously, saved under `.claude/plans/` |
-| [/refine-plan](commands/plan/refine-plan.md) | Refine a plan in place — check logical correctness and rule compliance, then edit the plan to fix issues |
-| [/execute-plan](commands/plan/execute-plan.md) | Execute a plan test-first — internalize, sequence the work, implement via the tdd red-green-refactor loop, validate, and verify |
-
 **[skill-references/](commands/skill-references/)**
 
 | Command | Description |
@@ -104,8 +112,11 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
 | [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback and permission prompts |
 | [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
-| [grill-with-docs](skills/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
-| [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
+| [grill-me](skills/grill-me/SKILL.md) | Grill a plan or design until it's shared and sharp, recording settled terms and decisions in the project's domain docs |
+| [design-change](skills/design-change/SKILL.md) | Turn a rough idea for changing an existing system into a code-checked design, written up as plain-language design docs before planning |
+| [write-plan](skills/write-plan/SKILL.md) | Write a self-reviewed plan from a design, the current conversation, or a short prompt, saved in its change folder. Run it with `/write-plan` |
+| [execute-plan](skills/execute-plan/SKILL.md) | Execute a plan test-first via the tdd loop, then validate, verify, and record deviations. Run it with `/execute-plan` |
+| [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report — or, in scoped mode, as a text review of what a design or plan touches |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
 | [ts-debug](skills/ts-debug/SKILL.md) | TypeScript/Node debugging |
 | [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
@@ -140,12 +151,6 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 | Style | Description |
 |-------|-------------|
 | [lean](output-styles/lean.md) | Terse by default — hard length caps, leads with the answer, holds its ground under pushback, expands only on request |
-
-### [Templates](templates/)
-
-| File | Description |
-|------|-------------|
-| [plan-template.md](templates/plan-template.md) | Plan artifact structure used by the `/to-plan` and `/generate-plan` commands |
 
 ### [Scripts](scripts/)
 
@@ -258,7 +263,6 @@ project/.claude/
 
 - **No project-specific content here.** Rules, commands, or skills referencing a specific project's paths belong in that project's `.claude/`.
 - **File-type rules** go in `rules/` with a `paths:` frontmatter listing the globs they apply to.
-- **Templates** should be referenced via absolute path: `~/.claude/templates/plan-template.md`.
 - **`make lint` / `make test`** in shared commands are acceptable — all projects are assumed to use a Makefile.
 
 ## Acknowledgments
@@ -270,7 +274,7 @@ project/.claude/
 - [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern
 - [coleam00/archon](https://github.com/coleam00/archon) — agent-harness skill reference repo
 - [affaan-m/ECC](https://github.com/affaan-m/ECC) — agent-harness skill reference repo
-- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills (tdd, grill-with-docs, improve-codebase-architecture) and the `/to-plan` command
+- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills (tdd, grill-me, improve-codebase-architecture) and of planning from the conversation in `write-plan`
 - [ghostsecurity/skills](https://github.com/ghostsecurity/skills) — codebase exploration heuristics
 - [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns
-- [obra/superpowers](https://github.com/obra/superpowers) — interface-first module mapping and TDD framing in the plan template
+- [obra/superpowers](https://github.com/obra/superpowers) — interface-first module mapping and TDD framing in the plan template; the plan self-review in `/write-plan`
