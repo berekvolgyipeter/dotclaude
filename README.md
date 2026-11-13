@@ -40,7 +40,7 @@ Rule files discovered automatically by Claude Code. A rule without `paths:` fron
 
 | File | Loaded when | Description |
 |------|-------------|-------------|
-| [general.md](rules/general.md) | Always | No-guessing policy, consistency, check-before-implementing, docs sync, rules awareness |
+| [general.md](rules/general.md) | Always | No-guessing policy, consistency, check-before-implementing, docs sync, rules awareness, settings-file changes |
 | [py-code.md](rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
 | [py-test.md](rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
 | [ts-code.md](rules/ts-code.md) | TypeScript files | TypeScript style, typing, naming, error handling |
@@ -162,6 +162,7 @@ Shared permissions, preferences, and security posture. Built for auto mode: the 
 - **Git history changes need your OK** — commits, merges, rebases, resets, and other history rewrites prompt; worktree management runs freely.
 - **Remote changes need your OK** — pushes and forge writes prompt; forge deletions are denied; reads run freely. In auto mode, opening MRs/PRs and routine collaboration on them (editing the description, commenting, replying to and resolving discussions) runs without a prompt, while forge configuration changes stay blocked.
 - **The machine stays untouched** — system settings, services, shell config, and package installs outside the project prompt or are denied.
+- **File edits stay in the project** — Claude's file tools refuse writes outside the working directories and this repo's linked config; add another directory with `/add-dir`.
 - **No phoning home** — telemetry and error reporting are off.
 
 Only a listed set of tools that can't work inside the sandbox run outside it — Claude can't take any other command out of the sandbox on its own — and Claude's package caches are kept separate from yours. This repo's linked config is readable without a prompt and from the sandbox in any project, and skill reference repos are writable from it too, so their maintenance scripts run anywhere.
@@ -228,7 +229,8 @@ Linting requires Python dev dependencies, declared in `pyproject.toml` and manag
 uv sync
 ```
 
-`make lint` also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`).
+`make lint` fails on any line longer than 120 characters in tracked or untracked (non-ignored) text files.
+It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`).
 
 ## Editing Workflow
 

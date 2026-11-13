@@ -59,3 +59,7 @@ Treat documentation as part of the work, not an afterthought: READMEs, inline do
 ## Rules Awareness
 
 When the user asks about rules, coding standards, or conventions — list `~/.claude/rules/` for user-level rules, and check `.claude/rules/` and `.claude/CLAUDE.md` in the current project for project-level rules. Use each rule's filename, H1 and `paths:` frontmatter to identify which rules are relevant, then read and answer from those files. Do not guess at rule content from memory.
+
+## Claude Code Settings Files
+
+You can't write Claude Code settings files. For a change to one, give the user a copyable command to run in their own terminal: a `jq` edit of only the keys involved, or a heredoc for a new file.

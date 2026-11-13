@@ -38,7 +38,7 @@ Address the chosen root with `git -C <root>`; never `cd`.
 - **CURRENT_BRANCH** — `git -C <root> branch --show-current`.
 - **DIFF_BASE**:
   - Delta mode: `HEAD`.
-  - PR mode: first refresh the base with a fetch run as its own Bash call — `git fetch origin <base>` when the working directory is inside CHANGE_SET_ROOT, otherwise `git -C <root> fetch origin <base>`. If the fetch fails, continue on local refs and note in your reply that the base may be stale. Then `git -C <root> merge-base HEAD origin/<base>`.
+  - PR mode: `git -C <root> merge-base HEAD origin/<base>`.
 - **Changed files** — `git -C <root> diff --name-status -M <DIFF_BASE>`, so each file's status (added, modified, deleted, renamed) is known. In PR mode this compares the working tree, so uncommitted edits on the branch are included — the review covers what the PR will contain once they are committed.
 - **Untracked files** — `git -C <root> ls-files --others --exclude-standard`.
 - **Commits** (PR mode) — `git -C <root> log --oneline <DIFF_BASE>..HEAD`.

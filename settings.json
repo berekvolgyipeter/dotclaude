@@ -15,6 +15,18 @@
     "pr": ""
   },
   "permissions": {
+    "blockWritesOutsideWorkingDirectories": true,
+    "additionalDirectories": [
+      "~/.claude/agents",
+      "~/.claude/commands",
+      "~/.claude/output-styles",
+      "~/.claude/rules",
+      "~/.claude/shared",
+      "~/.claude/skills",
+      "~/.claude/templates",
+      "/tmp",
+      "/private/tmp"
+    ],
     "allow": [
       "Bash(make lint)",
       "Bash(make test)",
@@ -28,6 +40,7 @@
       "Bash(git -C * add *)",
       "Bash(git fetch *)",
       "Bash(git -C * fetch *)",
+      "Bash(bash ~/.claude/scripts/git-fetch.sh *)",
       "Bash(git pull *)",
       "Bash(git -C * pull *)",
       "Bash(git worktree *)",
@@ -224,7 +237,15 @@
       "Bash(brew uninstall*)",
       "Bash(brew upgrade*)",
       "Bash(brew services *)",
-      "Bash(docker *)",
+      "Bash(docker rm *)",
+      "Bash(docker container rm *)",
+      "Bash(docker rmi *)",
+      "Bash(docker image rm *)",
+      "Bash(docker push *)",
+      "Bash(docker login *)",
+      "Bash(docker *prune*)",
+      "Bash(docker volume rm *)",
+      "Bash(docker network rm *)",
       "Bash(ssh *)",
       "Bash(scp *)",
       "Bash(rsync *)",
@@ -236,7 +257,9 @@
       "Bash(pmset *)",
       "Bash(scutil *)",
       "Bash(osascript *)",
-      "mcp__claude-context__clear_index"
+      "mcp__claude-context__clear_index",
+      "Edit(//**/dotclaude/hooks/**)",
+      "Edit(//**/dotclaude/scripts/**)"
     ]
   },
   "autoMode": {
@@ -246,7 +269,8 @@
     ],
     "soft_deny": [
       "$defaults",
-      "Forge configuration changes: changing GitLab project or GitHub repo settings, protected branches or tags, members or permissions, webhooks, deploy keys, CI/CD variables or secrets, or pipeline schedules, via glab/gh or their APIs."
+      "Forge configuration changes: changing GitLab project or GitHub repo settings, protected branches or tags, members or permissions, webhooks, deploy keys, CI/CD variables or secrets, or pipeline schedules, via glab/gh or their APIs.",
+      "Destructive or outward Docker operations: removing or pruning containers, images, volumes or networks, pushing or tagging images for a registry, or logging in to a registry. Reading (ps, images, inspect, logs, manifest inspect) and building or running containers for local tests are not covered."
     ]
   },
   "model": "opus",
@@ -306,7 +330,10 @@
         "files.pythonhosted.org",
         "platform.claude.com",
         "code.claude.com",
-        "docs.claude.com"
+        "docs.claude.com",
+        "proxy.golang.org",
+        "sum.golang.org",
+        "storage.googleapis.com"
       ],
       "allowAllUnixSockets": false
     },
@@ -347,25 +374,24 @@
     "excludedCommands": [
       "make install",
       "git fetch *",
+      "bash ~/.claude/scripts/git-fetch.sh *",
       "git pull *",
       "git add *",
       "git merge *",
       "git commit *",
       "git push *",
       "git worktree *",
-      "git -C * fetch *",
-      "git -C * pull *",
       "git -C * add *",
       "git -C * merge *",
       "git -C * commit *",
-      "git -C * push *",
       "git -C * worktree *",
       "gh *",
       "glab *",
       "go mod download *",
       "go mod tidy *",
       "go get *",
-      "agent-browser *"
+      "agent-browser *",
+      "docker manifest inspect *"
     ]
   },
   "alwaysThinkingEnabled": true,

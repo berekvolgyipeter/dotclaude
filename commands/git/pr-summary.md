@@ -6,9 +6,6 @@ model: haiku
 context: fork
 background: false
 argument-hint: "[repo] [target-branch]"
-allowed-tools:
-  - Bash(git fetch *)
-  - Bash(git -C * fetch *)
 ---
 
 **Mode: PR.** Arguments: `$ARGUMENTS` — may name the Project repo to describe and a target (base) branch.
