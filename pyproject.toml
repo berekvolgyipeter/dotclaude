@@ -2,10 +2,13 @@
 name = "dotclaude"
 version = "0.1.0"
 description = "Shared Claude Code configuration"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 dependencies = []
 
 [dependency-groups]
 dev = [
     "ruff>=0.17",
 ]
+
+[tool.ruff]
+line-length = 120
