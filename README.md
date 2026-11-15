@@ -25,25 +25,49 @@ flowchart LR
     Start([Session start]) --> Notice[SessionStart hook]
     Notice -->|list excluded commands| Claude
     User([User prompt]) --> Claude
-    Claude -->|tool call| Pre[PreToolUse hooks]
+    Claude -->|tool call| Pre[PreToolUse hook - Bash]
     Pre -->|deny mixed excluded commands| Tool[Tool execution]
     Tool --> Claude
-    Claude -.turn ends.-> Stop[Stop hook]
-    Stop -->|make lint + make test| Claude
+    Claude -.-> Stop[Stop hook<br/>lint + test]
+    Stop -->|pass| Done([Turn ends])
+    Stop -->|fail| Claude
 ```
 
-## Planning Workflows
+*Excluded commands run outside the sandbox, but only when called alone.*
+
+## SDLC Flow
 
 ```mermaid
 flowchart LR
-    Idea([Idea]) -->|clear enough| WP["/write-plan"]
+    Plan[Plan] --> Impl[Implement] --> Val[Validate] --> Retro[Retro]
+```
+
+### Planning
+
+```mermaid
+flowchart LR
+    Idea([Idea]) -->|clear enough| WP[write-plan]
     Idea -->|naming or decisions to settle| Grill[grill-me]
     Idea -->|find refactoring candidates| ICA[improve-codebase-architecture]
     Idea -->|change to an existing system| DC[design-change]
     Grill -->|conversation, glossary, ADRs| WP
     ICA -->|grilled candidate, glossary, ADRs| WP
     DC -->|design.md, evidence.md| WP
-    WP -->|plan.md| EP["/execute-plan"]
+    WP --> Plan([plan.md in the change folder])
+```
+
+### Implementation
+
+```mermaid
+flowchart LR
+    Ready([Ready to build]) -->|plan written| Impl[implement]
+    Ready -->|change settled in the conversation| Impl
+    Ready -->|short instruction| Impl
+    Ready -->|one behavior, test-first| TDD[tdd]
+    Impl -->|seams to test| TDD
+    Impl -->|changes| CR[code-review]
+    CR -->|findings| Impl
+    Impl -->|deviations, skipped findings| Rec([Execution Record or final report])
 ```
 
 ## What's Included
@@ -70,6 +94,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [shared/change-set.md](shared/change-set.md) | Finds the one change set to work on — from a repo, a worktree, or a folder of repos — and gathers its overview (root, branch, diff base, changed files); lists the candidates and stops when there are several |
 | [shared/planning-context.md](shared/planning-context.md) | Glossary, ADR and rule loading plus the change folder layout, shared by the planning artifacts |
 | [shared/domain-docs.md](shared/domain-docs.md) | Where the glossary and ADRs live, when to write them, and their formats — for every skill that records them |
+| [shared/codebase-design.md](shared/codebase-design.md) | The deep-module vocabulary and principles for designing and discussing a module's shape |
 | [shared/meet-the-user.md](shared/meet-the-user.md) | How interactive design, grilling and planning sessions pitch explanations and questions at the user's current level |
 | [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis, lint/test checks, and numbered findings reported in the session |
 
@@ -111,11 +136,11 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 |-------|-------------|
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
 | [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback and permission prompts |
-| [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
+| [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green loop |
 | [grill-me](skills/grill-me/SKILL.md) | Grill a plan or design until it's shared and sharp, recording settled terms and decisions in the project's domain docs |
 | [design-change](skills/design-change/SKILL.md) | Turn a rough idea for changing an existing system into a code-checked design, written up as plain-language design docs before planning |
-| [write-plan](skills/write-plan/SKILL.md) | Write a self-reviewed plan from a design, the current conversation, or a short prompt, saved in its change folder. Run it with `/write-plan` |
-| [execute-plan](skills/execute-plan/SKILL.md) | Execute a plan test-first via the tdd loop, then validate, verify, and record deviations. Run it with `/execute-plan` |
+| [write-plan](skills/write-plan/SKILL.md) | Write a self-reviewed plan from a design, the current conversation, or a short prompt, saved in its change folder |
+| [implement](skills/implement/SKILL.md) | Implement a plan, a change settled in the conversation, or a short instruction test-first via the tdd loop, then test, review, and verify against the goal |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report — or, in scoped mode, as a text review of what a design or plan touches |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
 | [ts-debug](skills/ts-debug/SKILL.md) | TypeScript/Node debugging |
@@ -269,12 +294,13 @@ project/.claude/
 
 - [coleam00/context-engineering-intro](https://github.com/coleam00/context-engineering-intro) — inspiration for some commands and rules
 - [trailofbits/claude-code-config](https://github.com/trailofbits/claude-code-config) — security and privacy focused settings
-- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions and code review patterns
+- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions, code review, planning and implementation practices
+- [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) — planning and implementation practices
 - [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns; interface-as-contract documentation
 - [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern
 - [coleam00/archon](https://github.com/coleam00/archon) — agent-harness skill reference repo
 - [affaan-m/ECC](https://github.com/affaan-m/ECC) — agent-harness skill reference repo
-- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills (tdd, grill-me, improve-codebase-architecture) and of planning from the conversation in `write-plan`
+- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills, planning and implementation practices
 - [ghostsecurity/skills](https://github.com/ghostsecurity/skills) — codebase exploration heuristics
 - [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns
-- [obra/superpowers](https://github.com/obra/superpowers) — interface-first module mapping and TDD framing in the plan template; the plan self-review in `/write-plan`
+- [obra/superpowers](https://github.com/obra/superpowers) — planning and implementation practices

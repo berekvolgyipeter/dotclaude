@@ -31,9 +31,9 @@ Work through each. For every finding, cite `file:line`, quote the rule it breaks
 
 ### 2. Engineering philosophy (only if an engineering-domain artifact changed)
 
-- Uses the exact vocabulary from `improve-codebase-architecture` (*module, interface, implementation, depth, seam, adapter, leverage, locality*) — not "component/service/boundary"?
+- Uses the exact vocabulary from `shared/codebase-design.md` (*module, interface, implementation, depth, seam, adapter, leverage, locality*) — not "component/service/boundary"?
 - Tests framed as behavior-through-interface, not implementation detail?
-- The planning pipeline (`design-change`, `write-plan`, `execute-plan`) still aligned with the skills it builds on?
+- The planning pipeline (`design-change`, `write-plan`, `implement`) still aligned with the skills it builds on?
 
 ### 3. Claude Code best practices
 

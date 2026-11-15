@@ -1,8 +1,8 @@
-# Language
+## Codebase Design
 
-Shared vocabulary for every suggestion this skill makes. Use these terms exactly — don't substitute "component," "service," "API," or "boundary." Consistent language is the whole point.
+The vocabulary for designing and discussing a module's shape — how deep it is, where its seam lies, what its interface exposes. Use these terms exactly — don't substitute "component," "service," "API," or "boundary." Consistent language is the whole point.
 
-## Terms
+### Terms
 
 **Module**
 Anything with an interface and an implementation. Deliberately scale-agnostic — applies equally to a function, class, package, or tier-spanning slice.
@@ -31,14 +31,14 @@ What callers get from depth. More capability per unit of interface they have to 
 **Locality**
 What maintainers get from depth. Change, bugs, knowledge, and verification concentrate at one place rather than spreading across callers. Fix once, fixed everywhere.
 
-## Principles
+### Principles
 
 - **Depth is a property of the interface, not the implementation.** A deep module can be internally composed of small, mockable, swappable parts — they just aren't part of the interface. A module can have **internal seams** (private to its implementation, used by its own tests) as well as the **external seam** at its interface.
 - **The deletion test.** Imagine deleting the module. If complexity vanishes, the module wasn't hiding anything (it was a pass-through). If complexity reappears across N callers, the module was earning its keep.
 - **The interface is the test surface.** Callers and tests cross the same seam. If you want to test *past* the interface, the module is probably the wrong shape.
 - **One adapter means a hypothetical seam. Two adapters means a real one.** Don't introduce a seam unless something actually varies across it.
 
-## Relationships
+### Relationships
 
 - A **Module** has exactly one **Interface** (the surface it presents to callers and tests).
 - **Depth** is a property of a **Module**, measured against its **Interface**.
@@ -46,7 +46,7 @@ What maintainers get from depth. Change, bugs, knowledge, and verification conce
 - An **Adapter** sits at a **Seam** and satisfies the **Interface**.
 - **Depth** produces **Leverage** for callers and **Locality** for maintainers.
 
-## Rejected framings
+### Rejected framings
 
 - **Depth as ratio of implementation-lines to interface-lines** (Ousterhout): rewards padding the implementation. We use depth-as-leverage instead.
 - **"Interface" as the TypeScript `interface` keyword or a class's public methods**: too narrow — interface here includes every fact a caller must know.

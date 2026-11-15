@@ -7,24 +7,9 @@ description: Find deepening opportunities in a codebase, informed by the domain 
 
 Surface architectural friction and propose **deepening opportunities** — refactors that turn shallow modules into deep ones. The aim is testability and AI-navigability.
 
-## Glossary
+## Vocabulary
 
-Use these terms exactly in every suggestion. Consistent language is the point — don't drift into "component," "service," "API," or "boundary." Full definitions in [language.md](references/language.md).
-
-- **Module** — anything with an interface and an implementation (function, class, package, slice).
-- **Interface** — everything a caller must know to use the module: types, invariants, error modes, ordering, config. Not just the type signature.
-- **Implementation** — the code inside.
-- **Depth** — leverage at the interface: a lot of behaviour behind a small interface. **Deep** = high leverage. **Shallow** = interface nearly as complex as the implementation.
-- **Seam** — where an interface lives; a place behaviour can be altered without editing in place. (Use this, not "boundary.")
-- **Adapter** — a concrete thing satisfying an interface at a seam.
-- **Leverage** — what callers get from depth.
-- **Locality** — what maintainers get from depth: change, bugs, knowledge concentrated in one place.
-
-Key principles (see [language.md](references/language.md) for the full list):
-
-- **Deletion test**: imagine deleting the module. If complexity vanishes, it was a pass-through. If complexity reappears across N callers, it was earning its keep.
-- **The interface is the test surface.**
-- **One adapter = hypothetical seam. Two adapters = real seam.**
+Read `~/.claude/shared/codebase-design.md` for the architecture vocabulary (**module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**) and its principles (the deletion test, "the interface is the test surface", "one adapter = hypothetical seam, two = real"). Use these terms exactly in every suggestion.
 
 This skill is _informed_ by the project's domain model. The domain language gives names to good seams; ADRs record decisions the skill should not re-litigate.
 
@@ -33,7 +18,7 @@ This skill is _informed_ by the project's domain model. The domain language give
 When invoked on a design or plan rather than the whole codebase, review only what it touches, then stop:
 
 1. Read the design or plan, its goal, and the glossary and ADRs in its area, found where section 1 of `~/.claude/shared/domain-docs.md` says. Write no domain docs in this mode — the calling skill owns them.
-2. Explore only the modules it builds or modifies and their direct callers, as in step 1 below.
+2. Explore only the modules it builds or modifies and their direct callers, with an Explore agent as in step 1 below — without step 1's domain-docs question or its scan of the commit history.
 3. Reply in text — no HTML report, no grilling loop. For each deepening opportunity: the modules involved, the friction, the deepening, its recommendation strength (`Strong`, `Worth exploring`, `Speculative`), and what the design should do about it — take it now because the change touches it anyway, avoid making it worse, or leave it for later. Lead with any place where the design itself adds a shallow module or a hypothetical seam. Reply "no findings" when there are none.
 
 ## Process
@@ -41,6 +26,8 @@ When invoked on a design or plan rather than the whole codebase, review only wha
 ### 1. Explore
 
 First ask the domain-docs question in section 2 of `~/.claude/shared/domain-docs.md`. Then read the glossary and any ADRs in the area you're touching, found where section 1 of that file says.
+
+**Scope before you scan.** Deepening a module pays off by making future changes to it easier, so weight the parts of the codebase that change often. If the user named a direction (a module, a subsystem, a pain point), take it. Otherwise walk back a good stretch of the commit history — say the last 200 commits (`git log --oneline --name-only -200`) — to find the hot spots — the files and areas that keep coming up — and look there first; if the changes are scattered with no clear hot spot, widen the net.
 
 Then use the Agent tool with `subagent_type=Explore` to walk the codebase. Don't follow rigid heuristics — explore organically and note where you experience friction:
 
@@ -69,7 +56,7 @@ Render each candidate as a card with:
 
 End the report with a **Top recommendation** section: which candidate you'd tackle first and why.
 
-**Use GLOSSARY.md vocabulary for the domain, and [language.md](references/language.md) vocabulary for the architecture.** If `GLOSSARY.md` defines "Order," talk about "the Order intake module" — not "the FooBarHandler," and not "the Order service."
+**Use GLOSSARY.md vocabulary for the domain, and the codebase-design vocabulary for the architecture.** If `GLOSSARY.md` defines "Order," talk about "the Order intake module" — not "the FooBarHandler," and not "the Order service."
 
 **ADR conflicts**: if a candidate contradicts an existing ADR, only surface it when the friction is real enough to warrant revisiting the ADR. Mark it clearly in the card (e.g. a warning callout: _"contradicts ADR-0007 — but worth reopening because…"_). Don't list every theoretical refactor an ADR forbids.
 

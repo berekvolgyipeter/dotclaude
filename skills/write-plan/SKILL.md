@@ -1,7 +1,6 @@
 ---
 name: write-plan
-description: Write an implementation plan from a change folder's design, the current conversation, or a short prompt, and save it in its change folder, one plan per repo
-disable-model-invocation: true
+description: Write an implementation plan from a change folder's design, the current conversation, or a short prompt, and save it in its change folder, one plan per repo. Use when a design, a settled conversation or a clear feature request is ready to become a plan for how the change is built; not for designing a change (design-change) or building one (implement).
 argument-hint: "[feature description | @change-folder]"
 effort: max
 model: opus
@@ -15,6 +14,8 @@ Turn the input below into an implementation plan: how the change is built in cod
 $ARGUMENTS
 </request>
 
+Read `~/.claude/shared/meet-the-user.md` and follow it whenever you ask the user something or report to them.
+
 ## Step 1 — Pick the Input
 
 Use the first that applies:
@@ -27,7 +28,7 @@ If there is no input at all, ask what to plan and stop.
 
 Plan one repo at a time. When the change spans several repos, plan only the repo the request names, or ask which one first, and work from that repo's design doc and evidence file.
 
-Whatever the input, name its goal — what the user wants to be true once the work ships. Take it from the design docs' Goal section or the conversation; for a bare request, confirm it with the user in one line before researching. The plan is judged against it.
+Whatever the input, name its goal — what the user wants to be true once the work ships. Take it from the design docs' Goal section or the conversation; for a bare request, draft it and confirm it in the Step 3 check-in. The plan is judged against it.
 
 ## Step 2 — Research
 
@@ -35,15 +36,15 @@ Whatever the input, name its goal — what the user wants to be true once the wo
 - Explore the area the change targets: similar features and patterns, the modules you'll build or modify, the conventions to follow, and the test patterns already in use.
 - With a design, re-check against the code every evidence fact the plan will rely on. The evidence is written mid-design; leave out any fact a later decision overtook.
 - When the change involves an external library or unfamiliar API, use WebSearch and Context7 for documentation, examples and pitfalls, and note the URLs. Skip this for changes confined to existing internal code.
-- Use AskUserQuestion only for what research cannot answer — e.g. which pattern to mirror, or product intent.
+- Note what research cannot answer — e.g. which pattern to mirror, or product intent — for the Step 3 check-in rather than asking now.
 
 ## Step 3 — Design
 
-ULTRATHINK about the design. Sketch the modules to build or modify, looking actively for deep modules — a lot of behaviour behind a small interface that rarely changes. Apply the deletion test to each: if deleting it would make complexity reappear across its callers, it earns its keep; if complexity just vanishes, it was a pass-through. Name seams in the glossary's language and don't re-litigate ADRs.
+ULTRATHINK about the design, in the vocabulary of `~/.claude/shared/codebase-design.md`. Sketch the modules to build or modify, looking actively for deep modules — a lot of behaviour behind a small interface that rarely changes. Apply the deletion test to each: if deleting it would make complexity reappear across its callers, it earns its keep; if complexity just vanishes, it was a pass-through. Name seams in the glossary's language and don't re-litigate ADRs.
 
 Unless the plan builds on a design (which already had its architecture review), invoke the `improve-codebase-architecture` skill in scoped mode on the sketch, and fold its findings into the module split.
 
-Then check in with the user once, following `~/.claude/shared/meet-the-user.md`: confirm the module split matches their expectations, ask which modules they want tests for, and for each of those confirm the main behaviors to test. These answers pin everything that follows.
+Then check in with the user once, in a single message: confirm a drafted goal, ask what research could not answer, confirm the module split matches their expectations, ask which seams (module interfaces) they want tests at, giving each proposed seam a one-line note on what it catches and what it misses, and for each one they pick confirm the main behaviors to test. These answers pin everything that follows.
 
 ## Step 4 — Write
 
@@ -51,7 +52,8 @@ Write the plan using the template in [plan-template.md](references/plan-template
 
 - **Module Map** — each module by its interface (the test surface): operations, key types, invariants, error modes, and its depth from the deletion test. Reference the real patterns you found.
 - **Key Decisions** — schema changes, API contracts and architectural decisions as `<decision>: <rationale>`, respecting ADRs. Code-level reasons belong here.
-- **Testing Strategy** — the behaviors the user confirmed, verified through public interfaces, not implementation details. Cite prior-art tests to mirror, and say which modules warrant integration-style tests and why.
+- **Testing Strategy** — the seams and behaviors the user confirmed, verified through public interfaces, not implementation details. Cite prior-art tests to mirror, and say which modules warrant integration-style tests and why.
+- **Deferred to Implementation** — what only running code can answer, each with why it waits.
 - **Notes & Sources** — documentation URLs and library gotchas, with the *why*.
 
 With a design, follow the template's rule for plans that build on one.
@@ -65,8 +67,9 @@ Check the draft and fix every issue in place before saving:
 3. **Consistency** — TL;DR, Goal, Requirements, Module Map, Phases and Testing Strategy agree; the modules can be built in order without backtracking; nothing strays into Out of Scope.
 4. **References exist** — every module, test, pattern and URL the plan names exists; verify with `grep`/`find`/Read.
 5. **Rules** — nothing contradicts a rule, glossary term or ADR loaded in Step 2.
-6. **No speculation** — no feature, abstraction, flag or fallback the requirements don't need.
-7. **No repetition** — nothing restates the design docs.
+6. **No speculation** — no feature, abstraction, flag or fallback the requirements don't need, and no error path that hides a failure behind a default or empty result.
+7. **Honest unknowns** — nothing only running code can answer is presented as settled; it sits in Deferred to Implementation.
+8. **No repetition** — nothing restates the design docs.
 
 ## Step 6 — Save
 

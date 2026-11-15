@@ -58,7 +58,11 @@ The load-bearing choices that constrain implementation, each as `<decision>: <ra
 
 ## Testing Strategy
 
-Which modules get tested and the behaviors to verify *through their public interface* — a good test reads like a specification and survives an internal refactor. Name the behaviors that matter (critical paths, complex logic), not every edge case. Cite prior art: similar tests already in the codebase to mirror.
+Which seams get tested (each with what it catches and misses) and the behaviors to verify *through the interface there* — a good test reads like a specification and survives an internal refactor. Name the behaviors that matter (critical paths, complex logic), not every edge case. Cite prior art: similar tests already in the codebase to mirror.
+
+## Deferred to Implementation
+
+Include when material. What the plan can't answer until code runs — runtime behavior, the exact shape of a helper, whether a refactor turns out necessary — each with why it waits. Never settle one on paper to make the plan look complete.
 
 ## Out of Scope
 
@@ -66,10 +70,10 @@ Include when scope is contested or there are tempting non-goals worth pinning. W
 
 ## Notes & Sources
 
-Include when material. Research URLs and library gotchas (the *why*, not just the *what*), and any open questions that block implementation.
+Include when material. Research URLs and library gotchas (the *why*, not just the *what*).
 
 ## Execution Record
 
-Left out when planning; written during execution. Each deviation from the plan with its reason, and the results of gating or manual tests.
+Left out when planning; written during execution. Each call made for the user as it happens — a deviation, a deferred item's answer, a skipped review finding, something considered and not built, a finished phase — as `<what> — <why> — <cost if wrong>`, then a closing `Complete` entry with the final test and lint results and whether the goal is reached.
 
 </plan-template>
