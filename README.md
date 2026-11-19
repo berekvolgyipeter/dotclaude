@@ -124,30 +124,11 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 ### [Commands](commands/)
 
-**[explore/](commands/explore/)**
-
 | Command | Description |
 |---------|-------------|
-| [/overview](commands/explore/overview.md) | Build a lightweight, high-level overview of a project |
-| [/architecture](commands/explore/architecture.md) | Discover a module's architecture, functionality, and communication interfaces, saved to `docs/architecture/` — excludes tests and CI/CD |
-
-**[git/](commands/git/)**
-
-| Command | Description |
-|---------|-------------|
-| [/commit-msg](commands/git/commit-msg.md) | Generate a suggested conventional commit message for the current changes. Runs in an isolated subagent, so diffs stay out of the session |
-
-**[review/](commands/review/)**
-
-| Command | Description |
-|---------|-------------|
-| [/skill-review](commands/review/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
-
-**[skill-references/](commands/skill-references/)**
-
-| Command | Description |
-|---------|-------------|
-| [/refresh-references](commands/skill-references/refresh-references.md) | Sync and audit the plugin-browser and agent-harness reference repos against upstream, then refine each catalog's sparse patterns and descriptions and re-index |
+| [/commit-msg](commands/commit-msg.md) | Generate a suggested conventional commit message for the current changes. Runs in an isolated subagent, so diffs stay out of the session |
+| [/skill-review](commands/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
+| [/refresh-references](commands/refresh-references.md) | Sync and audit the plugin-browser and agent-harness reference repos against upstream, then refine each catalog's sparse patterns and descriptions and re-index |
 
 ### [Skills](skills/)
 
@@ -238,7 +219,7 @@ Array settings (e.g. `permissions.allow`) concatenate across levels. Project-lev
 ## Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed
-- A `Makefile` in each project with at least: `lint`, `test`, `tree` targets
+- A `Makefile` in each project with at least: `lint`, `test` targets
 - Project-level Claude memory lives at `.claude/CLAUDE.md` (not a root-level `CLAUDE.md`) — commands and agents that read or write project memory assume this path
 
 ### claude-context

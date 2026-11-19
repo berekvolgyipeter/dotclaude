@@ -30,7 +30,6 @@
       "Bash(make lint)",
       "Bash(make test)",
       "Bash(make coverage)",
-      "Bash(make tree)",
       "Bash(source .venv/bin/activate)",
       "Bash(source venv/bin/activate)",
       "Bash(git status)",
