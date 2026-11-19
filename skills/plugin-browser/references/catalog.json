@@ -304,6 +304,7 @@
             ],
             "sparse": [
                 "/.claude-plugin/",
+                "/.claude/commands/",
                 "/agents/",
                 "/commands/",
                 "/hooks/",
@@ -405,6 +406,7 @@
                 "hooks",
                 "rules",
                 "configurations",
+                "workflows",
                 "guides"
             ],
             "sparse": [
@@ -416,6 +418,7 @@
                 "/hooks/",
                 "/contexts/",
                 "/mcp-configs/",
+                "/workflows/",
                 "/docs/*.md",
                 "/docs/architecture/",
                 "/docs/security/",
