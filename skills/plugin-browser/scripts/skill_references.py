@@ -100,7 +100,13 @@ def sync(skill_dir: Path) -> None:
             print(f"FAILED {repo.github}: {e.stderr.strip()}", file=sys.stderr)
     if failed:
         sys.exit(f"Sync failed for: {', '.join(failed)}")
+    sync_stamp_path(skill_dir).touch()
     print("Done — all reference repos are synced.")
+
+
+def sync_stamp_path(skill_dir: Path) -> Path:
+    """Touched after every fully successful sync; its mtime is the last sync time."""
+    return REFERENCES_ROOT / f".{skill_dir.resolve().name}-synced"
 
 
 def pattern_regex(core: str) -> re.Pattern:

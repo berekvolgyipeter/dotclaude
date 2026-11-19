@@ -128,7 +128,6 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 |---------|-------------|
 | [/commit-msg](commands/commit-msg.md) | Generate a suggested conventional commit message for the current changes. Runs in an isolated subagent, so diffs stay out of the session |
 | [/skill-review](commands/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
-| [/refresh-references](commands/refresh-references.md) | Sync and audit the plugin-browser and agent-harness reference repos against upstream, then refine each catalog's sparse patterns and descriptions and re-index |
 
 ### [Skills](skills/)
 
@@ -149,8 +148,7 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report — or, in scoped mode, as a text review of what a design or plan touches |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
 | [ts-debug](skills/ts-debug/SKILL.md) | TypeScript/Node debugging |
-| [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
-| [agent-harness](skills/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections from multiple indexed repos |
+| [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills, agents, plugins and agent harness frameworks from curated community and official repos |
 
 ### [Agents](agents/)
 
@@ -190,7 +188,6 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 | File | Description |
 |------|-------------|
 | [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
-| [skill_references.py](scripts/skill_references.py) | Syncs a skill's catalog-listed reference repos with their sparse patterns, or audits them for upstream layout changes |
 
 ### [settings.json](settings.json)
 
@@ -222,13 +219,6 @@ Array settings (e.g. `permissions.allow`) concatenate across levels. Project-lev
 - A `Makefile` in each project with at least: `lint`, `test` targets
 - Project-level Claude memory lives at `.claude/CLAUDE.md` (not a root-level `CLAUDE.md`) — commands and agents that read or write project memory assume this path
 
-### claude-context
-
-The claude-context MCP server (registered by `make mcp`) needs:
-- an embedding provider: OpenAI, with `OPENAI_API_KEY` set in this repo's `.env`, or a local Ollama
-- a locally running instance of Milvus vector db
-    - check out [this repo](https://github.com/berekvolgyipeter/milvus) to run Milvus via Docker Compose
-
 ## Installation
 
 ```bash
@@ -249,7 +239,7 @@ The script prints only what it changed, so it is safe to re-run. Re-run it after
 make mcp
 ```
 
-Registers the `claude-context` and `context7` MCP servers at user scope, so they are available in every project. It asks for the embedding provider: OpenAI reads the key from this repo's `.env` at server launch, so no key is stored in Claude Code's config; Ollama asks for the model and host. Safe to re-run — existing entries are replaced.
+Registers the `context7` MCP server at user scope, so it is available in every project. Safe to re-run — an existing entry is replaced.
 
 ## Uninstallation
 
@@ -306,8 +296,8 @@ project/.claude/
 - [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) — planning and implementation practices; independent review that sees only the change and its contract
 - [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns; interface-as-contract documentation
 - [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern; fix now, later or as-is triage
-- [coleam00/archon](https://github.com/coleam00/archon) — agent-harness skill reference repo
-- [affaan-m/ECC](https://github.com/affaan-m/ECC) — agent-harness skill reference repo
+- [coleam00/archon](https://github.com/coleam00/archon) — plugin-browser skill reference repo
+- [affaan-m/ECC](https://github.com/affaan-m/ECC) — plugin-browser skill reference repo
 - [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills, planning and implementation practices; code smell baseline and one-way-door risk in review
 - [ghostsecurity/skills](https://github.com/ghostsecurity/skills) — codebase exploration heuristics
 - [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns; walking the diff in reading order

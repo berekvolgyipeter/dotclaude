@@ -26,7 +26,7 @@ Work through each. For every finding, cite `file:line`, quote the rule it breaks
 - **README sync** — was `README.md` updated for every added/removed/changed rule, command, skill, agent, hook, output style, template, or script?
 - **Command frontmatter** — does every new or changed command file carry `disable-model-invocation: true`?
 - **Source acknowledgment** — if content was drawn from a `plugin-browser` source, is the repo listed under README *Acknowledgments*?
-- **Script placement** — are hook scripts in `hooks/` and helper scripts in `scripts/`?
+- **Script placement** — is each script next to its caller, like the existing ones?
 - **No irrelevant cross-references / no leaked internals** — is every artifact named one the reader actually reads, applies, or invokes? Is every env var, flag, or script detail one the reader actually sets or reacts to?
 
 ### 2. Engineering philosophy (only if an engineering-domain artifact changed)

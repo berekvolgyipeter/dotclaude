@@ -7,7 +7,7 @@ MAX_LINE_LENGTH := 120
 install:
 	bash setup/install.sh
 
-# Register the claude-context and context7 MCP servers at user scope (interactive)
+# Register the context7 MCP server at user scope
 mcp:
 	bash setup/install-mcp.sh
 
