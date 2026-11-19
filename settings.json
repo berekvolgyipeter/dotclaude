@@ -35,6 +35,7 @@
       "Bash(source venv/bin/activate)",
       "Bash(git status)",
       "Bash(git -C * status)",
+      "Bash(git stash create)",
       "Bash(git add *)",
       "Bash(git -C * add *)",
       "Bash(git fetch *)",

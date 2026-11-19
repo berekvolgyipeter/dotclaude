@@ -28,10 +28,16 @@ check>`). Separate findings with a horizontal rule (`---`).
 A finding says what is wrong and how bad it is, not whether to fix it: that depends on the change's goal and scope,
 which the reviewer does not see.
 
-Example:
+Examples — a bug, then a judgement call:
 
 ```
 ### #1 HIGH | bug | src/sync.py:42 — `except Exception: pass` hides upload failures
 **Why:** A failed upload reports success, so the caller never retries and the file is lost.
 **Fix:** Catch only `TimeoutError`, log it, and re-raise after the retry limit.
+
+---
+
+### #2 LOW | judgement call | src/sync.py:88 — `sync_all` parses, uploads and reports in one 120-line function
+**Why:** The three steps can't be tested apart, so a change to reporting means re-testing the upload path.
+**Fix:** Split out `parse_manifest` and `report_results`, leaving `sync_all` to call them in order.
 ```

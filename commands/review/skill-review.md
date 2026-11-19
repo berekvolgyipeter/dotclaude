@@ -23,7 +23,7 @@ Detect the type from the `$ARGUMENTS` reference:
 - **`SKILL.md` filename** — treat as a skill
 - **Any other `.md` file** — treat as a command
 
-If a non-`SKILL.md` file is missing `disable-model-invocation: true`, report it as a **CRITICAL** finding (missing required frontmatter key) — do not reclassify it as a skill.
+If a non-`SKILL.md` file is missing `disable-model-invocation: true`, report it as a **HIGH** bug (missing required frontmatter key) — do not reclassify it as a skill.
 
 Read every file referenced with `@path` syntax in the target file (and recursively in those files). Their content is part of the skill/command and must be reviewed alongside the entry file. Report findings against the referenced files using their own paths.
 
@@ -33,4 +33,4 @@ For commands, also check what skill-creator won't cover:
 - `$ARGUMENTS` is used in the body if it receives a file reference
 - `allowed-tools` only lists what the body actually calls
 
-Report issues by severity (critical / major / minor) with file:line references and concrete fixes. Keep it short.
+Report each finding in the shape `~/.claude/skills/review-changes/references/finding.md` defines, worst first. Keep it short.

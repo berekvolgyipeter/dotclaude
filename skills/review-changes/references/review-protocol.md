@@ -28,10 +28,12 @@ reviewed by every focus that runs.
 
 ## Step 1: Load Standards
 
-List `~/.claude/rules/` and read the frontmatter of each rule file. A rule applies when its `paths:` globs match a
-changed file (e.g. any `*.py` → `py-code.md`; `*.py` under `tests/` → also `py-test.md`; `*.md` → `docs.md`). Rules
-without `paths:` are behavioral, not code standards — skip them. **Read each applicable rule file in full**; the
-subagents need the actual rule content.
+List `~/.claude/rules/` and `<CHANGE_SET_ROOT>/.claude/rules/`, and read the frontmatter of each rule file. A rule
+applies when its `paths:` globs match a changed file (e.g. any `*.py` → `py-code.md`; `*.py` under `tests/` → also
+`py-test.md`; `*.md` → `docs.md`). Rules without `paths:` are behavioral, not code standards — skip them. **Read each
+applicable rule file in full**; the subagents need the actual rule content. Where a project rule and a user rule
+conflict, the project rule wins: it states how this repo is meant to be written. Leave the overridden part of the user
+rule out of what you pass on.
 
 Keep the loaded rule content available to paste verbatim into Step 4 subagent prompts. Note which rules are test
 rules (their `paths:` match only test files, e.g. `py-test.md`).
@@ -49,12 +51,18 @@ From the overview, take the changed files, untracked files, and DIFF_BASE. Drop 
 design docs, plans and reports there are not code. Size what is left with `git -C <root> diff --shortstat
 <DIFF_BASE> -- <files>`, plus the line count of each untracked file.
 
-Decide from file names, the stat and a count of security markers in the diff text — `git -C <root> diff
-<DIFF_BASE> -- <files> | grep -ciE '<pattern>'` (and `grep -ciE` on the untracked files), with a pattern for shell,
-query, `eval` and deserializer calls, file paths, network calls, auth, tokens and secrets — reading a file's diff only
-where these leave it unclear. **Do not bulk-read the per-file diffs** — the reviewers read them on demand, and
-pulling them all into your context defeats the design. A file name hides a `shell=True` added to `utils.py`; the
-count does not.
+Decide from file names, the stat and a count of security markers in the added lines — `git -C <root> diff
+<DIFF_BASE> -- <files> | grep -E '^\+[^+]' | grep -ciE '<pattern>'` (and `grep -ciE` on the untracked files). This
+pattern covers shell, query, `eval` and deserializer calls, file paths, network calls, TLS checks, auth, tokens and
+secrets; it is a minimum, so extend it with the sinks of the change's languages:
+
+```
+subprocess|shell=True|os\.system|child_process|execSync|spawn\(|exec\.Command|exec\(|eval\(|pickle|yaml\.load|deserializ|innerHTML|select .* from|insert into|update .* set|delete from|open\(|path\.join|chmod|requests\.|fetch\(|https?://|socket|verify=False|rejectUnauthorized|InsecureSkipVerify|auth[nz]|authenticat|authoriz|login|permission|token|secret|password|api[_-]?key|credential
+```
+
+Read a file's diff only where these leave it unclear. **Do not bulk-read the per-file diffs** — the reviewers read
+them on demand, and pulling them all into your context defeats the design. A file name hides a `shell=True` added to
+`utils.py`; the count does not.
 
 ### Risk surface
 
@@ -92,8 +100,8 @@ a small fix to auth code still needs the security reviewer.
 |---|---|---|---|---|
 | correctness | `review-correctness` | always | automated check failures | medium / high / xhigh |
 | standards | `review-standards` | always | the rules, minus test rules while `review-tests` runs | low / medium / high |
-| security | `review-security` | when the change touches secrets, auth or permissions, untrusted input, command or query building, file paths from input, network endpoints, or security settings | — | — / high / xhigh |
-| tests | `review-tests` | when the change edits tests or changes runtime behavior | the test rules | — / medium / high |
+| security | `review-security` | when the change touches secrets, auth or permissions, untrusted input, command or query building, file paths from input, network endpoints, or security settings | — | medium / high / xhigh |
+| tests | `review-tests` | when the change edits tests or changes runtime behavior | the test rules | low / medium / high |
 
 ### Batches
 
@@ -115,18 +123,7 @@ Each subagent prompt holds exactly:
 5. **Focus hint** — from the arguments, or "None"
 6. **Focuses not running** — the focuses this review does not dispatch (e.g. "security, tests"), or "None"
 
-## Step 5: Consolidate Findings
-
-Collect all subagent reports and:
-
-1. **Deduplicate** — merge findings that reference the same location or the same problem; keep the clearest wording
-   and the highest severity.
-2. **Verify** — for every finding, re-read the code it points at (the diff and enough of the file around it) and
-   confirm the problem is really there. Drop any finding you cannot confirm: a false finding costs the reader more
-   than a missed one, since they must disprove it before moving on.
-3. **Order by severity** — CRITICAL first, then HIGH, MEDIUM, LOW.
-
-## Step 6: Check Documentation
+## Step 5: Check Documentation
 
 For each changed file, check whether documentation needs to be updated:
 
@@ -134,6 +131,17 @@ For each changed file, check whether documentation needs to be updated:
 - If new public APIs, CLI flags, config options, environment variables, or user-facing behaviors were
   added/removed/renamed, check if the docs reflect them
 - If any docs are stale or missing coverage of the changes, report it as a MEDIUM bug
+
+## Step 6: Consolidate Findings
+
+Collect all subagent reports and the Step 5 documentation findings, and:
+
+1. **Deduplicate** — merge findings that reference the same location or the same problem; keep the clearest wording
+   and the highest severity.
+2. **Verify** — for every finding, re-read the code it points at (the diff and enough of the file around it) and
+   confirm the problem is really there. Drop any finding you cannot confirm: a false finding costs the reader more
+   than a missed one, since they must disprove it before moving on.
+3. **Order by severity** — CRITICAL first, then HIGH, MEDIUM, LOW.
 
 ## Output Format
 
