@@ -38,4 +38,4 @@ When the shape of that interface is itself in question (how deep the module is, 
 - **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
 - **Red for the right reason.** Run the new test and read its failure: it must fail because the behavior is missing. A test that passes before the code exists, or fails on an import or setup error, proves nothing — fix the test first.
 - **One slice at a time.** One seam, one test, one minimal implementation per cycle.
-- **Refactoring is not part of the loop.** It belongs to validation, after the work is built, not to the red → green implementation cycle.
+- **Refactoring is not part of the loop.** It belongs to the code review after the work is built, not to the red → green implementation cycle.

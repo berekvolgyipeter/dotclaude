@@ -31,7 +31,7 @@ Scan the conversation for any invocations of custom tools:
 
 **Skills** — `Skill` tool calls where the `skill` parameter matches a name in `~/.claude/skills/` or `.claude/skills/`
 
-**Commands** — slash command invocations like `/delta-review`, `/write-plan`, etc., which expand via the `Skill` tool
+**Commands** — slash command invocations like `/commit-msg`, `/skill-review`, etc., which expand via the `Skill` tool
 
 **Agents** — `Agent` tool calls where `subagent_type` matches a name in `~/.claude/agents/` or `.claude/agents/`
 
@@ -145,10 +145,10 @@ For 3+ learnings, use this structured template:
 
 ### Skill / Command / Agent Updates
 
-1. /pr-review — Add diff-size gate
-   - Context: User ran /pr-review on a 2000-line PR; the command tried to review every file and hit context limits
+1. review-changes — Add diff-size gate
+   - Context: User ran a branch review on a 2000-line PR; the skill tried to review every file and hit context limits
    - Issue: No guidance on handling large diffs — should summarize by file first, then deep-dive on request
-   - File: `~/.claude/commands/review/pr-review.md`
+   - File: `~/.claude/skills/review-changes/SKILL.md`
 
 ### Permission Updates
 

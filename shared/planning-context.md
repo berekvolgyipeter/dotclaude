@@ -27,6 +27,7 @@ Every file in it covers exactly one repo. When the change touches one repo:
 - `design.md` — the design doc
 - `evidence.md` — code facts with `file:line` evidence, gathered while designing
 - `plan.md` — the implementation plan
+- `validation.md` — the validation report of the finished change
 - `archived/` — documents of a dropped design
 
-When it touches several, each file is per repo, suffixed with the repo's name: `design-<repo>.md`, `evidence-<repo>.md`, `plan-<repo>.md`. The design docs link to each other.
+When it touches several, each file is per repo, suffixed with the repo's name: `design-<repo>.md`, `evidence-<repo>.md`, `plan-<repo>.md`, `validation-<repo>.md`. The design docs link to each other.

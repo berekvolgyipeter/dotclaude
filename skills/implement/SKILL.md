@@ -18,7 +18,7 @@ Read `~/.claude/shared/meet-the-user.md` and follow it whenever you ask the user
 
 Use the first that applies:
 
-1. **A plan** — a plan file, or a change folder holding one, named in the request. When the folder holds one plan per repo, build only the one the request names; if it names none, ask which before anything else, since nothing can start without it. Work inside that plan's repo: test, lint and review all run there. Follow its Requirements and Module Map, and whichever of Before You Start, Phases, Key Decisions, Testing Strategy, Deferred to Implementation and Out of Scope it includes. The user confirmed its interfaces (Module Map) and the seams and behaviors to test (Testing Strategy) while it was written: treat those as approved and don't ask again. When the plan's Execution Record has entries but no closing `Complete` entry, an earlier run was cut short: read the record and the changes against the base (from Before You Start, else the branch's merge-base with the default branch), work out what is already built, and continue from there rather than starting over.
+1. **A plan** — a plan file, or a change folder holding one, named in the request. When the folder holds one plan per repo, build only the one the request names; if it names none, ask which before anything else, since nothing can start without it. Work inside that plan's repo: test, lint and review all run there. Follow its Requirements and Module Map, and whichever of Before You Start, Phases, Key Decisions, Testing Strategy, Deferred to Implementation and Out of Scope it includes. The user confirmed its interfaces (Module Map) and the seams and behaviors to test (Testing Strategy) while it was written: treat those as approved and don't ask again. When the plan's Execution Record has entries but no `Complete` entry, an earlier run was cut short: read the record and the changes against the base (from Before You Start, else the branch's merge-base with the default branch), work out what is already built, and continue from there rather than starting over.
 2. **The conversation** — a change discussed and settled in this session. Build from it; don't re-interview the user for what you already have.
 3. **The request alone** — a short instruction.
 
@@ -78,12 +78,19 @@ Invoke the `tdd` skill and drive each seam to test through its red-green loop, o
 - Run the full test suite — `make test` if the project defines it, otherwise its documented runner (`pytest`, `npm test`, `cargo test`, etc.). Fix failures by fixing code, never by weakening or deleting tests.
 - Run the linter — `make lint` if defined, otherwise the documented lint, format and type-check commands — and fix every error.
 - Re-run until both pass clean.
-- A failure that also happens without your change is pre-existing: record it and leave it alone. Check it at the base in a separate worktree, or by confirming it touches nothing you changed — never stash, reset or switch branches, since the uncommitted work is the user's to review.
+- A failure that also happens without your change is pre-existing: record it and leave it alone. Check it at the base in a separate worktree, or by confirming it touches nothing you changed — never stash, reset or switch branches, since the uncommitted work is the user's to review. The one exception is the review's `git stash create` snapshot: it only records the work and leaves the working tree and index untouched.
 - When the project has neither a test runner nor a linter, record that and carry it into the report.
 
 ## 6. Review
 
-Invoke the `code-review` skill on the changes and wait for its findings — it runs in the background. Judge each finding against the goal and the plan: fix those that hold up, and record each one you skip. Then repeat step 5.
+Review in at most two rounds, so the review cannot loop.
+
+1. **First round.** Invoke the `review-changes` skill with the repo's root, then the first argument that applies, so phases already committed are included, and wait for its findings — it runs in the background:
+   - `since <base>` with the base from Before You Start;
+   - `since <merge-base>` — the branch's merge-base with the default branch — when earlier phases of this plan are already committed;
+   - no argument: the uncommitted changes against the last commit.
+2. **Fix.** Judge each finding against the goal and the plan. Fix every bug that holds up, taking the snapshot `review-changes` describes first. A judgement call you may skip — record it with a one-line reason. Then repeat step 5.
+3. **Second round** — only when the first round brought fixes. Invoke `review-changes` with `<root> since <snapshot>`. Fix and repeat step 5 as in the first round, then stop reviewing: record every finding still open for the final report.
 
 ## 7. Verify and Report
 
@@ -91,4 +98,4 @@ Invoke the `code-review` skill on the changes and wait for its findings — it r
 - Confirm each agreed behavior is covered by a test at its seam.
 - Confirm each item the plan deferred to implementation got an answer.
 - With a plan, close its Execution Record with a `Complete` entry: the final test and lint results, and whether the goal is reached.
-- Report to the user whether the goal is reached, any untested seams with their recommended tests, the other recorded calls with the costliest-if-wrong first, and anything left for them to do.
+- Report to the user whether the goal is reached, any untested seams with their recommended tests, the review findings still open after the second round, the other recorded calls with the costliest-if-wrong first, and anything left for them to do. End the report with "Run `validate` next" — it checks the change against its goal independently and runs it for real.

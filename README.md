@@ -65,9 +65,34 @@ flowchart LR
     Ready -->|short instruction| Impl
     Ready -->|one behavior, test-first| TDD[tdd]
     Impl -->|seams to test| TDD
-    Impl -->|changes| CR[code-review]
+    Impl -->|changes| CR[review-changes]
     CR -->|findings| Impl
     Impl -->|deviations, skipped findings| Rec([Execution Record or final report])
+```
+
+### Code Review
+
+```mermaid
+flowchart LR
+    Caller([implement, validate or developer]) -->|uncommitted · pr · since ref| RC[review-changes]
+    RC -->|size, risk and project stakes| Depth{lite · standard · full}
+    Depth -->|always| Core[review-correctness · review-standards]
+    Depth -->|when the change touches them| Cond[review-security · review-tests]
+    Core -->|findings| Verify[dedupe and verify]
+    Cond -->|findings| Verify
+    Verify -->|confirmed findings| Caller
+```
+
+### Validation
+
+```mermaid
+flowchart LR
+    Done([Change built]) -->|by implement or by hand| Val[validate]
+    Val -->|goal, plan, design, diff| Checks[goal and plan · design · run it for real · code review if none ran]
+    Checks -->|sorted findings| Dev{developer: fix now · later · as-is}
+    Dev -->|fix now| Fix[fix round · then rechecks and review-changes]
+    Fix -->|still open| Dev
+    Dev -->|done| Rep([validation.md in the change folder])
 ```
 
 ## What's Included
@@ -91,12 +116,11 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 | File | Description |
 |------|-------------|
-| [shared/change-set.md](shared/change-set.md) | Finds the one change set to work on — from a repo, a worktree, or a folder of repos — and gathers its overview (root, branch, diff base, changed files); lists the candidates and stops when there are several |
+| [shared/change-set.md](shared/change-set.md) | Finds the one change set to work on — uncommitted, a branch, or everything since a ref, in a repo, a worktree, or a folder of repos — and gathers its overview (root, branch, diff base, changed files); lists the candidates and stops when there are several |
 | [shared/planning-context.md](shared/planning-context.md) | Glossary, ADR and rule loading plus the change folder layout, shared by the planning artifacts |
 | [shared/domain-docs.md](shared/domain-docs.md) | Where the glossary and ADRs live, when to write them, and their formats — for every skill that records them |
 | [shared/codebase-design.md](shared/codebase-design.md) | The deep-module vocabulary and principles for designing and discussing a module's shape |
 | [shared/meet-the-user.md](shared/meet-the-user.md) | How interactive design, grilling and planning sessions pitch explanations and questions at the user's current level |
-| [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis, lint/test checks, and numbered findings reported in the session |
 
 ### [Commands](commands/)
 
@@ -112,14 +136,11 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | Command | Description |
 |---------|-------------|
 | [/commit-msg](commands/git/commit-msg.md) | Generate a suggested conventional commit message for the current changes. Runs in an isolated subagent, so diffs stay out of the session |
-| [/pr-summary](commands/git/pr-summary.md) | Brief PR summary grouped by feature/area. Runs in an isolated subagent, so diffs stay out of the session |
 
 **[review/](commands/review/)**
 
 | Command | Description |
 |---------|-------------|
-| [/pr-review](commands/review/pr-review.md) | Technical code review of a branch against its base branch. A background reviewer that doesn't see the session's context runs it; when its numbered findings arrive, the session evaluates them and fixes the ones that hold up. Trailing text is a focus hint. Runs `make lint` / `make test`, honoring the same `DOTCLAUDE_DISABLE_AUTO_LINT` / `DOTCLAUDE_DISABLE_AUTO_TEST` opt-outs as the Stop hook |
-| [/delta-review](commands/review/delta-review.md) | Same review for uncommitted changes against the latest commit |
 | [/skill-review](commands/review/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
 
 **[skill-references/](commands/skill-references/)**
@@ -141,6 +162,9 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | [design-change](skills/design-change/SKILL.md) | Turn a rough idea for changing an existing system into a code-checked design, written up as plain-language design docs before planning |
 | [write-plan](skills/write-plan/SKILL.md) | Write a self-reviewed plan from a design, the current conversation, or a short prompt, saved in its change folder |
 | [implement](skills/implement/SKILL.md) | Implement a plan, a change settled in the conversation, or a short instruction test-first via the tdd loop, then test, review, and verify against the goal |
+| [review-changes](skills/review-changes/SKILL.md) | Independent background code review of uncommitted changes, a branch, or everything since a ref, by focused reviewers at a depth sized to the change's risk and the project's `Review stakes: low|normal|high` line in its CLAUDE.md; the session then judges and fixes the findings |
+| [validate](skills/validate/SKILL.md) | Check a finished change against its goal, plan and design, and run it for real, before the diff review |
+| [pr-summary](skills/pr-summary/SKILL.md) | Brief, copyable PR summary grouped by feature/area, with evidence and risk when the change was validated |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report — or, in scoped mode, as a text review of what a design or plan touches |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
 | [ts-debug](skills/ts-debug/SKILL.md) | TypeScript/Node debugging |
@@ -157,7 +181,10 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 
 | Agent | Description |
 |-------|-------------|
-| [code-reviewer](agents/review/code-reviewer.md) | Focused code reviewer for batches of changed files, dispatched by review commands |
+| [review-correctness](agents/review/review-correctness.md) | Logic, edge cases, silent failures and broken interfaces in a change set, dispatched by review-changes |
+| [review-standards](agents/review/review-standards.md) | The user's coding rules, simplicity and code smells in a change set, dispatched by review-changes |
+| [review-security](agents/review/review-security.md) | Security issues in a change set that touches a security surface, dispatched by review-changes |
+| [review-tests](agents/review/review-tests.md) | Missing and weak tests in a change set, dispatched by review-changes |
 
 ### [Hooks](hooks/)
 
@@ -294,13 +321,15 @@ project/.claude/
 
 - [coleam00/context-engineering-intro](https://github.com/coleam00/context-engineering-intro) — inspiration for some commands and rules
 - [trailofbits/claude-code-config](https://github.com/trailofbits/claude-code-config) — security and privacy focused settings
-- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions, code review, planning and implementation practices
-- [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) — planning and implementation practices
+- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions, code review, validation, planning and implementation practices
+- [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) — planning and implementation practices; independent review that sees only the change and its contract
 - [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns; interface-as-contract documentation
-- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern
+- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern; fix now, later or as-is triage
 - [coleam00/archon](https://github.com/coleam00/archon) — agent-harness skill reference repo
 - [affaan-m/ECC](https://github.com/affaan-m/ECC) — agent-harness skill reference repo
-- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills, planning and implementation practices
+- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills, planning and implementation practices; code smell baseline and one-way-door risk in review
 - [ghostsecurity/skills](https://github.com/ghostsecurity/skills) — codebase exploration heuristics
-- [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns
-- [obra/superpowers](https://github.com/obra/superpowers) — planning and implementation practices
+- [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns; walking the diff in reading order
+- [obra/superpowers](https://github.com/obra/superpowers) — planning and implementation practices; bounded fix loop
+- [backnotprop/pstack](https://github.com/backnotprop/pstack) — blast-radius risk analysis around the one fact a change is safe because of
+- [openai/plugins](https://github.com/openai/plugins) — story-anchored run-for-real verification and patch-risk analysis
