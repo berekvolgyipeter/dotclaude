@@ -23,7 +23,7 @@ Read `~/.claude/shared/meet-the-user.md` and follow it whenever you ask the user
 `readlink -f ~/.claude/skills/retro`.
 
 **Unattended runs.** When your prompt says to run unattended, nobody can answer: ask nothing, write the report with
-status `awaiting decisions`, and stop after step 5's report — record no decisions and leave `next-due` alone.
+status `awaiting decisions`, and stop after step 5's report — record no decisions.
 
 ## 1. Read the Request
 
@@ -48,8 +48,8 @@ go on.
 | full | Note the current time (`date -u +%FT%TZ`) for the report's `Sessions up to`, then `find --since <cutoff>`: the cutoff is the `Sessions up to` time of the newest full report, else 7 days ago *(a first-run guess)*. |
 
 Run each as `python3 ~/.claude/scripts/sessions.py <operation>`. `find` prints one session per line — id, start time,
-start folder, transcript path — oldest first. With no sessions, say so and stop; an attended full scope still sets
-`next-due` to today plus 7 days, since there was nothing to review.
+start folder, transcript path — oldest first. With no sessions, say so and stop; a full scope still sets `next-due`
+to today plus 7 days, since there was nothing to review.
 
 Then write the outlines into a scratch folder and keep the paths and sizes it prints:
 
@@ -95,15 +95,15 @@ found it.
 
 Write the report in the shape `references/report.md` gives, into the retros folder. Paraphrase every moment — never
 copy transcript text into the report or the log. If the retros folder cannot be written, show the report in chat and
-say the folder's access settings are missing.
+say the folder's access settings are missing. A full scope then sets `next-due` to today plus 7 days and resets its
+snooze count — the reminder tracks the analysis, not the decisions.
 
 Unattended, stop here.
 
 Attended, show the TL;DR and the numbered proposals, and ask for a decision on each: **accept**, **reject** with a
 one-line reason, or **later**. A plain "yes" accepts every proposal except those that widen access — dropping an
 `ask` or `deny` rule, a sandbox limit or a safety line — which the report marks and which need their own answer. Record each answer in `decisions.md`, fill in
-each proposal's Decision line, and set the report's status to `decided`. A full scope — including a walked waiting
-report — then sets `next-due` to today plus 7 days and resets its snooze count.
+each proposal's Decision line, and set the report's status to `decided`.
 
 ## 6. Apply
 

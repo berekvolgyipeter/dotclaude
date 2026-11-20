@@ -26,3 +26,8 @@ links_into_repo() {
     esac
     return 1
 }
+
+# True if git ignores $1 in this repo (caches, build output, ...); false outside a git repo
+is_git_ignored() {
+    git -C "$REPO_DIR" check-ignore -q -- "$1" 2>/dev/null
+}

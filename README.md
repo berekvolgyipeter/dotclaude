@@ -212,11 +212,12 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 Shared permissions, preferences, and security posture. Built for auto mode: the sandbox and the auto mode classifier handle routine safety, so Claude works without prompt fatigue, while explicit rules hold a few hard lines:
 
 - **Secrets stay unreadable** — credential files, keychain, `.env` files, tokens in the environment, and forge auth tokens and CI secrets.
-- **Git history changes need your OK** — commits, merges, rebases, resets, and other history rewrites prompt; worktree management runs freely.
+- **Whole-history rewrites need your OK** — they prompt; routine local git work is left to auto mode.
 - **Remote changes need your OK** — pushes and forge writes prompt; forge deletions are denied; reads run freely. In auto mode, opening MRs/PRs and routine collaboration on them (editing the description, commenting, replying to and resolving discussions) runs without a prompt, while forge configuration changes stay blocked.
 - **The machine stays untouched** — system settings, services, shell config, and package installs outside the project prompt or are denied.
 - **File edits stay in the project** — Claude's file tools refuse writes outside the working directories and this repo's linked config; add another directory with `/add-dir`.
 - **No phoning home** — telemetry and error reporting are off.
+- **Docker is the exception** — it runs outside the sandbox and only auto mode judges it, so a container can reach secrets and the machine that the lines above keep from Claude.
 
 Only a listed set of tools that can't work inside the sandbox run outside it — Claude can't take any other command out of the sandbox on its own — and Claude's package caches are kept separate from yours. This repo's linked config is readable without a prompt and from the sandbox in any project, and skill reference repos are writable from it too, so their maintenance scripts run anywhere.
 
@@ -244,7 +245,7 @@ make install
 ```
 
 This runs `setup/install.sh`, which symlinks this repo into `~/.claude/` (the lists live in `setup/lib/targets.sh`):
-- **Directory entries**: each top-level entry of a linked directory gets its own symlink inside a real `~/.claude/<dir>/` (e.g. `~/.claude/skills/tdd -> repo/skills/tdd`). Content Claude Code ships into those directories itself, such as `skills/synced/`, lives alongside and is never touched.
+- **Directory entries**: each top-level entry of a linked directory gets its own symlink inside a real `~/.claude/<dir>/` (e.g. `~/.claude/skills/tdd -> repo/skills/tdd`); entries git ignores, such as `__pycache__`, are skipped. Content Claude Code ships into those directories itself, such as `skills/synced/`, lives alongside and is never touched.
 - **Files**: `settings.json`
 - **Folders**: `retros/`, linked whole as `~/.claude/retros`; its own `.gitignore` keeps everything in it out of git, since it holds notes drawn from your sessions.
 

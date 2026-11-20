@@ -15,11 +15,11 @@
     "pr": ""
   },
   "permissions": {
-    "blockWritesOutsideWorkingDirectories": true,
     "additionalDirectories": [
       "~/.claude/agents",
       "~/.claude/commands",
       "~/.claude/output-styles",
+      "~/.claude/retros",
       "~/.claude/rules",
       "~/.claude/shared",
       "~/.claude/skills",
@@ -39,7 +39,6 @@
       "Bash(git -C * add *)",
       "Bash(git fetch *)",
       "Bash(git -C * fetch *)",
-      "Bash(bash ~/.claude/scripts/git-fetch.sh *)",
       "Bash(git pull *)",
       "Bash(git -C * pull *)",
       "Bash(git worktree *)",
@@ -65,6 +64,7 @@
       "Read(~/.claude/commands/**)",
       "Read(~/.claude/hooks/**)",
       "Read(~/.claude/output-styles/**)",
+      "Read(~/.claude/retros/**)",
       "Read(~/.claude/rules/**)",
       "Read(~/.claude/scripts/**)",
       "Read(~/.claude/shared/**)",
@@ -170,44 +170,10 @@
       "Read(~/.netrc)"
     ],
     "ask": [
-      "Bash(git commit*)",
       "Bash(git push*)",
-      "Bash(git merge *)",
-      "Bash(git rebase*)",
-      "Bash(git reset*)",
-      "Bash(git cherry-pick *)",
-      "Bash(git revert *)",
-      "Bash(git tag *)",
-      "Bash(git branch -D *)",
-      "Bash(git remote add *)",
-      "Bash(git remote remove *)",
-      "Bash(git remote rm *)",
-      "Bash(git remote rename *)",
-      "Bash(git remote set-url *)",
-      "Bash(git remote set-head *)",
-      "Bash(git remote set-branches *)",
-      "Bash(git remote prune *)",
-      "Bash(git remote update*)",
       "Bash(git filter-branch *)",
       "Bash(git filter-repo *)",
-      "Bash(git -C * commit*)",
       "Bash(git -C * push*)",
-      "Bash(git -C * merge *)",
-      "Bash(git -C * rebase*)",
-      "Bash(git -C * reset*)",
-      "Bash(git -C * cherry-pick *)",
-      "Bash(git -C * revert *)",
-      "Bash(git -C * tag *)",
-      "Bash(git -C * branch -D *)",
-      "Bash(git -C * remote add *)",
-      "Bash(git -C * remote remove *)",
-      "Bash(git -C * remote rm *)",
-      "Bash(git -C * remote rename *)",
-      "Bash(git -C * remote set-url *)",
-      "Bash(git -C * remote set-head *)",
-      "Bash(git -C * remote set-branches *)",
-      "Bash(git -C * remote prune *)",
-      "Bash(git -C * remote update*)",
       "Bash(git -C * filter-branch *)",
       "Bash(git -C * filter-repo *)",
       "Bash(gh pr merge *)",
@@ -242,15 +208,6 @@
       "Bash(brew uninstall*)",
       "Bash(brew upgrade*)",
       "Bash(brew services *)",
-      "Bash(docker rm *)",
-      "Bash(docker container rm *)",
-      "Bash(docker rmi *)",
-      "Bash(docker image rm *)",
-      "Bash(docker push *)",
-      "Bash(docker login *)",
-      "Bash(docker *prune*)",
-      "Bash(docker volume rm *)",
-      "Bash(docker network rm *)",
       "Bash(ssh *)",
       "Bash(scp *)",
       "Bash(rsync *)",
@@ -261,17 +218,7 @@
       "Bash(networksetup *)",
       "Bash(pmset *)",
       "Bash(scutil *)",
-      "Bash(osascript *)",
-      "Edit(//**/dotclaude/hooks/**)",
-      "Edit(//**/dotclaude/scripts/**)",
-      "Bash(rm *)",
-      "Bash(git rm -f*)",
-      "Bash(git rm --force*)",
-      "Bash(git -C * rm -f*)",
-      "Bash(git -C * rm --force*)",
-      "Bash(docker buildx bake *)",
-      "Bash(docker compose up *)",
-      "Bash(docker compose down*)"
+      "Bash(osascript *)"
     ]
   },
   "autoMode": {
@@ -282,7 +229,8 @@
     "soft_deny": [
       "$defaults",
       "Forge configuration changes: changing GitLab project or GitHub repo settings, protected branches or tags, members or permissions, webhooks, deploy keys, CI/CD variables or secrets, or pipeline schedules, via glab/gh or their APIs.",
-      "Destructive or outward Docker operations: removing or pruning containers, images, volumes or networks, pushing or tagging images for a registry, or logging in to a registry. Reading (ps, images, inspect, logs, manifest inspect) and building or running containers for local tests are not covered."
+      "Destructive or outward Docker operations: removing or pruning containers, images, volumes or networks, pushing or tagging images for a registry, or logging in to a registry. Reading (ps, images, inspect, logs, manifest inspect) and building or running containers for local tests are not covered.",
+      "Docker host escapes: running containers with --privileged, host network or PID namespaces, the Docker socket mounted, or bind mounts of paths outside the working directory (such as / or the home folder). Mounting the project directory or a temp directory for local tests is not covered."
     ]
   },
   "model": "opus",
@@ -294,6 +242,10 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/list-excluded-commands.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/retro-reminder.sh"
           }
         ]
       }
@@ -351,7 +303,8 @@
     },
     "filesystem": {
       "allowWrite": [
-        "~/.claude/skills-references"
+        "~/.claude/skills-references",
+        "~/.claude/retros"
       ],
       "allowRead": [
         "~/.ssh/known_hosts",
@@ -363,7 +316,8 @@
         "~/.claude/rules",
         "~/.claude/scripts",
         "~/.claude/shared",
-        "~/.claude/skills"
+        "~/.claude/skills",
+        "~/.claude/retros"
       ]
     },
     "credentials": {
@@ -385,16 +339,11 @@
     "excludedCommands": [
       "make install",
       "git fetch *",
-      "bash ~/.claude/scripts/git-fetch.sh *",
-      "git pull *",
-      "git add *",
       "git merge *",
-      "git commit *",
+      "git pull *",
       "git push *",
       "git worktree *",
-      "git -C * add *",
       "git -C * merge *",
-      "git -C * commit *",
       "git -C * worktree *",
       "gh *",
       "glab *",
@@ -402,19 +351,7 @@
       "go mod tidy *",
       "go get *",
       "agent-browser *",
-      "docker manifest inspect *",
-      "docker info",
-      "docker version",
-      "docker ps*",
-      "docker images*",
-      "docker image ls*",
-      "docker image inspect *",
-      "docker compose ls*",
-      "docker compose ps*",
-      "docker compose logs *",
-      "docker buildx bake *",
-      "docker compose up *",
-      "docker compose down*"
+      "docker *"
     ]
   },
   "alwaysThinkingEnabled": true,

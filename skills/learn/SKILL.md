@@ -1,7 +1,6 @@
 ---
 name: learn
 description: Capture lessons from the current session in the background — corrections, agent mistakes, how the skills, commands and agents it used worked, and the permission prompts the user had to answer — and apply them to CLAUDE.md, rule files, skills, commands and agents at user or project level, leaving uncommitted diffs to review. Run with /learn, optionally naming what to learn, e.g. when the user wants to save what was learned, remember something for next time, or stop being asked for harmless actions.
-disable-model-invocation: true
 context: fork
 argument-hint: "[what to learn]"
 allowed-tools: Bash(python3 ~/.claude/scripts/sessions.py *)
