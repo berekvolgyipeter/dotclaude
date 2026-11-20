@@ -59,3 +59,19 @@ for file in "${FILES[@]}"; do
     ln -sfn "$source" "$target"
     echo "Linked: ~/.claude/$file"
 done
+
+# --- Link whole folders ---
+for folder in "${FOLDERS[@]}"; do
+    source="$REPO_DIR/$folder"
+    target="$CLAUDE_DIR/$folder"
+    chmod 700 "$source"
+    [ "$(readlink "$target")" = "$source" ] && continue
+
+    if [ -e "$target" ] && ! links_into_repo "$target"; then
+        echo "WARNING: ~/.claude/$folder already exists and is not linked to this repo. Skipping."
+        continue
+    fi
+
+    ln -sfn "$source" "$target"
+    echo "Linked: ~/.claude/$folder"
+done

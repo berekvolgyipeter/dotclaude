@@ -12,6 +12,10 @@ DIRS=(rules commands agents skills output-styles hooks scripts shared)
 # Files linked directly into ~/.claude/
 FILES=(settings.json)
 
+# Folders linked whole into ~/.claude/ and kept private; their own .gitignore keeps their contents out of git, and
+# their contents stay on uninstall
+FOLDERS=(retros)
+
 # Globs that match nothing expand to nothing instead of a literal '*'
 shopt -s nullglob
 

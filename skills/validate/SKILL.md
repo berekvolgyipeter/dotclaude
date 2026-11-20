@@ -123,4 +123,5 @@ Then reply in chat with only:
 
 - the verdict, one line;
 - the reading order;
-- the offer, for after the commit: "Once committed, I can write the PR summary with `pr-summary @<change folder>`."
+- the offer, for after the commit: "Once committed, I can write the PR summary with `pr-summary @<change folder>`,
+  and `/retro @<change folder>` looks back at how this change's sessions went."

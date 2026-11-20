@@ -27,6 +27,6 @@ lint:
 	@git grep -nIE --untracked '.{$(MAX_LINE_LENGTH)}.' -- '*.sh' '*.py'; rc=$$?; \
 		[ $$rc -eq 1 ] || { [ $$rc -eq 0 ] && echo "Lines above exceed $(MAX_LINE_LENGTH) characters"; exit 1; }
 
-# Run the hook behavior tests
+# Run the behavior tests, stopping at the first failing script
 test:
-	bash tests/lint-and-test.sh
+	@for t in tests/*.sh; do echo "== $$t"; bash "$$t" || exit 1; done

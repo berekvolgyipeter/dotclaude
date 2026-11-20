@@ -23,7 +23,7 @@ Symlinking into `~/.claude/` and version-controlling everything in git turns thi
 ```mermaid
 flowchart LR
     Start([Session start]) --> Notice[SessionStart hook]
-    Notice -->|list excluded commands| Claude
+    Notice -->|list excluded commands · retro due reminder| Claude
     User([User prompt]) --> Claude
     Claude -->|tool call| Pre[PreToolUse hook - Bash]
     Pre -->|deny mixed excluded commands| Tool[Tool execution]
@@ -93,6 +93,21 @@ flowchart LR
     Dev -->|fix now| Fix[fix round · then rechecks and review-changes]
     Fix -->|still open| Dev
     Dev -->|done| Rep([validation.md in the change folder])
+    Rep -.->|after the commit| Retro[retro @change folder]
+```
+
+### Retro
+
+```mermaid
+flowchart LR
+    Due([SessionStart reminder]) -->|full| Retro[retro]
+    Task([developer]) -->|task at hand · session · change folder| Retro
+    Retro -->|session outlines| Checks[independent checks · grader]
+    Checks -->|findings| Report([report in ~/.claude/retros])
+    Report --> Dev{developer: accept · reject · later}
+    Dev -->|answers| Log([decision log, graded next retro])
+    Dev -->|separate yes| Apply[apply accepted fixes]
+    Learn([/learn]) -->|background| Edits([uncommitted edits · blocked list])
 ```
 
 ## What's Included
@@ -136,7 +151,7 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | Skill | Description |
 |-------|-------------|
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
-| [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback and permission prompts |
+| [learn](skills/learn/SKILL.md) | Background capture of lessons from the current session and its permission prompts, left as uncommitted edits |
 | [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green loop |
 | [grill-me](skills/grill-me/SKILL.md) | Grill a plan or design until it's shared and sharp, recording settled terms and decisions in the project's domain docs |
 | [design-change](skills/design-change/SKILL.md) | Turn a rough idea for changing an existing system into a code-checked design, written up as plain-language design docs before planning |
@@ -144,6 +159,7 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | [implement](skills/implement/SKILL.md) | Implement a plan, a change settled in the conversation, or a short instruction test-first via the tdd loop, then test, review, and verify against the goal |
 | [review-changes](skills/review-changes/SKILL.md) | Independent background code review of uncommitted changes, a branch, or everything since a ref, by focused reviewers at a depth sized to the change's risk and the project's `Review stakes: low|normal|high` line in its CLAUDE.md; the session then judges and fixes the findings |
 | [validate](skills/validate/SKILL.md) | Check a finished change against its goal, plan and design, and run it for real, before the diff review |
+| [retro](skills/retro/SKILL.md) | Look back over past sessions and propose harness or project fixes in a short report the developer decides on, grading earlier fixes |
 | [pr-summary](skills/pr-summary/SKILL.md) | Brief, copyable PR summary grouped by feature/area, with evidence and risk when the change was validated |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report — or, in scoped mode, as a text review of what a design or plan touches |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
@@ -172,6 +188,7 @@ Event-driven shell scripts registered in `settings.json`.
 | Hook | Event | Description |
 |------|-------|-------------|
 | [standalone-excluded-commands.sh](hooks/standalone-excluded-commands.sh) | `PreToolUse` | Denies Bash calls that mix a `sandbox.excludedCommands` entry with other commands, since those run sandboxed. `list-excluded-commands.sh` lists these commands up front |
+| [retro-reminder.sh](hooks/retro-reminder.sh) | `SessionStart` | Reminds at session start when the next full retro is due |
 | [list-excluded-commands.sh](hooks/list-excluded-commands.sh) | `SessionStart` | Lists the `sandbox.excludedCommands` entries and how to call them so they run unsandboxed: alone, with no pipes, `$()`, backticks or redirects |
 | [lint-and-test.sh](hooks/lint-and-test.sh) | `Stop` | For non-gitignored files changed by Edit or Write since the last user prompt, runs `make lint` and `make test` in each file's git root — so edits in several repos or worktrees each run their own targets. Exits with code 2 to block and prompt Claude to fix failures; skips files outside a git repo and targets the root's Makefile doesn't define. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
 
@@ -188,6 +205,7 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 | File | Description |
 |------|-------------|
 | [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
+| [sessions.py](scripts/sessions.py) | Finds the session transcripts for a scope and writes compact outlines of them, for `retro` and `learn` |
 
 ### [settings.json](settings.json)
 
@@ -228,6 +246,7 @@ make install
 This runs `setup/install.sh`, which symlinks this repo into `~/.claude/` (the lists live in `setup/lib/targets.sh`):
 - **Directory entries**: each top-level entry of a linked directory gets its own symlink inside a real `~/.claude/<dir>/` (e.g. `~/.claude/skills/tdd -> repo/skills/tdd`). Content Claude Code ships into those directories itself, such as `skills/synced/`, lives alongside and is never touched.
 - **Files**: `settings.json`
+- **Folders**: `retros/`, linked whole as `~/.claude/retros`; its own `.gitignore` keeps everything in it out of git, since it holds notes drawn from your sessions.
 
 Dangling links to entries removed from the repo are pruned; run `make uninstall` before moving the repo, or its old links are left behind. If a non-repo entry with the same name already exists, the script warns and skips it. An existing real `settings.json` is backed up with a timestamp before being replaced.
 
@@ -247,7 +266,7 @@ Registers the `context7` MCP server at user scope, so it is available in every p
 make uninstall
 ```
 
-Removes only symlinks pointing into this repo, then any `~/.claude/<dir>/` left empty. Everything else is left untouched. If a backup exists for a file, the most recent backup is restored.
+Removes only symlinks pointing into this repo, then any `~/.claude/<dir>/` left empty. Everything else is left untouched, including the retro reports in `retros/`. If a backup exists for a file, the most recent backup is restored.
 
 ## Development Dependencies
 
@@ -258,7 +277,7 @@ uv sync
 ```
 
 `make lint` fails on any line longer than 120 characters in tracked or untracked (non-ignored) `.sh` and `.py` files.
-It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`).
+It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`, `python3`).
 
 ## Editing Workflow
 
@@ -292,15 +311,15 @@ project/.claude/
 
 - [coleam00/context-engineering-intro](https://github.com/coleam00/context-engineering-intro) — inspiration for some commands and rules
 - [trailofbits/claude-code-config](https://github.com/trailofbits/claude-code-config) — security and privacy focused settings
-- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions, code review, validation, planning and implementation practices
+- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions, code review, validation, planning and implementation practices; multi-session retro with a decision log and unattended runs
 - [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) — planning and implementation practices; independent review that sees only the change and its contract
 - [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns; interface-as-contract documentation
-- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern; fix now, later or as-is triage
+- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern; fix now, later or as-is triage; turning repeated corrections into hooks
 - [coleam00/archon](https://github.com/coleam00/archon) — plugin-browser skill reference repo
-- [affaan-m/ECC](https://github.com/affaan-m/ECC) — plugin-browser skill reference repo
-- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills, planning and implementation practices; code smell baseline and one-way-door risk in review
+- [affaan-m/ECC](https://github.com/affaan-m/ECC) — plugin-browser skill reference repo; a verdict per learning before anything is written
+- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills, planning and implementation practices; code smell baseline and one-way-door risk in review; the retro's fix ladder
 - [ghostsecurity/skills](https://github.com/ghostsecurity/skills) — codebase exploration heuristics
 - [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns; walking the diff in reading order
-- [obra/superpowers](https://github.com/obra/superpowers) — planning and implementation practices; bounded fix loop
-- [backnotprop/pstack](https://github.com/backnotprop/pstack) — blast-radius risk analysis around the one fact a change is safe because of
+- [obra/superpowers](https://github.com/obra/superpowers) — planning and implementation practices; bounded fix loop; session analysis by independent checks citing session moments
+- [backnotprop/pstack](https://github.com/backnotprop/pstack) — blast-radius risk analysis around the one fact a change is safe because of; fixing a repeated mistake at the highest level that works
 - [openai/plugins](https://github.com/openai/plugins) — story-anchored run-for-real verification and patch-risk analysis

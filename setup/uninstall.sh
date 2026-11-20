@@ -22,6 +22,15 @@ for dir in "${DIRS[@]}"; do
     rmdir "$target_dir" 2>/dev/null || true
 done
 
+# --- Remove folder links (the folders and their contents stay in the repo) ---
+for folder in "${FOLDERS[@]}"; do
+    target="$CLAUDE_DIR/$folder"
+    if links_into_repo "$target"; then
+        rm -f "$target"
+        echo "Removed: ~/.claude/$folder"
+    fi
+done
+
 # --- Remove file links and restore backups ---
 for file in "${FILES[@]}"; do
     target="$CLAUDE_DIR/$file"
