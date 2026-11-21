@@ -5,7 +5,7 @@ The shape of a plan saved in a change folder — one plan per repo.
 Two rules govern the whole document:
 
 - **Sections earn their place.** Keep a section only if this plan has real content for it. A section padded with placeholder prose is worse than an absent one. Every plan opens with TL;DR, Goal, Requirements, and Module Map — these are the floor; the rest appear when material.
-- **No file paths, no stale code.** Paths and snippets rot fast. Two exceptions: the origin line below, and a snippet that pins a decision more precisely than prose can (a schema, type shape, state machine, or reducer). Inline such a snippet, trimmed to the decision-rich part.
+- **No file paths, no stale code.** Paths and snippets rot fast. Three exceptions: the origin line below, the folders in Module Map and Output Structure (folders outlive files), and a snippet that pins a decision more precisely than prose can (a schema, type shape, state machine, or reducer). Inline such a snippet, trimmed to the decision-rich part.
 
 Use the glossary's vocabulary throughout, and respect the ADRs in the area being touched.
 
@@ -47,6 +47,11 @@ For each module:
 - **Module** — its name, in domain-glossary vocabulary.
 - **Interface** — what callers depend on. Describe the contract, not the code.
 - **Depth** — one line on the deletion test: if this module vanished, what complexity reappears across its callers? A deep module concentrates a lot behind a small interface. If a module is deliberately shallow, say why it still earns its seam.
+- **Location** — the repo-relative folder it lives in, chosen so the module's pieces stay together.
+
+## Output Structure
+
+Include only when the plan creates new folders. A folder tree of the new layout, so a reader sees its shape before the per-module details. The tree shows the intended shape; the implementer may adjust it if the code reveals a better one, and records why.
 
 ## Phases
 

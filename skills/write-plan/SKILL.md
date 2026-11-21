@@ -40,7 +40,7 @@ Whatever the input, name its goal — what the user wants to be true once the wo
 
 ## Step 3 — Design
 
-ULTRATHINK about the design, in the vocabulary of `~/.claude/shared/codebase-design.md`. Sketch the modules to build or modify, looking actively for deep modules — a lot of behaviour behind a small interface that rarely changes. Apply the deletion test to each: if deleting it would make complexity reappear across its callers, it earns its keep; if complexity just vanishes, it was a pass-through. Name seams in the glossary's language and don't re-litigate ADRs.
+ULTRATHINK about the design, in the vocabulary of `~/.claude/shared/codebase-design.md`. Sketch the modules to build or modify, looking actively for deep modules — a lot of behaviour behind a small interface that rarely changes. Apply the deletion test to each: if deleting it would make complexity reappear across its callers, it earns its keep; if complexity just vanishes, it was a pass-through. Name seams in the glossary's language and don't re-litigate ADRs. Decide where each module lives: keep what changes together in one folder (locality) — a layout that scatters a module makes every later change harder. Follow the repo's existing folder layout where it already does this; where it doesn't (a flat folder of many files, or one concept split across folders by type), give the new module its own folder rather than adding to the problem, and leave the existing files where they are.
 
 Unless the plan builds on a design (which already had its architecture review), invoke the `improve-codebase-architecture` skill in scoped mode on the sketch, and fold its findings into the module split.
 
@@ -50,7 +50,7 @@ Then check in with the user once, in a single message: confirm a drafted goal, a
 
 Write the plan using the template in [plan-template.md](references/plan-template.md). Fold the research into it:
 
-- **Module Map** — each module by its interface (the test surface): operations, key types, invariants, error modes, and its depth from the deletion test. Reference the real patterns you found.
+- **Module Map** — each module by its interface (the test surface): operations, key types, invariants, error modes, its depth from the deletion test, and its location. Reference the real patterns you found.
 - **Key Decisions** — schema changes, API contracts and architectural decisions as `<decision>: <rationale>`, respecting ADRs. Code-level reasons belong here.
 - **Testing Strategy** — the seams and behaviors the user confirmed, verified through public interfaces, not implementation details. Cite prior-art tests to mirror, and say which modules warrant integration-style tests and why.
 - **Deferred to Implementation** — what only running code can answer, each with why it waits.
@@ -64,12 +64,13 @@ Check the draft and fix every issue in place before saving:
 
 1. **Goal** — the plan reaches the goal from the design or the conversation, not only the literal request.
 2. **Coverage** — every requirement maps to a module or decision.
-3. **Consistency** — TL;DR, Goal, Requirements, Module Map, Phases and Testing Strategy agree; the modules can be built in order without backtracking; nothing strays into Out of Scope.
-4. **References exist** — every module, test, pattern and URL the plan names exists; verify with `grep`/`find`/Read.
-5. **Rules** — nothing contradicts a rule, glossary term or ADR loaded in Step 2.
-6. **No speculation** — no feature, abstraction, flag or fallback the requirements don't need, and no error path that hides a failure behind a default or empty result.
-7. **Honest unknowns** — nothing only running code can answer is presented as settled; it sits in Deferred to Implementation.
-8. **No repetition** — nothing restates the design docs.
+3. **Layout** — each module's location keeps its pieces together, following the repo's existing layout where that layout does; new folders appear in Output Structure.
+4. **Consistency** — TL;DR, Goal, Requirements, Module Map, Phases and Testing Strategy agree; the modules can be built in order without backtracking; nothing strays into Out of Scope.
+5. **References exist** — every module, test, pattern and URL the plan names exists; verify with `grep`/`find`/Read.
+6. **Rules** — nothing contradicts a rule, glossary term or ADR loaded in Step 2.
+7. **No speculation** — no feature, abstraction, flag or fallback the requirements don't need, and no error path that hides a failure behind a default or empty result.
+8. **Honest unknowns** — nothing only running code can answer is presented as settled; it sits in Deferred to Implementation.
+9. **No repetition** — nothing restates the design docs.
 
 ## Step 6 — Save
 

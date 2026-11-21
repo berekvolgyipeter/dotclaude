@@ -18,7 +18,7 @@ Read `~/.claude/shared/meet-the-user.md` and follow it whenever you ask the user
 
 Use the first that applies:
 
-1. **A plan** — a plan file, or a change folder holding one, named in the request. When the folder holds one plan per repo, build only the one the request names; if it names none, ask which before anything else, since nothing can start without it. Work inside that plan's repo: test, lint and review all run there. Follow its Requirements and Module Map, and whichever of Before You Start, Phases, Key Decisions, Testing Strategy, Deferred to Implementation and Out of Scope it includes. The user confirmed its interfaces (Module Map) and the seams and behaviors to test (Testing Strategy) while it was written: treat those as approved and don't ask again. When the plan's Execution Record has entries but no `Complete` entry, an earlier run was cut short: read the record and the changes against the base (from Before You Start, else the branch's merge-base with the default branch), work out what is already built, and continue from there rather than starting over.
+1. **A plan** — a plan file, or a change folder holding one, named in the request. When the folder holds one plan per repo, build only the one the request names; if it names none, ask which before anything else, since nothing can start without it. Work inside that plan's repo: test, lint and review all run there. Follow its Requirements and Module Map, and whichever of Before You Start, Output Structure, Phases, Key Decisions, Testing Strategy, Deferred to Implementation and Out of Scope it includes. The user confirmed its interfaces (Module Map) and the seams and behaviors to test (Testing Strategy) while it was written: treat those as approved and don't ask again. When the plan's Execution Record has entries but no `Complete` entry, an earlier run was cut short: read the record and the changes against the base (from Before You Start, else the branch's merge-base with the default branch), work out what is already built, and continue from there rather than starting over.
 2. **The conversation** — a change discussed and settled in this session. Build from it; don't re-interview the user for what you already have.
 3. **The request alone** — a short instruction.
 
@@ -36,7 +36,7 @@ Name the goal — what the user wants to be true once the work ships. Take it fr
 
 - If the plan has an Origin line, read the design docs it links — they hold the goal and what was set aside.
 - Read `~/.claude/shared/planning-context.md` and follow its Glossary and ADRs and Rules sections.
-- Explore the codebase: the modules and interfaces the change touches — a plan names no file paths, so map it onto the real files — and the existing tests and patterns to mirror, starting with the prior art a plan names.
+- Explore the codebase: the modules and interfaces the change touches — a plan names each module's folder but no file paths, so map it onto the real files — and the existing tests and patterns to mirror, starting with the prior art a plan names.
 - Fetch the documentation URLs a plan references, and research further if the context is still not enough to start.
 
 Now settle everything the input leaves open in one opening message, so the rest of the run needs no answers:
