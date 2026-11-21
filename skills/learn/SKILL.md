@@ -64,7 +64,7 @@ Scan the outline for any invocations of custom tools:
 
 **Skills** — `Skill` tool calls where the `skill` parameter matches a name in `~/.claude/skills/` or `.claude/skills/`
 
-**Commands** — slash command invocations like `/commit-msg`, `/skill-review`, etc., which expand via the `Skill` tool
+**Commands** — slash command invocations like `/skill-review`, etc., which expand via the `Skill` tool
 
 **Agents** — `Agent` tool calls where `subagent_type` matches a name in `~/.claude/agents/` or `.claude/agents/`
 

@@ -139,7 +139,6 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 | Command | Description |
 |---------|-------------|
-| [/commit-msg](commands/commit-msg.md) | Generate a suggested conventional commit message for the current changes. Runs in an isolated subagent, so diffs stay out of the session |
 | [/skill-review](commands/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
 
 ### [Skills](skills/)
@@ -159,6 +158,7 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | [validate](skills/validate/SKILL.md) | Check a finished change against its goal, plan and design, and run it for real, before the diff review |
 | [retro](skills/retro/SKILL.md) | Look back over past sessions and propose harness or project fixes in a short report the developer acts on whenever they want |
 | [pr-summary](skills/pr-summary/SKILL.md) | Brief, copyable PR summary grouped by feature/area, with evidence and risk when the change was validated |
+| [commit-summary](skills/commit-summary/SKILL.md) | Pre-commit digest of the uncommitted changes — a plain summary, a changed-files tree and a suggested conventional commit message |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report — or, in scoped mode, as a text review of what a design or plan touches |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
 | [ts-debug](skills/ts-debug/SKILL.md) | TypeScript/Node debugging |
