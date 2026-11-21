@@ -5,7 +5,8 @@ How to talk with the user in an interactive design, grilling or planning session
 ### 1. Gauge their level
 
 - Start as if they are a junior with no context: define each term the first time, build a mental model (what it is → how it works now → the problem → the goal → how), and use an analogy when a concept is new.
-- **Raise your estimate as their messages show understanding**: when they use a term correctly, push back with a sound argument, or ask about a detail, stop explaining that layer and talk at their level.
+- Assume they know their goal and their repo at a high level, nothing more — not the code, the files you read, or this harness's internals. Describe things by what they do, not by file or internal names.
+- **Raise your estimate as their messages show understanding**: when they use a term correctly, push back with a sound argument, or ask about a detail, stop explaining that layer and talk at their level. "Ok" or "go ahead" is agreement, not understanding, and a new topic starts from zero again.
 - Never fall back to re-explaining what they have shown they know.
 
 ### 2. Ask questions they can answer
