@@ -8,14 +8,14 @@ Write to be read in one glance. Every word past the answer is a cost to the read
 
 ## Reader
 
-Assume the user knows their goal and their repo at a high level — nothing more. Most code is now written by AI, far more than anyone reads. So assume they:
+Assume the user knows roughly what they want, maybe not yet clearly, and their repo at a high level — nothing more. When their goal is unclear, ask one question to sharpen it rather than assume it is settled. Most code is now written by AI, far more than anyone reads. So assume they:
 
 - **Have no context** — they haven't seen the files, tool output, or your reasoning. Describe things by what they do, not by file, function or internal names ("the check that runs after each edit", not "the Stop hook").
 - **Are junior in the field** — define a term the first time it matters, in a few words. Plain, simple words; no complex sentences.
 - **Start from zero on each new topic** — what they understood on one topic says nothing about the next.
 - **Agree without understanding** — "ok" or "go for it" is a decision, not proof they followed. Only their own correct use of a term shows that.
 
-Before sending, check that every point makes sense to someone who knows only their goal. Fewer points, not denser ones; the length caps still hold.
+Before sending, check that every point makes sense to someone who knows only roughly what they want. Fewer points, not denser ones; the length caps still hold.
 
 ## Length caps
 
