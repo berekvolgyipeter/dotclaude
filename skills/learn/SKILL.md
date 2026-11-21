@@ -79,7 +79,7 @@ For each one found (or expected but missing), read its current definition file, 
 
 ### Step 3: Review Permission Prompts
 
-The outline's permission lines record how each prompted call was decided: `user_temporary` means the user approved a prompt once, `user_permanent` means they chose "don't ask again", `user_reject` means they declined. Calls auto mode blocked show as failed tool results naming the matched rule in brackets, e.g. `[Data Exfiltration]`.
+The outline's permission lines record how each prompted call was decided: `user_temporary` means the user approved a prompt once, `user_reject` means they declined, and `rule reject` means a deny rule they saved earlier refused the call without a prompt. Calls auto mode blocked show as failed tool results naming the matched rule in brackets, e.g. `[Data Exfiltration]`.
 
 For each recurring or plainly harmless prompt, find why it prompted — an `ask` rule that matched (often too broadly), no `allow` rule outside auto mode, or a classifier block — then pick the narrowest fix:
 
@@ -97,7 +97,7 @@ Guardrails — propose none of these:
 - Broad allows like `Bash(*)` or a bare interpreter — auto mode drops them anyway
 - Allowing a call the user declined, or one that changes system settings, git history, or a remote beyond what the user approved
 
-Permission changes go to the user's settings file `~/.claude/settings.json` — `autoMode` is read only there. A permission that fits only the current project goes to `.claude/settings.local.json`. Keep machine-specific paths out of a settings file that is shared. Settings files cannot be written from here: each permission fix goes to the blocked list as a `jq` command that edits only the keys involved. The same holds for any frontmatter of a skill, command or agent that grants permissions or changes how calls are approved (`allowed-tools`, `tools:`, `permissionMode` and the like): never add to or widen it — put the change on the blocked list.
+Permission changes go to the user's settings file `~/.claude/settings.json` — `autoMode` is read only there. A permission that fits only the current project goes to `.claude/settings.local.json`. Keep machine-specific paths out of a settings file that is shared. Settings files cannot be written from here: each permission fix goes to the unapplied learnings as a `jq` command that edits only the keys involved. The same holds for any frontmatter of a skill, command or agent that grants permissions or changes how calls are approved (`allowed-tools`, `tools:`, `permissionMode` and the like): never add to or widen it — add the change to the unapplied learnings.
 
 ### Step 4: Determine Target File(s)
 
@@ -117,7 +117,7 @@ Decide whether a learning is **universal** (applies to all projects → user-lev
 
 This includes the learn skill itself — if the learning process was suboptimal, update its SKILL.md.
 
-**New user-level files:** each entry under `~/.claude/<dir>/` is a symlink into the dotclaude repo, so edits to existing files through `~/.claude/` land in the repo, but a newly created top-level file is not linked until `make install` runs. Don't create one: put it on the blocked list with its full content's purpose, its repo path (the repo root is two levels above `readlink -f ~/.claude/skills/learn`) and "run `make install`".
+**New user-level files:** each entry under `~/.claude/<dir>/` is a symlink into the dotclaude repo, so edits to existing files through `~/.claude/` land in the repo, but a newly created top-level file is not linked until `make install` runs. Don't create one: add it to the unapplied learnings with its full content's purpose, its repo path (the repo root is two levels above `readlink -f ~/.claude/skills/learn`) and "run `make install`".
 
 ### Step 5: Formulate Updates
 
@@ -125,12 +125,12 @@ For substantial rewrites of skill, command, or agent instructions, invoke the `p
 
 For each learning, create a clear, actionable update:
 - **Match content to scope**: General rules (`~/.claude/`) must use universally applicable text and examples — **never use actual class, function, variable, or file names from the current project**. Fabricate minimal generic names (e.g. `is_valid`, `has_items`, `MyClass`). Project-specific learnings (`.claude/`) may use domain terms and reference actual code patterns. When a learning is general, extract the universal principle and craft a fully generic example. **Self-check before writing**: re-read every proposed example and verify no name from the current project leaked in.
-- **No secrets**: never copy a token, password, key or credentialed URL from the outline into any file or the blocked list — name the variable or the kind of secret instead
+- **No secrets**: never copy a token, password, key or credentialed URL from the outline into any file or the unapplied learnings — name the variable or the kind of secret instead
 - **Be concise**: One clear point per rule
 - **Be actionable**: The next agent running this skill/command/agent should know exactly what to do differently
 - **Show examples**: Use ✅ GOOD / ❌ BAD format when helpful
 - **Keep examples minimal**: Prefer simple 2-5 line snippets over verbose realistic ones
-- **Prioritize by impact**: apply at most the four highest-impact learnings — rules that prevent repeated mistakes > rules that save significant time > nice-to-have documentation. Put the rest on the blocked list, one line each.
+- **Prioritize by impact**: apply at most the four highest-impact learnings — rules that prevent repeated mistakes > rules that save significant time > nice-to-have documentation. Add the rest to the unapplied learnings, one line each.
 
 ## Apply
 
@@ -144,7 +144,7 @@ Then apply it:
 2. Place new rules in the most logical section
 3. **Verify the whole document stays consistent after the edit** — re-read the surrounding rules and confirm the change introduced no contradiction, no duplicated guidance, and no diverging terminology. A refinement that conflicts with a neighbouring rule, or repeats it in different words, is worse than no edit. If the new wording supersedes an existing rule, update or remove that rule too so the document speaks with one voice.
 
-An edit you are refused, or a project file outside the working directories, goes to the blocked list instead.
+An edit you are refused, or a project file outside the working directories, goes to the unapplied learnings instead.
 
 ## Handling Existing Content
 
@@ -155,10 +155,10 @@ Rule files accumulate institutional knowledge that's hard to reconstruct, so tre
 - **Find the closest existing rule first** — read the whole section the learning relates to and ask "does an existing rule or section already cover this?" Merge into or generalize the closest match rather than appending a near-sibling beside it; this is what keeps you from creating a near-duplicate.
 - **Exact duplicate** → Skip
 - **Similar but incomplete** → Enhance with more detail
-- **Conflicting** → don't edit; put both wordings on the blocked list for the user to settle. Only when a new learning plainly supersedes an old rule, replace the old one rather than adding alongside it — stale rules create confusion.
+- **Conflicting** → don't edit; add both wordings to the unapplied learnings for the user to settle. Only when a new learning plainly supersedes an old rule, replace the old one rather than adding alongside it — stale rules create confusion.
 - **Complementary** → Add as a new distinct rule
-- **Outdated** → If you notice a rule that's clearly no longer relevant while reading the file, put it on the blocked list as a cleanup candidate
-- **File size** → If a rule file exceeds ~100 lines, put a consolidation note on the blocked list
+- **Outdated** → If you notice a rule that's clearly no longer relevant while reading the file, add it to the unapplied learnings as a cleanup candidate
+- **File size** → If a rule file exceeds ~100 lines, add a consolidation note to the unapplied learnings
 - **Be objective**: Focus on patterns observed in the conversation. User preferences expressed through corrections are valid learnings — capture them as preferences, not as universal rules
 
 ## Example Scenarios
@@ -193,10 +193,10 @@ Rule files accumulate institutional knowledge that's hard to reconstruct, so tre
 - Target: The relevant `SKILL.md` description field
 - Update: Tighten the description to exclude the false-trigger context
 
-## Blocked List
+## Unapplied Learnings
 
-Everything you may not or should not do alone goes to `~/.claude/retros/blocked.md`, appended one line per item —
-after reading the file, so an item already listed is not added again:
+Everything you may not or should not do alone goes to `~/.claude/retros/unapplied-learnings.md`, appended one line per
+item — after reading the file, so an item already listed is not added again:
 
 ```text
 - <YYYY-MM-DD> · <source project folder> · <target file> — <what and why> — <command, if any>
@@ -209,7 +209,7 @@ If that file cannot be written, carry the items in the result line instead.
 End with exactly one line, so the user's conversation gets only this:
 
 ```text
-learn: edited <every file you changed, comma-separated> · <n> blocked in ~/.claude/retros/blocked.md
+learn: edited <every file you changed, comma-separated> · <n> unapplied in ~/.claude/retros/unapplied-learnings.md
 ```
 
 or `learn: nothing to learn`. Name every file you edited, project files included: they sit in the same working tree as

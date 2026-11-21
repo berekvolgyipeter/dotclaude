@@ -111,7 +111,137 @@ expect_ids() {
   report "$name" "$is_ok"
 }
 
+# every_kind_session — a session p1/s1 holding one line of every outline kind, plus a subagent
+every_kind_session() {
+  session p1 s1
+  human "review my change"
+  reply "Starting the review."
+  tool k1 Skill '{"skill": "review-changes"}'
+  result k1 false "skill loaded" config accept
+  tool a1 Agent '{"subagent_type": "review-correctness", "description": "Check correctness"}'
+  result a1 false "agent done" config accept
+  tool e1 Edit '{"file_path": "/repo/main.py"}'
+  result e1 false "edited" config accept
+  tool w1 Write '{"file_path": "/repo/notes.md"}'
+  result w1 false "written" config accept
+  tool b1 Bash '{"command": "make test"}'
+  result b1 true "Exit code 2: 3 tests failed" user_temporary accept
+  tool b2 Bash '{"command": "curl example.com"}'
+  put '{type: "user", toolDenialKind: "permission-rule", sandboxViolations: [{kind: "network", host: "blocked.test"}],
+    message: {role: "user", content: [{type: "tool_result", tool_use_id: "b2", is_error: true, content: "Denied"}]}}'
+  put '{type: "user", message: {role: "user", content: [{type: "text", text: "[Request interrupted by user]"}]}}'
+  subagent p1 s1 g1 "Check correctness"
+  put '{type: "user", message: {role: "user", content: "You are a reviewer."}}'
+  reply "Subagent prose about the diff."
+  tool g2 Grep '{"pattern": "TODO"}'
+}
+
 # --- behaviors ---
+
+new_case
+every_kind_session
+run outline --out "$WORK/out" --view human "$PROJECTS/p1/s1.jsonl"
+expect_outline "the human view keeps messages, replies, interruptions, skill and agent calls and file edits only" \
+  "$WORK/out/s1.md" "+HUMAN: review my change" "+Starting the review." "+INTERRUPTED by human" \
+  "+Skill: review-changes" "+Agent: review-correctness" "+Edit: /repo/main.py" "+Write: /repo/notes.md" \
+  "-Bash: make test" \
+  "-3 tests failed" "-user_temporary" \
+  "-DENIED" "-SANDBOX" "-Subagent g1" "-Subagent prose" "-Grep: TODO"
+
+new_case
+every_kind_session
+run outline --out "$WORK/out" --view harness "$PROJECTS/p1/s1.jsonl"
+expect_outline "the harness view keeps messages, tool calls, failures, permissions and subagents, and drops replies" \
+  "$WORK/out/s1.md" "+HUMAN: review my change" "+Bash: make test" "+FAILED Bash: make test" \
+  "+user_temporary accept: Bash: make test" "+DENIED (permission-rule)" "+SANDBOX:" "+INTERRUPTED by human" \
+  "+Subagent g1: Check correctness" "+Grep: TODO" "-Starting the review." "-Subagent prose" "-CLAUDE ("
+
+new_case
+every_kind_session
+run outline --out "$WORK/full" "$PROJECTS/p1/s1.jsonl"
+run outline --out "$WORK/human" --view human "$PROJECTS/p1/s1.jsonl"
+run outline --out "$WORK/harness" --view harness "$PROJECTS/p1/s1.jsonl"
+is_ok=1
+for view in human harness; do
+  # a view only drops lines: the full outline, minus the lines missing from the view, is the view
+  grep -vxF -f "$WORK/$view/s1.md" "$WORK/full/s1.md" >"$WORK/dropped"
+  diff <(grep -vxF -f "$WORK/dropped" "$WORK/full/s1.md") "$WORK/$view/s1.md" >/dev/null || is_ok=0
+  [ "$(wc -l <"$WORK/$view/s1.md")" -lt "$(wc -l <"$WORK/full/s1.md")" ] || is_ok=0
+done
+report "every view line appears verbatim and in order in the full outline" "$is_ok"
+
+# denied_result <id> <denial kind> <text> [<permission source> <decision>] — an error result the harness refused
+denied_result() {
+  local decision='{}'
+  [ $# -ge 5 ] && decision="$(jq -cn --arg s "$4" --arg d "$5" '{permissionDecision: {source: $s, decision: $d}}')"
+  put '{type: "user", toolDenialKind: $kind, message: {role: "user", content: [
+    {type: "tool_result", tool_use_id: $id, is_error: true, content: $text}]}} + $decision' \
+    --arg id "$1" --arg kind "$2" --arg text "$3" --argjson decision "$decision"
+}
+
+new_case
+session p1 s1
+human "push it"
+tool h1 Bash '{"command": "git push origin main"}'
+denied_result h1 permission-rule "PreToolUse:Bash hook error: BLOCKED: use a feature branch" hook reject
+tool c1 Write '{"file_path": "/repo/settings.json"}'
+denied_result c1 permission-rule "Writes to settings files are blocked" config reject
+tool u1 Bash '{"command": "make test"}'
+result u1 false "ok" user_temporary accept
+tool u2 Bash '{"command": "make lint"}'
+result u2 false "ok" user_permanent accept
+tool u3 Bash '{"command": "rm -rf build"}'
+denied_result u3 permission-rule "Permission to use Bash was denied" user_reject reject
+tool u4 Edit '{"file_path": "/repo/main.py"}'
+denied_result u4 user-rejected "The user doesn't want to proceed with this tool use."
+tool f1 Read '{"file_path": "/repo/missing.py"}'
+result f1 true "File does not exist." config accept
+tool q1 Agent '{"description": "Review hooks"}'
+result q1 false "the PreToolUse:Bash hook error message reads well" config accept
+tool r1 Skill '{"skill": "review-changes"}'
+put '{type: "user", permissionDecision: {source: "user_permanent", decision: "accept", reasonType: "rule"},
+  message: {role: "user", content: [{type: "tool_result", tool_use_id: "r1", is_error: false, content: "loaded"}]}}'
+tool r2 Bash '{"command": "git push --force"}'
+put '{type: "user", toolDenialKind: "permission-rule",
+  permissionDecision: {source: "user_reject", decision: "reject", reasonType: "rule"},
+  message: {role: "user", content: [{type: "tool_result", tool_use_id: "r2", is_error: true, content: "Denied"}]}}'
+run signals "$PROJECTS/p1/s1.jsonl"
+header="$(printf '%s\t' session prompts denials hook_rejections failures sandbox_blocks interrupts)"
+is_ok=0
+[ "$STATUS" = 0 ] && [ "$(sed -n 1p <<<"$OUT")" = "${header%$'\t'}" ] &&
+  [ "$(sed -n 2p <<<"$OUT")" = "$(printf 's1\t4\t2\t1\t1\t0\t0')" ] && is_ok=1
+report "signals count each tool result once, by who decided it — a saved rule is no prompt — never by its text" \
+  "$is_ok"
+
+new_case
+session p1 s1
+human "review and push"
+tool r1 Skill '{"skill": "review-changes"}'
+put '{type: "user", permissionDecision: {source: "user_permanent", decision: "accept", reasonType: "rule"},
+  message: {role: "user", content: [{type: "tool_result", tool_use_id: "r1", is_error: false, content: "loaded"}]}}'
+tool r2 Bash '{"command": "git push --force"}'
+put '{type: "user", toolDenialKind: "permission-rule",
+  permissionDecision: {source: "user_reject", decision: "reject", reasonType: "rule"},
+  message: {role: "user", content: [{type: "tool_result", tool_use_id: "r2", is_error: true, content: "Denied"}]}}'
+run outline --out "$WORK/out" --view harness "$PROJECTS/p1/s1.jsonl"
+expect_outline "a decision a saved rule settled is not shown as the human's answer" \
+  "$WORK/out/s1.md" "+Skill: review-changes" "+PERMISSION rule reject: Bash: git push --force" \
+  "-user_permanent" "-user_reject"
+
+new_case
+every_kind_session
+result g2 true "No matches found" config accept
+session p1 s2
+human "push it"
+tool h1 Bash '{"command": "git push origin main"}'
+denied_result h1 permission-rule "PreToolUse:Bash hook error: BLOCKED" hook reject
+run signals "$PROJECTS/p1/s1.jsonl" "$PROJECTS/p1/s2.jsonl"
+expected="$(printf '%s\n' "session	prompts	denials	hook_rejections	failures	sandbox_blocks	interrupts" \
+  "s1	1	0	0	2	1	1" "s2	0	0	1	0	0	0" "total	1	0	1	2	1	1" "average	0.5	0.0	0.5	1.0	0.5	0.5")"
+is_ok=0
+[ "$STATUS" = 0 ] && [ "$OUT" = "$expected" ] && is_ok=1
+report "signals count subagents toward their session, sandbox blocks and interruptions, with total and average" \
+  "$is_ok"
 
 new_case
 session p1 s1

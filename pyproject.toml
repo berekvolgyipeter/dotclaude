@@ -13,4 +13,4 @@ dev = [
 [tool.ruff]
 line-length = 120
 # The session reader runs on the stock macOS python3 in every project, not on this repo's virtual environment
-per-file-target-version = { "scripts/sessions.py" = "py39" }
+per-file-target-version = { "scripts/sessions.py" = "py39", "scripts/transcript.py" = "py39" }

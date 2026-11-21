@@ -102,12 +102,10 @@ flowchart LR
 flowchart LR
     Due([SessionStart reminder]) -->|full| Retro[retro]
     Task([developer]) -->|task at hand · session · change folder| Retro
-    Retro -->|session outlines| Checks[independent checks · grader]
-    Checks -->|findings| Report([report in ~/.claude/retros])
-    Report --> Dev{developer: accept · reject · later}
-    Dev -->|answers| Log([decision log, graded next retro])
-    Dev -->|separate yes| Apply[apply accepted fixes]
-    Learn([/learn]) -->|background| Edits([uncommitted edits · blocked list])
+    Retro -->|human and harness views · signal counts| Helpers[human helper · harness helper]
+    Helpers -->|findings| Report([report in ~/.claude/retros])
+    Report -.->|whenever the developer wants| Fixes[plan the fixes]
+    Learn([/learn]) -->|background| Edits([uncommitted edits · unapplied learnings])
 ```
 
 ## What's Included
@@ -159,7 +157,7 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | [implement](skills/implement/SKILL.md) | Implement a plan, a change settled in the conversation, or a short instruction test-first via the tdd loop, then test, review, and verify against the goal |
 | [review-changes](skills/review-changes/SKILL.md) | Independent background code review of uncommitted changes, a branch, or everything since a ref, by focused reviewers at a depth sized to the change's risk and the project's `Review stakes: low|normal|high` line in its CLAUDE.md; the session then judges and fixes the findings |
 | [validate](skills/validate/SKILL.md) | Check a finished change against its goal, plan and design, and run it for real, before the diff review |
-| [retro](skills/retro/SKILL.md) | Look back over past sessions and propose harness or project fixes in a short report the developer decides on, grading earlier fixes |
+| [retro](skills/retro/SKILL.md) | Look back over past sessions and propose harness or project fixes in a short report the developer acts on whenever they want |
 | [pr-summary](skills/pr-summary/SKILL.md) | Brief, copyable PR summary grouped by feature/area, with evidence and risk when the change was validated |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report — or, in scoped mode, as a text review of what a design or plan touches |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
@@ -188,7 +186,7 @@ Event-driven shell scripts registered in `settings.json`.
 | Hook | Event | Description |
 |------|-------|-------------|
 | [standalone-excluded-commands.sh](hooks/standalone-excluded-commands.sh) | `PreToolUse` | Denies Bash calls that mix a `sandbox.excludedCommands` entry with other commands, since those run sandboxed. `list-excluded-commands.sh` lists these commands up front |
-| [retro-reminder.sh](hooks/retro-reminder.sh) | `SessionStart` | Reminds at session start when the next full retro is due |
+| [retro-reminder.sh](hooks/retro-reminder.sh) | `SessionStart` | Reminds at session start when no full retro ran recently; `DOTCLAUDE_RETRO_REMINDER_DAYS` sets how many days count as recent, `0` turns it off |
 | [list-excluded-commands.sh](hooks/list-excluded-commands.sh) | `SessionStart` | Lists the `sandbox.excludedCommands` entries and how to call them so they run unsandboxed: alone, with no pipes, `$()`, backticks or redirects |
 | [lint-and-test.sh](hooks/lint-and-test.sh) | `Stop` | For non-gitignored files changed by Edit or Write since the last user prompt, runs `make lint` and `make test` in each file's git root — so edits in several repos or worktrees each run their own targets. Exits with code 2 to block and prompt Claude to fix failures; skips files outside a git repo and targets the root's Makefile doesn't define. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
 
@@ -205,7 +203,8 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 | File | Description |
 |------|-------------|
 | [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
-| [sessions.py](scripts/sessions.py) | Finds the session transcripts for a scope and writes compact outlines of them, for `retro` and `learn` |
+| [sessions.py](scripts/sessions.py) | Finds the session transcripts for a scope, writes compact outlines of them (whole, or a human or harness view) and counts their friction signals, for `retro` and `learn` |
+| [transcript.py](scripts/transcript.py) | Reads one session transcript's entries into outline lines and permission outcomes, for `sessions.py` |
 
 ### [settings.json](settings.json)
 
@@ -312,7 +311,7 @@ project/.claude/
 
 - [coleam00/context-engineering-intro](https://github.com/coleam00/context-engineering-intro) — inspiration for some commands and rules
 - [trailofbits/claude-code-config](https://github.com/trailofbits/claude-code-config) — security and privacy focused settings
-- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions, code review, validation, planning and implementation practices; multi-session retro with a decision log and unattended runs
+- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions, code review, validation, planning and implementation practices; multi-session retro with generalist helpers batched by session, and unattended runs
 - [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) — planning and implementation practices; independent review that sees only the change and its contract
 - [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns; interface-as-contract documentation
 - [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern; fix now, later or as-is triage; turning repeated corrections into hooks

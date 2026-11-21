@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Finds Claude Code session transcripts for a scope and writes compact outlines of them.
+"""Finds Claude Code session transcripts for a scope, writes compact outlines of them and counts their friction.
 
 Usage:
   sessions.py find --session ID | --root DIR --branch NAME | --folder DIR | --since ISO_TIME
       one "<id>\t<start time>\t<start folder>\t<transcript>" line per session, oldest first
-  sessions.py outline --out DIR TRANSCRIPT...
-      one "<outline path>\t<size in bytes>" line per transcript
+  sessions.py outline --out DIR [--view full|human|harness] TRANSCRIPT...
+      one "<outline path>\t<size in bytes>" line per transcript; human keeps the main session's messages, replies,
+      interruptions, skill and agent calls and file edits; harness keeps everything but the replies
+  sessions.py signals TRANSCRIPT...
+      a tab-separated header, one row per session (its subagents included), then total and average rows
 
 Runs on Python 3.9+ with the standard library only.
 """
@@ -15,32 +18,50 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from dataclasses import dataclass, field
+from collections import Counter
+from dataclasses import dataclass
 from datetime import datetime, timezone
+from enum import Enum
 from pathlib import Path
 
-KEY_INPUT_FIELDS = ("command", "file_path", "notebook_path", "pattern", "skill", "url", "query")
-MAX_HUMAN_CHARS = 4000
-MAX_REPLY_CHARS = 2000
-MAX_TOOL_INPUT_CHARS = 200
-MAX_FAILURE_CHARS = 300
-EDITING_TOOLS = ("Edit", "Write", "NotebookEdit")
+from transcript import (
+    EDITING_TOOLS,
+    LineKind,
+    OutlineLine,
+    SessionOutliner,
+    edited_paths,
+    human_text,
+    read_entries,
+    single_line,
+)
+
 MIN_HUMAN_MESSAGES = 2
-USER_ENTRY = "user"
-ASSISTANT_ENTRY = "assistant"
-ATTACHMENT_ENTRY = "attachment"
-QUEUED_COMMAND_ATTACHMENT = "queued_command"
-INTERRUPTION_PREFIX = "[Request interrupted by user"
-HUMAN_ORIGIN = "human"
-TEXT_BLOCK = "text"
-TOOL_USE_BLOCK = "tool_use"
-TOOL_RESULT_BLOCK = "tool_result"
-ROUTINE_PERMISSION = ("config", "accept")
-UNKNOWN_TOOL_LABEL = "unknown tool"
+HUMAN_VIEW_TOOLS = ("Skill", "Agent", *EDITING_TOOLS)
+SANDBOX_BLOCKS_COLUMN = "sandbox_blocks"
+INTERRUPTS_COLUMN = "interrupts"
+SIGNAL_COLUMNS = ("prompts", "denials", "hook_rejections", "failures", SANDBOX_BLOCKS_COLUMN, INTERRUPTS_COLUMN)
 
 
 class SessionNotFoundError(Exception):
     pass
+
+
+class OutlineView(str, Enum):
+    """Which outline lines a reader gets: all of them, the human side, or the harness side."""
+
+    FULL = "full"
+    HUMAN = "human"
+    HARNESS = "harness"
+
+    def keeps(self, line: OutlineLine) -> bool:
+        if self is OutlineView.HUMAN:
+            is_human_side = line.kind in (LineKind.HUMAN, LineKind.REPLY, LineKind.INTERRUPTED)
+            return is_human_side or line.tool_name in HUMAN_VIEW_TOOLS
+        return self is OutlineView.FULL or line.kind is not LineKind.REPLY
+
+    @property
+    def keeps_subagents(self) -> bool:
+        return self is not OutlineView.HUMAN
 
 
 @dataclass
@@ -80,150 +101,6 @@ class Session:
         return sum(1 for entry in self.entries if human_text(entry) is not None) < MIN_HUMAN_MESSAGES
 
 
-@dataclass
-class SessionOutliner:
-    """Turns one transcript's entries into outline lines, remembering each tool call to label its result."""
-
-    tool_labels: dict[str, str] = field(default_factory=dict)
-    lines: list[str] = field(default_factory=list)
-
-    def outline(self, entries: list[dict]) -> list[str]:
-        for entry in entries:
-            self._add_entry(entry)
-        return self.lines
-
-    def _add_entry(self, entry: dict) -> None:
-        time = clock_time(entry)
-        content = content_of(entry)
-        message = human_text(entry)
-        if message is not None:
-            self.lines.append(f"[{time}] HUMAN: {indent_continuation(shorten(message, MAX_HUMAN_CHARS))}")
-        elif is_interruption(entry):
-            self.lines.append(f"[{time}] INTERRUPTED by human")
-        elif entry.get("type") == ASSISTANT_ENTRY:
-            self._add_assistant_content(time, content)
-        elif entry.get("type") == USER_ENTRY and isinstance(content, list):
-            self._add_tool_results(time, entry, content)
-
-    def _add_assistant_content(self, time: str, content: str | list) -> None:
-        reply = text_of(content)
-        if reply:
-            self.lines.append(
-                f"[{time}] CLAUDE ({len(reply)} chars): {indent_continuation(shorten(reply, MAX_REPLY_CHARS))}"
-            )
-        for block in tool_use_blocks(content):
-            label = label_tool_call(block)
-            self.tool_labels[block.get("id", "")] = label
-            self.lines.append(f"[{time}] TOOL {label}")
-
-    def _add_tool_results(self, time: str, entry: dict, content: list) -> None:
-        for block in content:
-            if block.get("type") != TOOL_RESULT_BLOCK:
-                continue
-            label = self.tool_labels.get(block.get("tool_use_id", ""), UNKNOWN_TOOL_LABEL)
-            if block.get("is_error"):
-                failure = shorten(" ".join(text_of(block.get("content") or "").split()), MAX_FAILURE_CHARS)
-                self.lines.append(f"[{time}] FAILED {label}: {failure}")
-            self._add_permission(time, entry, label)
-        if entry.get("sandboxViolations"):
-            self.lines.append(f"[{time}] SANDBOX: {json.dumps(entry['sandboxViolations'])}")
-
-    def _add_permission(self, time: str, entry: dict, label: str) -> None:
-        decision = entry.get("permissionDecision") or {}
-        source, verdict = decision.get("source", ""), decision.get("decision", "")
-        if source and (source, verdict) != ROUTINE_PERMISSION:
-            self.lines.append(f"[{time}] PERMISSION {source} {verdict}: {label}")
-        elif entry.get("toolDenialKind"):
-            self.lines.append(f"[{time}] DENIED ({entry['toolDenialKind']}): {label}")
-
-
-def read_entries(transcript: Path) -> list[dict]:
-    # Split on newlines only: JSON lines may hold raw U+2028 or U+2029, which str.splitlines() would split on.
-    entries = (parse_entry(line) for line in transcript.read_text().split("\n") if line.strip())
-    return [entry for entry in entries if entry is not None]
-
-
-def parse_entry(line: str) -> dict | None:
-    # A live session's transcript can end in a line still being written.
-    try:
-        return json.loads(line)
-    except json.JSONDecodeError:
-        return None
-
-
-def human_text(entry: dict) -> str | None:
-    """The text of a message the human typed — including one queued while Claude was working — else None."""
-    if entry.get("type") == USER_ENTRY and not entry.get("isMeta"):
-        is_human = (entry.get("origin") or {}).get("kind") == HUMAN_ORIGIN
-        return text_of(content_of(entry)) if is_human else None
-    attachment = entry.get("attachment") or {}
-    is_queued_human = attachment.get("type") == QUEUED_COMMAND_ATTACHMENT and (
-        (attachment.get("origin") or {}).get("kind") == HUMAN_ORIGIN
-    )
-    return (
-        text_of(attachment.get("prompt") or "") if entry.get("type") == ATTACHMENT_ENTRY and is_queued_human else None
-    )
-
-
-def is_interruption(entry: dict) -> bool:
-    return entry.get("type") == USER_ENTRY and text_of(content_of(entry)).startswith(INTERRUPTION_PREFIX)
-
-
-def clock_time(entry: dict) -> str:
-    """The HH:MM part of an entry's ISO timestamp."""
-    return str(entry.get("timestamp", ""))[11:16]
-
-
-def content_of(entry: dict) -> str | list:
-    return (entry.get("message") or {}).get("content") or ""
-
-
-def tool_use_blocks(content: str | list) -> list[dict]:
-    return [block for block in content if block.get("type") == TOOL_USE_BLOCK] if isinstance(content, list) else []
-
-
-def text_of(content: str | list) -> str:
-    if isinstance(content, str):
-        return content
-    return "\n".join(block.get("text", "") for block in content if block.get("type") == TEXT_BLOCK)
-
-
-def shorten(text: str, limit: int) -> str:
-    return text if len(text) <= limit else f"{text[:limit]}… [{len(text) - limit} more chars]"
-
-
-def indent_continuation(text: str) -> str:
-    """Indents every line after the first, so quoted text can never pose as an outline line of its own."""
-    return text.replace("\n", "\n    ")
-
-
-def single_line(text: str) -> str:
-    return " ".join(text.split())
-
-
-def label_tool_call(block: dict) -> str:
-    name = block.get("name", "?")
-    tool_input = block.get("input") or {}
-    if name == "Agent":
-        agent_type = tool_input.get("subagent_type", "general-purpose")
-        return f"Agent: {single_line(agent_type)} — {single_line(tool_input.get('description', ''))}"
-    key_input = next((tool_input[key] for key in KEY_INPUT_FIELDS if key in tool_input), None)
-    detail = str(key_input) if key_input is not None else json.dumps(tool_input)
-    return f"{name}: {shorten(' '.join(detail.split()), MAX_TOOL_INPUT_CHARS)}"
-
-
-def edited_paths(entries: list[dict]) -> list[str]:
-    paths = []
-    for entry in entries:
-        if entry.get("type") != ASSISTANT_ENTRY:
-            continue
-        for block in tool_use_blocks(content_of(entry)):
-            if block.get("name") in EDITING_TOOLS:
-                tool_input = block.get("input") or {}
-                paths.append(str(tool_input.get("file_path") or tool_input.get("notebook_path") or ""))
-    return paths
-
-
 def subagent_transcripts(transcript: Path) -> list[Path]:
     return sorted((transcript.parent / transcript.stem / "subagents").glob("agent-*.jsonl"))
 
@@ -236,21 +113,53 @@ def describe_subagent(subagent: Path) -> str:
     return f"## Subagent {agent_id}: {description} ({single_line(meta.get('agentType', 'unknown type'))})"
 
 
-def outline_session(transcript: Path) -> list[str]:
-    lines = SessionOutliner().outline(read_entries(transcript))
+def outline_lines(transcript: Path, view: OutlineView) -> list[str]:
+    return [line.text for line in SessionOutliner().outline(read_entries(transcript)) if view.keeps(line)]
+
+
+def indent_subagent_line(text: str) -> str:
+    return "\n".join(f"  {part}" for part in text.split("\n"))
+
+
+def outline_session(transcript: Path, view: OutlineView) -> list[str]:
+    lines = outline_lines(transcript, view)
+    if not view.keeps_subagents:
+        return lines
     for subagent in subagent_transcripts(transcript):
         lines += ["", describe_subagent(subagent)]
-        subagent_lines = "\n".join(SessionOutliner().outline(read_entries(subagent))).split("\n")
-        lines += [f"  {line}" for line in subagent_lines]
+        lines += [indent_subagent_line(text) for text in outline_lines(subagent, view)]
     return lines
 
 
-def write_outlines(transcripts: list[Path], out_dir: Path) -> None:
+def write_outlines(transcripts: list[Path], out_dir: Path, view: OutlineView) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     for transcript in transcripts:
         outline_path = out_dir / f"{transcript.stem}.md"
-        outline_path.write_text("\n".join(outline_session(transcript)) + "\n")
+        outline_path.write_text("\n".join(outline_session(transcript, view)) + "\n")
         print(f"{outline_path}\t{outline_path.stat().st_size}")
+
+
+def count_signals(transcript: Path) -> Counter[str]:
+    """The session's signals, its subagents' included, keyed by signals column."""
+    counts: Counter[str] = Counter()
+    for path in [transcript, *subagent_transcripts(transcript)]:
+        outliner = SessionOutliner()
+        lines = outliner.outline(read_entries(path))
+        counts.update(outcome.value for outcome in outliner.outcomes)
+        counts[SANDBOX_BLOCKS_COLUMN] += sum(1 for line in lines if line.kind is LineKind.SANDBOX)
+        counts[INTERRUPTS_COLUMN] += sum(1 for line in lines if line.kind is LineKind.INTERRUPTED)
+    return counts
+
+
+def print_signals(transcripts: list[Path]) -> None:
+    print("\t".join(["session", *SIGNAL_COLUMNS]))
+    total: Counter[str] = Counter()
+    for transcript in transcripts:
+        counts = count_signals(transcript)
+        total.update(counts)
+        print("\t".join([transcript.stem, *(str(counts[column]) for column in SIGNAL_COLUMNS)]))
+    print("\t".join(["total", *(str(total[column]) for column in SIGNAL_COLUMNS)]))
+    print("\t".join(["average", *(f"{total[column] / len(transcripts):.1f}" for column in SIGNAL_COLUMNS)]))
 
 
 def session_transcripts() -> list[Path]:
@@ -333,7 +242,12 @@ def parse_arguments() -> argparse.Namespace:
     find_parser.add_argument("--branch", type=non_empty_text)
     outline_parser = commands.add_parser("outline")
     outline_parser.add_argument("--out", type=Path, required=True)
+    outline_parser.add_argument(
+        "--view", type=OutlineView, choices=list(OutlineView), default=OutlineView.FULL, metavar="{full,human,harness}"
+    )
     outline_parser.add_argument("transcripts", type=Path, nargs="+")
+    signals_parser = commands.add_parser("signals")
+    signals_parser.add_argument("transcripts", type=Path, nargs="+")
     arguments = parser.parse_args()
     if arguments.command == "find" and (arguments.root is None) != (arguments.branch is None):
         find_parser.error("--root and --branch go together")
@@ -355,8 +269,10 @@ def main() -> int:
     try:
         if arguments.command == "find":
             print_sessions(find_sessions(arguments))
+        elif arguments.command == "outline":
+            write_outlines(arguments.transcripts, arguments.out, arguments.view)
         else:
-            write_outlines(arguments.transcripts, arguments.out)
+            print_signals(arguments.transcripts)
     except SessionNotFoundError as error:
         print(f"sessions.py: {error}", file=sys.stderr)
         return 1
