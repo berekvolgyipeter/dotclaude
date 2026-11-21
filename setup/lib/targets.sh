@@ -7,10 +7,14 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 CLAUDE_DIR="$HOME/.claude"
 
 # Directories whose top-level entries are linked one by one into ~/.claude/<dir>/
-DIRS=(rules commands agents skills output-styles templates hooks scripts shared)
+DIRS=(rules commands agents skills output-styles hooks scripts shared)
 
 # Files linked directly into ~/.claude/
 FILES=(settings.json)
+
+# Folders linked whole into ~/.claude/ and kept private; their own .gitignore keeps their contents out of git, and
+# their contents stay on uninstall
+FOLDERS=(retros)
 
 # Globs that match nothing expand to nothing instead of a literal '*'
 shopt -s nullglob
@@ -21,4 +25,9 @@ links_into_repo() {
         "$REPO_DIR"/*) return 0 ;;
     esac
     return 1
+}
+
+# True if git ignores $1 in this repo (caches, build output, ...); false outside a git repo
+is_git_ignored() {
+    git -C "$REPO_DIR" check-ignore -q -- "$1" 2>/dev/null
 }

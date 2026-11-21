@@ -2,7 +2,8 @@
 .DS_Store
 .venv/
 .claude/.logs/
-.scratch/
+.claude/settings.local.json
+.scratch
 *cache/
 uv.lock
 __pycache__

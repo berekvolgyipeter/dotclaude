@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Behavior tests for hooks/lint-and-test.sh (the Stop-hook lint/test gate).
-# Each case builds throwaway Project repos whose Makefiles log the targets they ran,
+# Each case builds throwaway git repos whose Makefiles log the targets they ran,
 # writes a transcript fixture, pipes Stop JSON to the hook, and checks exit code + targets run.
 
 set -uo pipefail
@@ -85,7 +85,7 @@ user_prompt "change both"
 edit Edit "$WORK/api/main.py"
 edit Write "$WORK/web/new.ts"
 run_hook
-check "edits in two Project repos run each repo's own targets" 0 "api:lint api:test web:lint web:test"
+check "edits in two repos run each repo's own targets" 0 "api:lint api:test web:lint web:test"
 
 new_case
 new_repo "$WORK/app" lint test
@@ -114,7 +114,7 @@ git -C "$WORK/app" worktree add -q "$WORK/elsewhere/app-wt"
 user_prompt "fix it in the worktree"
 edit Edit "$WORK/elsewhere/app-wt/main.py"
 run_hook
-check "an edit in a Project worktree outside cwd runs that worktree's targets" 0 "app:lint app:test"
+check "an edit in a worktree outside cwd runs that worktree's targets" 0 "app:lint app:test"
 
 new_case
 new_repo "$WORK/app" lint test

@@ -2,7 +2,7 @@
 
 Shared [Claude Code](https://docs.anthropic.com/en/docs/claude-code) configuration repo, symlinked into `~/.claude/` so edits here propagate to every project automatically.
 
-Manage rules, skills, commands, agents, hooks, and templates in one place instead of duplicating them across every project.
+Manage rules, skills, commands, agents, and hooks in one place instead of duplicating them across every project.
 
 > **Note:** This repo contains scripts that modify files on your system. Please review the contents before use.
 >
@@ -16,20 +16,98 @@ Symlinking into `~/.claude/` and version-controlling everything in git turns thi
 
 **Scope.** This repo configures Claude Code — it does not bundle a linter or test runner. The Stop hook delegates to whatever the host project uses (`make lint`, `make test`); it skips gracefully when those targets aren't defined.
 
-**Engineering philosophy.** A single stance runs through the engineering artifacts here: deep modules behind simple interfaces, behavior-first testing, and design grounded in the project's domain language.
+**Engineering philosophy.** A single stance runs through the engineering artifacts here: deep modules behind simple interfaces, behavior-first testing, design grounded in the project's domain language, every step anchored to the user's goal and validated before hand-off, and sessions pitched at the user's level of understanding.
 
 ## Runtime Flow
 
 ```mermaid
 flowchart LR
     Start([Session start]) --> Notice[SessionStart hook]
-    Notice -->|list excluded commands| Claude
+    Notice -->|list excluded commands · retro due reminder| Claude
     User([User prompt]) --> Claude
-    Claude -->|tool call| Pre[PreToolUse hooks]
+    Claude -->|tool call| Pre[PreToolUse hook - Bash]
     Pre -->|deny mixed excluded commands| Tool[Tool execution]
     Tool --> Claude
-    Claude -.turn ends.-> Stop[Stop hook]
-    Stop -->|make lint + make test| Claude
+    Claude -.-> Stop[Stop hook<br/>lint + test]
+    Stop -->|pass| Done([Turn ends])
+    Stop -->|fail| Claude
+```
+
+*Excluded commands run outside the sandbox, but only when called alone.*
+
+## SDLC Flow
+
+```mermaid
+flowchart LR
+    Plan[Plan] --> Impl[Implement] --> Val[Validate] --> Retro[Retro]
+```
+
+### Planning
+
+```mermaid
+flowchart LR
+    Idea([Idea]) -->|clear enough| WP[write-plan]
+    Idea -->|naming or decisions to settle| Grill[grill-me]
+    Idea -->|find refactoring candidates| ICA[improve-codebase-architecture]
+    Idea -->|change to an existing system| DC[design-change]
+    Grill -->|conversation, glossary, ADRs| WP
+    ICA -->|grilled candidate, glossary, ADRs| WP
+    DC -->|design.md, evidence.md| WP
+    WP --> Plan([plan.md in the change folder])
+```
+
+### Implementation
+
+```mermaid
+flowchart LR
+    Ready([Ready to build]) -->|plan written| Impl[implement]
+    Ready -->|change settled in the conversation| Impl
+    Ready -->|short instruction| Impl
+    Ready -->|one behavior, test-first| TDD[tdd]
+    Impl -->|seams to test| TDD
+    Impl -->|changes| CR[review-changes]
+    CR -->|findings| Impl
+    Impl -->|deviations, skipped findings| Rec([Execution Record or final report])
+```
+
+### Code Review
+
+```mermaid
+flowchart LR
+    Caller([implement, validate or developer]) -->|uncommitted · pr · since ref| RC[review-changes]
+    RC -->|size, risk and project stakes| Depth{lite · standard · full}
+    Depth -->|always| Core[review-correctness · review-standards]
+    Depth -->|when the change touches them| Cond[review-security · review-tests]
+    Core -->|findings| Verify[dedupe and verify]
+    Cond -->|findings| Verify
+    Verify -->|confirmed findings| Caller
+```
+
+### Validation
+
+```mermaid
+flowchart LR
+    Done([Change built]) -->|by implement or by hand| Val[validate]
+    Val -->|goal, plan, design, diff| Checks[goal and plan · design · run it for real · code review if none ran]
+    Checks -->|sorted findings| Dev{developer: fix now · later · as-is}
+    Dev -->|fix now| Fix[fix round · then rechecks and review-changes]
+    Fix -->|still open| Dev
+    Dev -->|done| Rep([validation.md in the change folder])
+    Rep -.->|after the commit| Retro[retro @change folder]
+```
+
+### Retro
+
+```mermaid
+flowchart LR
+    Due([SessionStart reminder]) -->|full| Retro[retro]
+    Task([developer]) -->|task at hand · session · change folder| Retro
+    Retro -->|session outlines| Checks[independent checks · grader]
+    Checks -->|findings| Report([report in ~/.claude/retros])
+    Report --> Dev{developer: accept · reject · later}
+    Dev -->|answers| Log([decision log, graded next retro])
+    Dev -->|separate yes| Apply[apply accepted fixes]
+    Learn([/learn]) -->|background| Edits([uncommitted edits · blocked list])
 ```
 
 ## What's Included
@@ -53,47 +131,18 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 | File | Description |
 |------|-------------|
-| [shared/change-set.md](shared/change-set.md) | Finds the one Change set to work on — from a Project repo, a Project worktree, or an Index repo — and gathers its overview (root, branch, diff base, changed files); lists the candidates and stops when there are several |
-| [shared/code-review.md](shared/code-review.md) | Subagent-based review orchestration protocol with parallel batch analysis, lint/test checks, and numbered findings reported in the session |
+| [shared/change-set.md](shared/change-set.md) | Finds the one change set to work on — uncommitted, a branch, or everything since a ref, in a repo, a worktree, or a folder of repos — and gathers its overview (root, branch, diff base, changed files); lists the candidates and stops when there are several |
+| [shared/planning-context.md](shared/planning-context.md) | Glossary, ADR and rule loading plus the change folder layout, shared by the planning artifacts |
+| [shared/domain-docs.md](shared/domain-docs.md) | Where the glossary and ADRs live, when to write them, and their formats — for every skill that records them |
+| [shared/codebase-design.md](shared/codebase-design.md) | The deep-module vocabulary and principles for designing and discussing a module's shape |
+| [shared/meet-the-user.md](shared/meet-the-user.md) | How interactive design, grilling and planning sessions pitch explanations and questions at the user's current level |
 
 ### [Commands](commands/)
 
-**[explore/](commands/explore/)**
-
 | Command | Description |
 |---------|-------------|
-| [/overview](commands/explore/overview.md) | Build a lightweight, high-level overview of a project |
-| [/architecture](commands/explore/architecture.md) | Discover a module's architecture, functionality, and communication interfaces, saved to `docs/architecture/` — excludes tests and CI/CD |
-
-**[git/](commands/git/)**
-
-| Command | Description |
-|---------|-------------|
-| [/commit-msg](commands/git/commit-msg.md) | Generate a suggested conventional commit message for the current changes. Runs in an isolated subagent, so diffs stay out of the session |
-| [/pr-summary](commands/git/pr-summary.md) | Brief PR summary grouped by feature/area. Runs in an isolated subagent, so diffs stay out of the session |
-
-**[review/](commands/review/)**
-
-| Command | Description |
-|---------|-------------|
-| [/pr-review](commands/review/pr-review.md) | Technical code review of a branch against its base branch. A background reviewer that doesn't see the session's context runs it; when its numbered findings arrive, the session evaluates them and fixes the ones that hold up. Trailing text is a focus hint. Runs `make lint` / `make test`, honoring the same `DOTCLAUDE_DISABLE_AUTO_LINT` / `DOTCLAUDE_DISABLE_AUTO_TEST` opt-outs as the Stop hook |
-| [/delta-review](commands/review/delta-review.md) | Same review for uncommitted changes against the latest commit |
-| [/skill-review](commands/review/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
-
-**[plan/](commands/plan/)**
-
-| Command | Description |
-|---------|-------------|
-| [/to-plan](commands/plan/to-plan.md) | Synthesize the current conversation into a plan saved under `.claude/plans/` — pairs with the `grill-with-docs` skill |
-| [/generate-plan](commands/plan/generate-plan.md) | Generate a plan from a short prompt by researching the target area of the codebase autonomously, saved under `.claude/plans/` |
-| [/refine-plan](commands/plan/refine-plan.md) | Refine a plan in place — check logical correctness and rule compliance, then edit the plan to fix issues |
-| [/execute-plan](commands/plan/execute-plan.md) | Execute a plan test-first — internalize, sequence the work, implement via the tdd red-green-refactor loop, validate, and verify |
-
-**[skill-references/](commands/skill-references/)**
-
-| Command | Description |
-|---------|-------------|
-| [/refresh-references](commands/skill-references/refresh-references.md) | Sync and audit the plugin-browser and agent-harness reference repos against upstream, then refine each catalog's sparse patterns and descriptions and re-index |
+| [/commit-msg](commands/commit-msg.md) | Generate a suggested conventional commit message for the current changes. Runs in an isolated subagent, so diffs stay out of the session |
+| [/skill-review](commands/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
 
 ### [Skills](skills/)
 
@@ -102,14 +151,20 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 | Skill | Description |
 |-------|-------------|
 | [prompt-engineering](skills/prompt-engineering/SKILL.md) | Prompt crafting and optimization techniques |
-| [learn](skills/learn/SKILL.md) | Self-improvement from conversation feedback and permission prompts |
-| [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green-refactor loop |
-| [grill-with-docs](skills/grill-with-docs/SKILL.md) | Grill design decisions, maintaining a CONTEXT.md glossary & ADRs |
-| [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report |
+| [learn](skills/learn/SKILL.md) | Background capture of lessons from the current session and its permission prompts, left as uncommitted edits |
+| [tdd](skills/tdd/SKILL.md) | Test-driven development with the red-green loop |
+| [grill-me](skills/grill-me/SKILL.md) | Grill a plan or design until it's shared and sharp, recording settled terms and decisions in the project's domain docs |
+| [design-change](skills/design-change/SKILL.md) | Turn a rough idea for changing an existing system into a code-checked design, written up as plain-language design docs before planning |
+| [write-plan](skills/write-plan/SKILL.md) | Write a self-reviewed plan from a design, the current conversation, or a short prompt, saved in its change folder |
+| [implement](skills/implement/SKILL.md) | Implement a plan, a change settled in the conversation, or a short instruction test-first via the tdd loop, then test, review, and verify against the goal |
+| [review-changes](skills/review-changes/SKILL.md) | Independent background code review of uncommitted changes, a branch, or everything since a ref, by focused reviewers at a depth sized to the change's risk and the project's `Review stakes: low|normal|high` line in its CLAUDE.md; the session then judges and fixes the findings |
+| [validate](skills/validate/SKILL.md) | Check a finished change against its goal, plan and design, and run it for real, before the diff review |
+| [retro](skills/retro/SKILL.md) | Look back over past sessions and propose harness or project fixes in a short report the developer decides on, grading earlier fixes |
+| [pr-summary](skills/pr-summary/SKILL.md) | Brief, copyable PR summary grouped by feature/area, with evidence and risk when the change was validated |
+| [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report — or, in scoped mode, as a text review of what a design or plan touches |
 | [py-debug](skills/py-debug/SKILL.md) | Python debugging |
 | [ts-debug](skills/ts-debug/SKILL.md) | TypeScript/Node debugging |
-| [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills/agents/plugins from multiple indexed community and official repos |
-| [agent-harness](skills/agent-harness/SKILL.md) | Browse and explore agent harness frameworks and Claude Code resource collections from multiple indexed repos |
+| [plugin-browser](skills/plugin-browser/SKILL.md) | Browse, discover, and explore skills, agents, plugins and agent harness frameworks from curated community and official repos |
 
 ### [Agents](agents/)
 
@@ -121,7 +176,10 @@ Skills must live flat under `skills/` — Claude Code only discovers a skill who
 
 | Agent | Description |
 |-------|-------------|
-| [code-reviewer](agents/review/code-reviewer.md) | Focused code reviewer for batches of changed files, dispatched by review commands |
+| [review-correctness](agents/review/review-correctness.md) | Logic, edge cases, silent failures and broken interfaces in a change set, dispatched by review-changes |
+| [review-standards](agents/review/review-standards.md) | The user's coding rules, simplicity and code smells in a change set, dispatched by review-changes |
+| [review-security](agents/review/review-security.md) | Security issues in a change set that touches a security surface, dispatched by review-changes |
+| [review-tests](agents/review/review-tests.md) | Missing and weak tests in a change set, dispatched by review-changes |
 
 ### [Hooks](hooks/)
 
@@ -130,6 +188,7 @@ Event-driven shell scripts registered in `settings.json`.
 | Hook | Event | Description |
 |------|-------|-------------|
 | [standalone-excluded-commands.sh](hooks/standalone-excluded-commands.sh) | `PreToolUse` | Denies Bash calls that mix a `sandbox.excludedCommands` entry with other commands, since those run sandboxed. `list-excluded-commands.sh` lists these commands up front |
+| [retro-reminder.sh](hooks/retro-reminder.sh) | `SessionStart` | Reminds at session start when the next full retro is due |
 | [list-excluded-commands.sh](hooks/list-excluded-commands.sh) | `SessionStart` | Lists the `sandbox.excludedCommands` entries and how to call them so they run unsandboxed: alone, with no pipes, `$()`, backticks or redirects |
 | [lint-and-test.sh](hooks/lint-and-test.sh) | `Stop` | For non-gitignored files changed by Edit or Write since the last user prompt, runs `make lint` and `make test` in each file's git root — so edits in several repos or worktrees each run their own targets. Exits with code 2 to block and prompt Claude to fix failures; skips files outside a git repo and targets the root's Makefile doesn't define. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
 
@@ -141,29 +200,24 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 |-------|-------------|
 | [lean](output-styles/lean.md) | Terse by default — hard length caps, leads with the answer, holds its ground under pushback, expands only on request |
 
-### [Templates](templates/)
-
-| File | Description |
-|------|-------------|
-| [plan-template.md](templates/plan-template.md) | Plan artifact structure used by the `/to-plan` and `/generate-plan` commands |
-
 ### [Scripts](scripts/)
 
 | File | Description |
 |------|-------------|
 | [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
-| [skill_references.py](scripts/skill_references.py) | Syncs a skill's catalog-listed reference repos with their sparse patterns, or audits them for upstream layout changes |
+| [sessions.py](scripts/sessions.py) | Finds the session transcripts for a scope and writes compact outlines of them, for `retro` and `learn` |
 
 ### [settings.json](settings.json)
 
 Shared permissions, preferences, and security posture. Built for auto mode: the sandbox and the auto mode classifier handle routine safety, so Claude works without prompt fatigue, while explicit rules hold a few hard lines:
 
 - **Secrets stay unreadable** — credential files, keychain, `.env` files, tokens in the environment, and forge auth tokens and CI secrets.
-- **Git history changes need your OK** — commits, merges, rebases, resets, and other history rewrites prompt; worktree management runs freely.
+- **Whole-history rewrites need your OK** — they prompt; routine local git work is left to auto mode.
 - **Remote changes need your OK** — pushes and forge writes prompt; forge deletions are denied; reads run freely. In auto mode, opening MRs/PRs and routine collaboration on them (editing the description, commenting, replying to and resolving discussions) runs without a prompt, while forge configuration changes stay blocked.
 - **The machine stays untouched** — system settings, services, shell config, and package installs outside the project prompt or are denied.
 - **File edits stay in the project** — Claude's file tools refuse writes outside the working directories and this repo's linked config; add another directory with `/add-dir`.
 - **No phoning home** — telemetry and error reporting are off.
+- **Docker is the exception** — it runs outside the sandbox and only auto mode judges it, so a container can reach secrets and the machine that the lines above keep from Claude.
 
 Only a listed set of tools that can't work inside the sandbox run outside it — Claude can't take any other command out of the sandbox on its own — and Claude's package caches are kept separate from yours. This repo's linked config is readable without a prompt and from the sandbox in any project, and skill reference repos are writable from it too, so their maintenance scripts run anywhere.
 
@@ -181,15 +235,8 @@ Array settings (e.g. `permissions.allow`) concatenate across levels. Project-lev
 ## Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed
-- A `Makefile` in each project with at least: `lint`, `test`, `tree` targets
+- A `Makefile` in each project with at least: `lint`, `test` targets
 - Project-level Claude memory lives at `.claude/CLAUDE.md` (not a root-level `CLAUDE.md`) — commands and agents that read or write project memory assume this path
-
-### claude-context
-
-The claude-context MCP server (registered by `make mcp`) needs:
-- an embedding provider: OpenAI, with `OPENAI_API_KEY` set in this repo's `.env`, or a local Ollama
-- a locally running instance of Milvus vector db
-    - check out [this repo](https://github.com/berekvolgyipeter/milvus) to run Milvus via Docker Compose
 
 ## Installation
 
@@ -198,8 +245,9 @@ make install
 ```
 
 This runs `setup/install.sh`, which symlinks this repo into `~/.claude/` (the lists live in `setup/lib/targets.sh`):
-- **Directory entries**: each top-level entry of a linked directory gets its own symlink inside a real `~/.claude/<dir>/` (e.g. `~/.claude/skills/tdd -> repo/skills/tdd`). Content Claude Code ships into those directories itself, such as `skills/synced/`, lives alongside and is never touched.
+- **Directory entries**: each top-level entry of a linked directory gets its own symlink inside a real `~/.claude/<dir>/` (e.g. `~/.claude/skills/tdd -> repo/skills/tdd`); entries git ignores, such as `__pycache__`, are skipped. Content Claude Code ships into those directories itself, such as `skills/synced/`, lives alongside and is never touched.
 - **Files**: `settings.json`
+- **Folders**: `retros/`, linked whole as `~/.claude/retros`; its own `.gitignore` keeps everything in it out of git, since it holds notes drawn from your sessions.
 
 Dangling links to entries removed from the repo are pruned; run `make uninstall` before moving the repo, or its old links are left behind. If a non-repo entry with the same name already exists, the script warns and skips it. An existing real `settings.json` is backed up with a timestamp before being replaced.
 
@@ -211,7 +259,7 @@ The script prints only what it changed, so it is safe to re-run. Re-run it after
 make mcp
 ```
 
-Registers the `claude-context` and `context7` MCP servers at user scope, so they are available in every project. It asks for the embedding provider: OpenAI reads the key from this repo's `.env` at server launch, so no key is stored in Claude Code's config; Ollama asks for the model and host. Safe to re-run — existing entries are replaced.
+Registers the `context7` MCP server at user scope, so it is available in every project. Safe to re-run — an existing entry is replaced.
 
 ## Uninstallation
 
@@ -219,7 +267,7 @@ Registers the `claude-context` and `context7` MCP servers at user scope, so they
 make uninstall
 ```
 
-Removes only symlinks pointing into this repo, then any `~/.claude/<dir>/` left empty. Everything else is left untouched. If a backup exists for a file, the most recent backup is restored.
+Removes only symlinks pointing into this repo, then any `~/.claude/<dir>/` left empty. Everything else is left untouched, including the retro reports in `retros/`. If a backup exists for a file, the most recent backup is restored.
 
 ## Development Dependencies
 
@@ -230,7 +278,7 @@ uv sync
 ```
 
 `make lint` fails on any line longer than 120 characters in tracked or untracked (non-ignored) `.sh` and `.py` files.
-It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`).
+It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`, `python3`).
 
 ## Editing Workflow
 
@@ -258,19 +306,21 @@ project/.claude/
 
 - **No project-specific content here.** Rules, commands, or skills referencing a specific project's paths belong in that project's `.claude/`.
 - **File-type rules** go in `rules/` with a `paths:` frontmatter listing the globs they apply to.
-- **Templates** should be referenced via absolute path: `~/.claude/templates/plan-template.md`.
 - **`make lint` / `make test`** in shared commands are acceptable — all projects are assumed to use a Makefile.
 
 ## Acknowledgments
 
 - [coleam00/context-engineering-intro](https://github.com/coleam00/context-engineering-intro) — inspiration for some commands and rules
 - [trailofbits/claude-code-config](https://github.com/trailofbits/claude-code-config) — security and privacy focused settings
-- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions and code review patterns
+- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions, code review, validation, planning and implementation practices; multi-session retro with a decision log and unattended runs
+- [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) — planning and implementation practices; independent review that sees only the change and its contract
 - [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns; interface-as-contract documentation
-- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern
-- [coleam00/archon](https://github.com/coleam00/archon) — agent-harness skill reference repo
-- [affaan-m/ECC](https://github.com/affaan-m/ECC) — agent-harness skill reference repo
-- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills (tdd, grill-with-docs, improve-codebase-architecture) and the `/to-plan` command
+- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern; fix now, later or as-is triage; turning repeated corrections into hooks
+- [coleam00/archon](https://github.com/coleam00/archon) — plugin-browser skill reference repo
+- [affaan-m/ECC](https://github.com/affaan-m/ECC) — plugin-browser skill reference repo; a verdict per learning before anything is written
+- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills, planning and implementation practices; code smell baseline and one-way-door risk in review; the retro's fix ladder
 - [ghostsecurity/skills](https://github.com/ghostsecurity/skills) — codebase exploration heuristics
-- [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns
-- [obra/superpowers](https://github.com/obra/superpowers) — interface-first module mapping and TDD framing in the plan template
+- [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns; walking the diff in reading order
+- [obra/superpowers](https://github.com/obra/superpowers) — planning and implementation practices; bounded fix loop; session analysis by independent checks citing session moments
+- [backnotprop/pstack](https://github.com/backnotprop/pstack) — blast-radius risk analysis around the one fact a change is safe because of; fixing a repeated mistake at the highest level that works
+- [openai/plugins](https://github.com/openai/plugins) — story-anchored run-for-real verification and patch-risk analysis

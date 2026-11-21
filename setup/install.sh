@@ -16,16 +16,17 @@ for dir in "${DIRS[@]}"; do
     target_dir="$CLAUDE_DIR/$dir"
     mkdir -p "$target_dir"
 
-    # Remove dangling repo links: entries deleted from the repo
+    # Remove repo links to entries deleted from the repo or ignored by git
     for target in "$target_dir"/*; do
-        if [ -L "$target" ] && [ ! -e "$target" ] && links_into_repo "$target"; then
+        if links_into_repo "$target" && { [ ! -e "$target" ] || is_git_ignored "$(readlink "$target")"; }; then
             rm -f "$target"
             echo "Removed: ~/.claude/$dir/$(basename "$target")"
         fi
     done
 
-    # Link each entry (dotfiles are skipped by the glob)
+    # Link each entry; the glob skips dotfiles and the loop skips git-ignored entries such as __pycache__
     for source in "$REPO_DIR/$dir"/*; do
+        is_git_ignored "$source" && continue
         name="$(basename "$source")"
         target="$target_dir/$name"
 
@@ -58,4 +59,20 @@ for file in "${FILES[@]}"; do
 
     ln -sfn "$source" "$target"
     echo "Linked: ~/.claude/$file"
+done
+
+# --- Link whole folders ---
+for folder in "${FOLDERS[@]}"; do
+    source="$REPO_DIR/$folder"
+    target="$CLAUDE_DIR/$folder"
+    chmod 700 "$source"
+    [ "$(readlink "$target")" = "$source" ] && continue
+
+    if [ -e "$target" ] && ! links_into_repo "$target"; then
+        echo "WARNING: ~/.claude/$folder already exists and is not linked to this repo. Skipping."
+        continue
+    fi
+
+    ln -sfn "$source" "$target"
+    echo "Linked: ~/.claude/$folder"
 done
