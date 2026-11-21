@@ -139,7 +139,30 @@ new_repo "$WORK/app" test
 user_prompt "change it"
 edit Edit "$WORK/app/main.py"
 run_hook
-check "a missing target is skipped and the other still runs" 0 "app:test"
+check "a missing target runs the other and exits 2 with a reminder" 2 "app:test"
+if [[ "$ERR" != *"no lint target"* ]] || [[ "$ERR" == *"no test target"* ]]; then
+  echo "FAIL - the reminder names only the missing target"
+  FAILS=$((FAILS + 1))
+fi
+
+new_case
+mkdir -p "$WORK/app"
+git -C "$WORK/app" init -q
+user_prompt "change it"
+edit Edit "$WORK/app/main.py"
+run_hook
+check "a repo with neither runner exits 2 with a reminder" 2 ""
+if [[ "$ERR" != *"no lint target"* ]] || [[ "$ERR" != *"no test target"* ]]; then
+  echo "FAIL - the reminder names both missing targets"
+  FAILS=$((FAILS + 1))
+fi
+
+new_case
+new_repo "$WORK/app" test
+user_prompt "change it"
+edit Edit "$WORK/app/main.py"
+DOTCLAUDE_DISABLE_AUTO_LINT=1 run_hook
+check "a disabled missing target gets no reminder" 0 "app:test"
 
 new_case
 new_repo "$WORK/app" '!lint' test

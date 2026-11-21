@@ -14,7 +14,7 @@ Symlinking into `~/.claude/` and version-controlling everything in git turns thi
 
 **Security-first defaults.** Claude runs smoothly inside a sandbox but can't read your secrets, change your machine, or touch remotes without asking — see [settings.json](#settingsjson).
 
-**Scope.** This repo configures Claude Code — it does not bundle a linter or test runner. The Stop hook delegates to whatever the host project uses (`make lint`, `make test`); it skips gracefully when those targets aren't defined.
+**Scope.** This repo configures Claude Code — it does not bundle a linter or test runner. The Stop hook delegates to whatever the host project uses (`make` or `task` targets `lint` and `test`); when neither defines a target, it reminds Claude to run the project's own command.
 
 **Engineering philosophy.** A single stance runs through the engineering artifacts here: deep modules behind simple interfaces, behavior-first testing, design grounded in the project's domain language, every step anchored to the user's goal and validated before hand-off, and sessions pitched at the user's level of understanding.
 
@@ -188,7 +188,7 @@ Event-driven shell scripts registered in `settings.json`.
 | [standalone-excluded-commands.sh](hooks/standalone-excluded-commands.sh) | `PreToolUse` | Denies Bash calls that mix a `sandbox.excludedCommands` entry with other commands, since those run sandboxed. `list-excluded-commands.sh` lists these commands up front |
 | [retro-reminder.sh](hooks/retro-reminder.sh) | `SessionStart` | Reminds at session start when no full retro ran recently; `DOTCLAUDE_RETRO_REMINDER_DAYS` sets how many days count as recent, `0` turns it off |
 | [list-excluded-commands.sh](hooks/list-excluded-commands.sh) | `SessionStart` | Lists the `sandbox.excludedCommands` entries and how to call them so they run unsandboxed: alone, with no pipes, `$()`, backticks or redirects |
-| [lint-and-test.sh](hooks/lint-and-test.sh) | `Stop` | For non-gitignored files changed by Edit or Write since the last user prompt, runs `make lint` and `make test` in each file's git root — so edits in several repos or worktrees each run their own targets. Exits with code 2 to block and prompt Claude to fix failures; skips files outside a git repo and targets the root's Makefile doesn't define. `make lint` is skipped when `DOTCLAUDE_DISABLE_AUTO_LINT` is set to `1`/`true`; `make test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is set to `1`/`true` |
+| [lint-and-test.sh](hooks/lint-and-test.sh) | `Stop` | Runs the `lint` and `test` targets (`make` or `task`) in each repo edited since the last user prompt, blocking on failures or missing targets; `DOTCLAUDE_DISABLE_AUTO_LINT` / `DOTCLAUDE_DISABLE_AUTO_TEST` set to `1`/`true` skip them |
 
 ### [Output Styles](output-styles/)
 
@@ -234,7 +234,7 @@ Array settings (e.g. `permissions.allow`) concatenate across levels. Project-lev
 ## Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed
-- A `Makefile` in each project with at least: `lint`, `test` targets
+- A `Makefile` or `Taskfile` in each project with at least: `lint`, `test` targets
 - Project-level Claude memory lives at `.claude/CLAUDE.md` (not a root-level `CLAUDE.md`) — commands and agents that read or write project memory assume this path
 
 ## Installation
