@@ -277,7 +277,7 @@ uv sync
 ```
 
 `make lint` fails on any line longer than 120 characters in tracked or untracked (non-ignored) `.sh` and `.py` files.
-It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`, `python3`).
+It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`, `python3`), and checks the repo's own rules: each command opts out of model invocation, and each linked entry is listed in this README and installed.
 
 ## Editing Workflow
 
