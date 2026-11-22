@@ -37,9 +37,9 @@ class CatalogRepo:
 
 
 def load_catalog(skill_dir: Path) -> list[CatalogRepo]:
-    entries = json.loads((skill_dir / "references" / "catalog.json").read_text())
+    catalog = json.loads((skill_dir / "references" / "catalog.json").read_text())
     clones_root = (REFERENCES_ROOT / skill_dir.resolve().name).resolve()
-    return [parse_catalog_entry(e, clones_root) for e in entries["repos"]]
+    return [parse_catalog_entry(entry, clones_root) for entry in catalog["repos"]]
 
 
 def parse_catalog_entry(entry: dict, clones_root: Path) -> CatalogRepo:

@@ -5,6 +5,7 @@
     "DISABLE_TELEMETRY": "1",
     "DISABLE_ERROR_REPORTING": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "DOTCLAUDE_RETRO_REMINDER_DAYS": "7",
     "UV_CACHE_DIR": "/tmp/claude-501/uv-cache",
     "npm_config_cache": "/tmp/claude-501/npm-cache",
     "GOCACHE": "/tmp/claude-501/go-build",
@@ -30,6 +31,10 @@
       "Bash(make lint)",
       "Bash(make test)",
       "Bash(make coverage)",
+      "Bash(task lint)",
+      "Bash(task test)",
+      "Bash(task coverage)",
+      "Bash(bash ~/.claude/scripts/check-commands.sh *)",
       "Bash(source .venv/bin/activate)",
       "Bash(source venv/bin/activate)",
       "Bash(git status)",
@@ -218,7 +223,11 @@
       "Bash(networksetup *)",
       "Bash(pmset *)",
       "Bash(scutil *)",
-      "Bash(osascript *)"
+      "Bash(osascript *)",
+      "Edit(**/settings.json)",
+      "Edit(**/settings.local.json)",
+      "Write(**/settings.json)",
+      "Write(**/settings.local.json)"
     ]
   },
   "autoMode": {
@@ -228,6 +237,7 @@
     ],
     "soft_deny": [
       "$defaults",
+      "Claude Code configuration changes from the shell: writing to any Claude Code settings file (settings.json, settings.local.json, managed settings) or otherwise changing its permissions, sandbox, hooks or auto mode rules through Bash, scripts or other tools. Reading settings files is not covered.",
       "Forge configuration changes: changing GitLab project or GitHub repo settings, protected branches or tags, members or permissions, webhooks, deploy keys, CI/CD variables or secrets, or pipeline schedules, via glab/gh or their APIs.",
       "Destructive or outward Docker operations: removing or pruning containers, images, volumes or networks, pushing or tagging images for a registry, or logging in to a registry. Reading (ps, images, inspect, logs, manifest inspect) and building or running containers for local tests are not covered.",
       "Docker host escapes: running containers with --privileged, host network or PID namespaces, the Docker socket mounted, or bind mounts of paths outside the working directory (such as / or the home folder). Mounting the project directory or a temp directory for local tests is not covered."
@@ -343,8 +353,6 @@
       "git pull *",
       "git push *",
       "git worktree *",
-      "git -C * merge *",
-      "git -C * worktree *",
       "gh *",
       "glab *",
       "go mod download *",

@@ -124,7 +124,7 @@ Rule files discovered automatically by Claude Code. A rule without `paths:` fron
 
 | File | Loaded when | Description |
 |------|-------------|-------------|
-| [general.md](rules/general.md) | Always | Do only what is requested, no-guessing policy, consistency, dedicated file tools, check-before-implementing, docs sync, rules awareness, settings-file changes |
+| [general.md](rules/general.md) | Always | Do only what is requested, no-guessing policy, consistency, dedicated file tools, fail-safe shell commands, check-before-implementing, docs sync, rules awareness |
 | [py-code.md](rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
 | [py-test.md](rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
 | [ts-code.md](rules/ts-code.md) | TypeScript files | TypeScript style, typing, naming, error handling |
@@ -220,6 +220,7 @@ Shared permissions, preferences, and security posture. Built for auto mode: the 
 - **Secrets stay unreadable** — credential files, keychain, `.env` files, tokens in the environment, and forge auth tokens and CI secrets.
 - **Whole-history rewrites need your OK** — they prompt; routine local git work is left to auto mode.
 - **Remote changes need your OK** — pushes and forge writes prompt; forge deletions are denied; reads run freely. In auto mode, opening MRs/PRs and routine collaboration on them (editing the description, commenting, replying to and resolving discussions) runs without a prompt, while forge configuration changes stay blocked.
+- **Settings changes need your OK** — Claude's edits to a settings file prompt, and auto mode blocks settings changes made any other way.
 - **The machine stays untouched** — system settings, services, shell config, and package installs outside the project prompt or are denied.
 - **File edits stay in the project** — Claude's file tools refuse writes outside the working directories and this repo's linked config; add another directory with `/add-dir`.
 - **No phoning home** — telemetry and error reporting are off.

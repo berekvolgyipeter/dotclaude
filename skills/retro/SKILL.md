@@ -43,7 +43,7 @@ harness repo is two levels above `readlink -f ~/.claude/skills/retro`.
 The latest `Sessions up to` time of the full reports, empty when there is none:
 
 ```sh
-grep -rho --include='*-full*.md' 'Sessions up to:\*\* [^ ]*' ~/.claude/retros/ | sed 's/.* //' | sort | tail -n 1
+grep -ho 'Sessions up to:\*\* [^ ]*' ~/.claude/retros/*-full*.md | sed 's/.* //' | sort | tail -n 1
 ```
 
 Run each as `python3 ~/.claude/scripts/sessions.py <operation>`. `find` prints one session per line — id, start time,
