@@ -23,7 +23,7 @@ Work through each. For every finding, cite `file:line`, quote the rule it breaks
 
 ### 1. Repo conventions (`.claude/CLAUDE.md` → Rules for Changes)
 
-- **README sync** — was `README.md` updated for every added/removed/changed rule, command, skill, agent, hook, output style, template, or script?
+- **README sync** — was `README.md` updated for every added/removed/changed rule, command, skill, agent, hook, output style, or script?
 - **Command frontmatter** — does every new or changed command file carry `disable-model-invocation: true`?
 - **Source acknowledgment** — if content was drawn from a `plugin-browser` source, is the repo listed under README *Acknowledgments*?
 - **Script placement** — is each script next to its caller, like the existing ones?

@@ -13,14 +13,15 @@ if [ -z "$root" ] || [ ! -d "$root" ]; then
   exit 1
 fi
 
-# Looks the target up in make's rule database: a dry run also succeeds for a mere file or dir of
-# that name, and fails for a real target whose prerequisites are missing.
+# Looks the target up in the rule section (`# Files`) of make's database: a dry run also succeeds
+# for a mere file or dir of that name, and fails for a real target whose prerequisites are missing.
 defines_make() {
   command -v make >/dev/null 2>&1 || return 1
   # -q exits non-zero by design; only the printed database matters.
   (cd "$root" && make -pRrq : 2>/dev/null || true) | awk -v t="$1" '
+    /^# Files/ { in_files = 1 }
     /^# Not a target/ { skip = 1; next }
-    !skip && index($0, t ":") == 1 && substr($0, length(t) + 2, 1) != "=" { found = 1 }
+    in_files && !skip && index($0, t ":") == 1 && substr($0, length(t) + 2, 1) != "=" { found = 1 }
     { skip = 0 }
     END { exit !found }'
 }
@@ -28,7 +29,7 @@ defines_make() {
 defines_task() {
   command -v task >/dev/null 2>&1 && compgen -G "$root/[Tt]askfile*.y*ml" >/dev/null \
     && (cd "$root" && task --list-all --json 2>/dev/null) \
-    | jq -e --arg t "$1" 'any(.tasks[]; .name == $t)' >/dev/null 2>&1
+    | jq -e --arg t "$1" 'any(.tasks[]; .name == $t or any(.aliases[]?; . == $t))' >/dev/null 2>&1
 }
 
 for target in lint test; do

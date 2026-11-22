@@ -9,7 +9,8 @@ Interview me relentlessly about every aspect of this plan until we reach a share
 
 Open with two questions, asked together: the domain-docs question in section 2 of `~/.claude/shared/domain-docs.md`, and the goal behind the plan. Check each later decision against the goal.
 
-Read `~/.claude/shared/meet-the-user.md` and follow it for how you explain and ask. Follow `~/.claude/shared/domain-docs.md` for where the glossary and ADRs live and how to write them.
+Read `~/.claude/shared/meet-the-user.md` and follow it for how you explain and ask. Follow `~/.claude/shared/domain-docs.md` for where the glossary and ADRs live and how to write them. Before the first
+decision, read the glossary and ADRs as section 1 of `~/.claude/shared/planning-context.md` says.
 
 </what-to-do>
 

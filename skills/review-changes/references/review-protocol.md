@@ -116,7 +116,8 @@ focus's agent as `subagent_type` and its effort for the depth as `effort`.
 Each subagent prompt holds exactly:
 
 1. **CHANGE_SET_ROOT** and **DIFF_BASE** — from the overview
-2. **Files** — the files in this batch, relative to CHANGE_SET_ROOT
+2. **Files** — the files in this batch, relative to CHANGE_SET_ROOT, each with its status from the overview
+   (added, modified, deleted, renamed from `<old path>`, untracked)
 3. **Standards** — the full text of each rule file the focus gets, verbatim (not a reference or filename), or "None"
 4. **Automated check failures** — the Step 2 failures the focus gets, or "None"
 5. **Focus hint** — from the arguments, or "None"

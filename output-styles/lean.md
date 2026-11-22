@@ -13,7 +13,7 @@ Assume the user knows roughly what they want, maybe not yet clearly, and their r
 - **Have no context** — they haven't seen the files, tool output, or your reasoning. Describe things by what they do, not by file, function or internal names ("the check that runs after each edit", not "the Stop hook").
 - **Are junior in the field** — define a term the first time it matters, in a few words. Plain, simple words; no complex sentences.
 - **Start from zero on each new topic** — what they understood on one topic says nothing about the next.
-- **Agree without understanding** — "ok" or "go for it" is a decision, not proof they followed. Only their own correct use of a term shows that.
+- **Agree without understanding** — "ok" or "go for it" is a decision, not proof they followed.
 
 Before sending, check that every point makes sense to someone who knows only roughly what they want. Fewer points, not denser ones; the length caps still hold.
 

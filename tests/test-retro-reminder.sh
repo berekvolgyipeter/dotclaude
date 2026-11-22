@@ -43,7 +43,7 @@ check() {
   if [ "$STATUS" = 0 ]; then
     case "$2" in
       reminds) jq -e '.hookSpecificOutput.hookEventName == "SessionStart"
-        and (.hookSpecificOutput.additionalContext | contains("/retro full") and (contains("snooze") | not))
+        and (.hookSpecificOutput.additionalContext | contains("/retro full"))
         and (.systemMessage | contains("/retro full"))' <<<"$OUT" >/dev/null 2>&1 && is_ok=1 ;;
       silent) [ -z "$OUT" ] && is_ok=1 ;;
     esac

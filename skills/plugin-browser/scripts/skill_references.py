@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 REFERENCES_ROOT = Path("~/.claude/skills-references").expanduser()
+GITHUB_REPO_PATTERN = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
 
 
 def git(dest: Path, *args: str) -> str:
@@ -37,14 +38,19 @@ class CatalogRepo:
 
 def load_catalog(skill_dir: Path) -> list[CatalogRepo]:
     entries = json.loads((skill_dir / "references" / "catalog.json").read_text())
-    return [
-        CatalogRepo(
-            github=e["github"],
-            local_path=Path(e["local_path"]).expanduser(),
-            sparse=tuple(e.get("sparse", ())),
-        )
-        for e in entries["repos"]
-    ]
+    clones_root = (REFERENCES_ROOT / skill_dir.resolve().name).resolve()
+    return [parse_catalog_entry(e, clones_root) for e in entries["repos"]]
+
+
+def parse_catalog_entry(entry: dict, clones_root: Path) -> CatalogRepo:
+    """Exits on an entry that would clone from a malformed repo name or outside the skill's own clones folder."""
+    github = entry["github"]
+    if not GITHUB_REPO_PATTERN.fullmatch(github):
+        sys.exit(f"catalog entry has a malformed github repo: {github!r}")
+    local_path = Path(entry["local_path"]).expanduser().resolve()
+    if not local_path.is_relative_to(clones_root) or local_path == clones_root:
+        sys.exit(f"catalog entry clones outside {clones_root}: {local_path}")
+    return CatalogRepo(github=github, local_path=local_path, sparse=tuple(entry.get("sparse", ())))
 
 
 def sync_repo(repo: CatalogRepo) -> None:
@@ -100,11 +106,11 @@ def sync(skill_dir: Path) -> None:
             print(f"FAILED {repo.github}: {e.stderr.strip()}", file=sys.stderr)
     if failed:
         sys.exit(f"Sync failed for: {', '.join(failed)}")
-    sync_stamp_path(skill_dir).touch()
+    locate_sync_stamp(skill_dir).touch()
     print("Done — all reference repos are synced.")
 
 
-def sync_stamp_path(skill_dir: Path) -> Path:
+def locate_sync_stamp(skill_dir: Path) -> Path:
     """Touched after every fully successful sync; its mtime is the last sync time."""
     return REFERENCES_ROOT / f".{skill_dir.resolve().name}-synced"
 
@@ -182,7 +188,7 @@ def audit_repo(repo: CatalogRepo, previous: list[str] | None) -> list[str] | Non
 
 
 def print_orphans(skill: str, repos: list[CatalogRepo]) -> None:
-    skill_root = REFERENCES_ROOT / skill
+    skill_root = (REFERENCES_ROOT / skill).resolve()
     if not skill_root.is_dir():
         return
     known = {r.local_path for r in repos}

@@ -6,8 +6,8 @@ description: Design session for changing an existing (brownfield) system — tur
 # Design Change
 
 Drive a change from "I have an idea" to "the design is sound, checked against the code, and I understand every part
-of it". The deliverable is one plain-language **design doc** per component the change touches, plus an **evidence**
-file with the implementation facts, ready for whoever writes the implementation plan.
+of it". The deliverable is one plain-language **design doc** and one **evidence** file with the implementation facts
+per repo the change touches, ready for whoever writes the implementation plan.
 
 Write them where the conversation already keeps this work: a folder named or used in the conversation. If there is
 none, create one change folder, named and laid out as the Change folder section of
@@ -82,9 +82,10 @@ Keep it for humans:
   or code identifiers unless the reader must type them (a CLI switch, a setting an operator sets).
 - The word table defines the few terms this change's reader needs, even ones the glossary already has: copy those
   definitions from the glossary word for word. When a new domain term or a hard-to-reverse decision settles, record
-  it in the domain docs only if the user said yes at the start.
+  it in the glossary or as an ADR only if the user said yes to that kind at the start.
 - Every implementation detail found along the way goes into the evidence file of the repo it is about, with
-  `file:line` evidence. Nothing found is lost; the design doc just does not carry it.
+  `file:line` evidence. Nothing found is lost; the design doc just does not carry it. Name a secret or personal record
+  by its variable or kind, never its value: these files are shared.
 - Record each decision in the design doc when it is made, so the document is always current. Remove what a later
   decision made stale; do not leave both versions.
 - When a design is dropped, move its documents to an `archived/` folder instead of deleting them.

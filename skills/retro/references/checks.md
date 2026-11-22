@@ -7,7 +7,8 @@ placeholders filled in, and nothing else: no summary of the sessions, no hint of
 Placeholders — replace each with its value:
 
 - `{{OUTLINES}}` — one line per outline this helper reads: `<outline path> — session <id>, started <start time>`,
-  with the start time `find` printed.
+  with the start time `find` printed. Append `, lines <first>-<last> only` for a part of an oversized outline, and
+  `, read only up to line <n>` with the outline line of the `/retro` message for the session running this retro.
 - `{{HARNESS}}` — the harness repo's root.
 - `<data rule>` — both prompts include this text:
 

@@ -68,8 +68,8 @@ Do NOT propose interfaces yet. After the file is written, ask the user: "Which o
 
 Once the user picks a candidate, drop into a grilling conversation. Walk the design tree with them — constraints, dependencies, the shape of the deepened module, what sits behind the seam, what tests survive.
 
-When the user said yes to domain docs at the start, record these inline as decisions crystallize:
+Record these inline as decisions crystallize, for each kind of domain doc the user said yes to at the start:
 
 - **Naming a deepened module after a concept not in the glossary, or sharpening a fuzzy term?** Add or update the term in the glossary.
-- **User rejects the candidate with a load-bearing reason?** Write an ADR, so future architecture reviews don't re-suggest it — only when a future explorer would need the reason; skip ephemeral reasons ("not worth it right now") and self-evident ones.
+- **User rejects the candidate with a load-bearing reason?** Write an ADR when the rejection passes the test in section 4 of `~/.claude/shared/domain-docs.md`, so future architecture reviews don't re-suggest it.
 - **Want to explore alternative interfaces for the deepened module?** See [interface-design.md](references/interface-design.md).

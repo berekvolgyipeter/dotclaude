@@ -8,7 +8,7 @@ Shared Claude Code configuration repo symlinked into `~/.claude/`. See @README.m
 
 ## Rules for Changes
 
-- **Always update `README.md`** when adding, removing, or changing any rule, command, skill, agent, hook, output style, template, or other configuration. Keep the README in sync with the actual repo contents.
+- **Always update `README.md`** when adding, removing, or changing any rule, command, skill, agent, hook, output style, or other configuration. Keep the README in sync with the actual repo contents.
 - **Keep the README's flow diagrams in sync** — when a change alters a flow the Runtime Flow or SDLC Flow diagrams show (a step, its order, a hand-off, a developer decision, or which artifact runs it), update the affected diagram in the same change. Diagrams show the main steps and decisions only, not every sub-step.
 - **Don't document project-level `.claude/` files in `README.md`** — the README catalogs only the user-level artifacts symlinked from the repo root. Files under this repo's own `.claude/` directory (e.g. `.claude/commands/`, `.claude/settings.json`) are project-level config for this repo only and must not be added to the README tables.
 - **Keep README entries short** — describe what an artifact is for in a phrase, not how it works. Its own file is the single source of its steps, inputs, and edge cases; repeating them in the README doubles the maintenance and rots.

@@ -28,7 +28,8 @@ When the review arrives:
   the judgement calls with your recommendation for the user to choose. Your caller may set its own policy or ask you
   to fix nothing — follow it.
 - **Before the first fix**, run `git -C <reviewed root> stash create` and keep the commit it prints — the
-  **snapshot**; when it prints nothing, the snapshot is `HEAD`. It only records the work as it was and leaves the
+  **snapshot**; when it prints nothing, the snapshot is the commit `git -C <reviewed root> rev-parse HEAD`
+  prints. It only records the work as it was and leaves the
   working tree and index untouched. After fixing, report the snapshot and offer `review-changes <root> since
   <snapshot>`, which reviews only what the fixes changed; untracked files are not in a snapshot, so that review reads
   them in full again.

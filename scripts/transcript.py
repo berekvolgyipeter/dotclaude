@@ -1,5 +1,5 @@
 """Reads one Claude Code transcript's entries: the outline lines they make, how each tool call was decided, and the
-files they edited. The session reader (sessions.py) builds on it.
+files they edited.
 
 Runs on Python 3.9+ with the standard library only.
 """
@@ -66,7 +66,7 @@ class PermissionDecision:
     is_rule_match: bool
 
     @classmethod
-    def of(cls, entry: dict) -> PermissionDecision:
+    def from_entry(cls, entry: dict) -> PermissionDecision:
         decision = entry.get("permissionDecision") or {}
         return cls(
             source=decision.get("source", ""),
@@ -119,7 +119,7 @@ class SessionOutliner:
             self._add_tool_results(time, entry, content)
 
     def _add_assistant_content(self, time: str, content: str | list) -> None:
-        reply = text_of(content)
+        reply = extract_text(content)
         if reply:
             text = f"[{time}] CLAUDE ({len(reply)} chars): {indent_continuation(shorten(reply, MAX_REPLY_CHARS))}"
             self.lines.append(OutlineLine(LineKind.REPLY, text))
@@ -134,10 +134,10 @@ class SessionOutliner:
                 continue
             label = self.tool_labels.get(block.get("tool_use_id", ""), UNKNOWN_TOOL_LABEL)
             if block.get("is_error"):
-                failure = shorten(" ".join(text_of(block.get("content") or "").split()), MAX_FAILURE_CHARS)
+                failure = shorten(single_line(extract_text(block.get("content") or "")), MAX_FAILURE_CHARS)
                 self.lines.append(OutlineLine(LineKind.FAILED, f"[{time}] FAILED {label}: {failure}"))
             self._add_permission(time, entry, label)
-            outcome = tool_outcome(entry, block)
+            outcome = classify_tool_outcome(entry, block)
             if outcome is not None:
                 self.outcomes.append(outcome)
         if entry.get("sandboxViolations"):
@@ -145,7 +145,7 @@ class SessionOutliner:
             self.lines.append(OutlineLine(LineKind.SANDBOX, text))
 
     def _add_permission(self, time: str, entry: dict, label: str) -> None:
-        decision = PermissionDecision.of(entry)
+        decision = PermissionDecision.from_entry(entry)
         if decision.is_shown:
             text = f"[{time}] PERMISSION {decision.decider} {decision.verdict}: {label}"
             self.lines.append(OutlineLine(LineKind.PERMISSION, text))
@@ -154,9 +154,9 @@ class SessionOutliner:
             self.lines.append(OutlineLine(LineKind.DENIED, text))
 
 
-def tool_outcome(entry: dict, result_block: dict) -> ToolOutcome | None:
+def classify_tool_outcome(entry: dict, result_block: dict) -> ToolOutcome | None:
     """Classifies a tool result by who decided on the call, never by its text, which can quote anything."""
-    decision = PermissionDecision.of(entry)
+    decision = PermissionDecision.from_entry(entry)
     if decision.verdict == REJECT_VERDICT and decision.source == HOOK_SOURCE:
         return ToolOutcome.HOOK_REJECTION
     if decision.verdict == REJECT_VERDICT and (decision.source == CONFIG_SOURCE or decision.is_rule_match):
@@ -169,7 +169,11 @@ def tool_outcome(entry: dict, result_block: dict) -> ToolOutcome | None:
 
 def read_entries(transcript: Path) -> list[dict]:
     # Split on newlines only: JSON lines may hold raw U+2028 or U+2029, which str.splitlines() would split on.
-    entries = (parse_entry(line) for line in transcript.read_text().split("\n") if line.strip())
+    entries = (
+        parse_entry(line)
+        for line in transcript.read_text(encoding="utf-8", errors="replace").split("\n")
+        if line.strip()
+    )
     return [entry for entry in entries if entry is not None]
 
 
@@ -185,18 +189,20 @@ def human_text(entry: dict) -> str | None:
     """The text of a message the human typed — including one queued while Claude was working — else None."""
     if entry.get("type") == USER_ENTRY and not entry.get("isMeta"):
         is_human = (entry.get("origin") or {}).get("kind") == HUMAN_ORIGIN
-        return text_of(content_of(entry)) if is_human else None
+        return extract_text(content_of(entry)) if is_human else None
     attachment = entry.get("attachment") or {}
     is_queued_human = attachment.get("type") == QUEUED_COMMAND_ATTACHMENT and (
         (attachment.get("origin") or {}).get("kind") == HUMAN_ORIGIN
     )
     return (
-        text_of(attachment.get("prompt") or "") if entry.get("type") == ATTACHMENT_ENTRY and is_queued_human else None
+        extract_text(attachment.get("prompt") or "")
+        if entry.get("type") == ATTACHMENT_ENTRY and is_queued_human
+        else None
     )
 
 
 def is_interruption(entry: dict) -> bool:
-    return entry.get("type") == USER_ENTRY and text_of(content_of(entry)).startswith(INTERRUPTION_PREFIX)
+    return entry.get("type") == USER_ENTRY and extract_text(content_of(entry)).startswith(INTERRUPTION_PREFIX)
 
 
 def clock_time(entry: dict) -> str:
@@ -212,7 +218,7 @@ def tool_use_blocks(content: str | list) -> list[dict]:
     return [block for block in content if block.get("type") == TOOL_USE_BLOCK] if isinstance(content, list) else []
 
 
-def text_of(content: str | list) -> str:
+def extract_text(content: str | list) -> str:
     if isinstance(content, str):
         return content
     return "\n".join(block.get("text", "") for block in content if block.get("type") == TEXT_BLOCK)
@@ -239,7 +245,7 @@ def label_tool_call(block: dict) -> str:
         return f"Agent: {single_line(agent_type)} — {single_line(tool_input.get('description', ''))}"
     key_input = next((tool_input[key] for key in KEY_INPUT_FIELDS if key in tool_input), None)
     detail = str(key_input) if key_input is not None else json.dumps(tool_input)
-    return f"{name}: {shorten(' '.join(detail.split()), MAX_TOOL_INPUT_CHARS)}"
+    return f"{name}: {shorten(single_line(detail), MAX_TOOL_INPUT_CHARS)}"
 
 
 def edited_paths(entries: list[dict]) -> list[str]:

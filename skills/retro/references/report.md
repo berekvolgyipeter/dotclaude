@@ -1,7 +1,6 @@
 # Report Format
 
-A retro's report, written into `~/.claude/retros/` and read by the developer. The next full retro reads only its
-`Sessions up to` time, and the reminder hook only its file name.
+A retro's report, written into `~/.claude/retros/` and read by the developer.
 
 `<YYYY-MM-DD>-<scope>.md`, where scope is `task`, `session`, `change` or `full`; when that file exists, add `-2`,
 `-3`… before `.md`. Write it for a glance: plain words, no file-internal jargon in the TL;DR, every moment paraphrased.

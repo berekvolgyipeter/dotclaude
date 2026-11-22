@@ -100,7 +100,7 @@ flowchart LR
 
 ## Principles
 
-**AI is the new layer above code.** Just as languages lifted us above machine instructions without making them irrelevant, AI now writes more code than a person can read, and the workflow around it has become the interface between the person and the code. This repo engineers that layer: the person stays in charge of goals and decisions, while the code is still held to the disciplines underneath — deep modules, behavior-first tests, the project's domain language.
+**This repo treats AI as a new layer above code.** Just as languages lifted us above machine instructions without making them irrelevant, AI can write more code than a person can read, so the workflow around it becomes the interface between the person and the code. This repo engineers that workflow: the person stays in charge of goals and decisions, while the code is still held to the disciplines underneath — deep modules, behavior-first tests, the project's domain language.
 
 The engineering skills rest on these tenets:
 
@@ -137,7 +137,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 
 | File | Description |
 |------|-------------|
-| [shared/change-set.md](shared/change-set.md) | Finds the one change set to work on — uncommitted, a branch, or everything since a ref, in a repo, a worktree, or a folder of repos — and gathers its overview (root, branch, diff base, changed files); lists the candidates and stops when there are several |
+| [shared/change-set.md](shared/change-set.md) | Finds the one change set to work on and gathers its overview |
 | [shared/planning-context.md](shared/planning-context.md) | Glossary, ADR and rule loading plus the change folder layout, shared by the planning artifacts |
 | [shared/domain-docs.md](shared/domain-docs.md) | Where the glossary and ADRs live, when to write them, and their formats — for every skill that records them |
 | [shared/codebase-design.md](shared/codebase-design.md) | The deep-module vocabulary and principles for designing and discussing a module's shape |
@@ -160,7 +160,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [design-change](skills/design-change/SKILL.md) | Turn a rough idea for changing an existing system into a code-checked design, written up as plain-language design docs before planning |
 | [write-plan](skills/write-plan/SKILL.md) | Write a self-reviewed plan from a design, the current conversation, or a short prompt, saved in its change folder |
 | [implement](skills/implement/SKILL.md) | Implement a plan, a change settled in the conversation, or a short instruction test-first via the tdd loop, then test, review, and verify against the goal |
-| [review-changes](skills/review-changes/SKILL.md) | Independent background code review of uncommitted changes, a branch, or everything since a ref, by focused reviewers at a depth sized to the change's risk and the project's `Review stakes: low|normal|high` line in its CLAUDE.md; the session then judges and fixes the findings |
+| [review-changes](skills/review-changes/SKILL.md) | Independent background code review of uncommitted changes, a branch, or everything since a ref, sized to the change's risk; the session then judges and fixes the findings |
 | [validate](skills/validate/SKILL.md) | Check a finished change against its goal, plan and design, and run it for real, before the diff review |
 | [retro](skills/retro/SKILL.md) | Look back over past sessions and propose harness or project fixes in a short report the developer acts on whenever they want |
 | [pr-summary](skills/pr-summary/SKILL.md) | Brief, copyable PR summary grouped by feature/area, with evidence and risk when the change was validated |
@@ -210,7 +210,7 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 |------|-------------|
 | [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
 | [check-commands.sh](scripts/check-commands.sh) | Prints the command that runs a project's `lint` and `test` targets, or `none`, for the Stop hook and the engineering skills |
-| [sessions.py](scripts/sessions.py) | Finds the session transcripts for a scope, writes compact outlines of them (whole, or a human or harness view) and counts their friction signals, for `retro` and `learn` |
+| [sessions.py](scripts/sessions.py) | Finds session transcripts and writes compact outlines and friction counts of them, for `retro` and `learn` |
 | [transcript.py](scripts/transcript.py) | Reads one session transcript's entries into outline lines and permission outcomes, for `sessions.py` |
 
 ### [settings.json](settings.json)

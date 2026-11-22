@@ -4,10 +4,8 @@ description: Browse and discover Claude Code skills, agents, commands, and plugi
 allowed-tools:
   - Bash(grep *)
   - Bash(find *)
-  - Bash(git -C * log *)
-  - Bash(git -C * ls-tree *)
-  - Bash(git -C * show *)
-  - Bash(python3 ~/.claude/skills/plugin-browser/scripts/*)
+  - Bash(python3 ~/.claude/skills/plugin-browser/scripts/skill_references.py sync ~/.claude/skills/plugin-browser)
+  - Bash(python3 ~/.claude/skills/plugin-browser/scripts/skill_references.py audit ~/.claude/skills/plugin-browser)
   - Read
   - Edit(~/.claude/skills/plugin-browser/references/catalog.json)
 ---

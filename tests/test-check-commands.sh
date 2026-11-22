@@ -61,6 +61,43 @@ printf 'test: missing.txt\n\t@true\nlint:\n\t@true\n' >"$dir/Makefile"
 check "a target with a missing prerequisite is still a target" 0 $'lint: make lint\ntest: make test' "$dir"
 rm -rf "$dir"
 
+dir="$(project test)"
+printf 'define BODY\nlint: foo\nendef\n' >>"$dir/Makefile"
+check "a line inside a define body is not a target" 0 $'lint: none\ntest: make test' "$dir"
+rm -rf "$dir"
+
+# A stub `task` on PATH lists the tasks in the project's .tasks.json, as `task --list-all --json` would.
+STUB_BIN="$(mktemp -d "${TMPDIR:-/tmp}/check-commands-bin.XXXXXX")"
+printf '#!/bin/sh\ncat .tasks.json\n' >"$STUB_BIN/task"
+chmod +x "$STUB_BIN/task"
+
+# taskfile <dir> <tasks json> — gives the project a Taskfile whose tasks the stub lists
+taskfile() {
+  touch "$1/Taskfile.yml"
+  printf '%s' "$2" >"$1/.tasks.json"
+}
+
+dir="$(project)"
+taskfile "$dir" '{"tasks": [{"name": "lint"}, {"name": "test"}]}'
+PATH="$STUB_BIN:$PATH" check "both Taskfile targets" 0 $'lint: task lint\ntest: task test' "$dir"
+rm -rf "$dir"
+
+dir="$(project lint)"
+taskfile "$dir" '{"tasks": [{"name": "lint"}, {"name": "test"}]}'
+PATH="$STUB_BIN:$PATH" check "the Makefile wins over the Taskfile" 0 $'lint: make lint\ntest: task test' "$dir"
+rm -rf "$dir"
+
+dir="$(project)"
+taskfile "$dir" '{"tasks": [{"name": "check", "aliases": ["lint"]}]}'
+PATH="$STUB_BIN:$PATH" check "a Taskfile alias is a target" 0 $'lint: task lint\ntest: none' "$dir"
+rm -rf "$dir"
+
+dir="$(project)"
+printf '%s' '{"tasks": [{"name": "lint"}]}' >"$dir/.tasks.json"
+PATH="$STUB_BIN:$PATH" check "no Taskfile means no task target" 0 $'lint: none\ntest: none' "$dir"
+rm -rf "$dir"
+rm -rf "$STUB_BIN"
+
 check "a missing dir is a usage error" 1 "" "${TMPDIR:-/tmp}/check-commands-missing-$$"
 check "no argument is a usage error" 1 ""
 

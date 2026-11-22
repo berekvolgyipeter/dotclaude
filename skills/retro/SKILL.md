@@ -43,7 +43,7 @@ harness repo is two levels above `readlink -f ~/.claude/skills/retro`.
 The latest `Sessions up to` time of the full reports, empty when there is none:
 
 ```sh
-grep -ho 'Sessions up to:\*\* [^ ]*' ~/.claude/retros/*-full*.md | sed 's/.* //' | sort | tail -n 1
+grep -rho --include='*-full*.md' 'Sessions up to:\*\* [^ ]*' ~/.claude/retros/ | sed 's/.* //' | sort | tail -n 1
 ```
 
 Run each as `python3 ~/.claude/scripts/sessions.py <operation>`. `find` prints one session per line — id, start time,
@@ -59,7 +59,8 @@ python3 ~/.claude/scripts/sessions.py outline --view harness --out "$TMPDIR/retr
 python3 ~/.claude/scripts/sessions.py signals <transcript path>...
 ```
 
-This session's own retro turns are not evidence: leave out everything from the `/retro` message on.
+This session's own retro turns are not evidence: leave out everything from the `/retro` message on — mark the cutoff
+in that outline's `{{OUTLINES}}` line.
 
 For a full scope, tell the developer in one line before going on: the window (its start, or "every retained session",
 to now), the number of sessions, and the size of both views together in MB. Attended, they can stop the run there.
@@ -68,7 +69,8 @@ to now), the number of sessions, and the size of both views together in MB. Atte
 
 Dispatch the helpers in `references/checks.md` in parallel and wait for all of them: a Human helper for the human
 view and a Harness helper for the harness view. When a view adds up to more than about 400 KB *(a guess — tune it
-once view sizes are known)*, split it into batches under that size and send one helper per batch. Send each exactly
+once view sizes are known)*, split it into batches under that size and send one helper per batch; an outline over that size on its own is split
+by line range, one part per helper. Send each exactly
 its prompt with the placeholders filled in and nothing from this session — a helper that shares your view of the
 sessions shares your blind spots.
 

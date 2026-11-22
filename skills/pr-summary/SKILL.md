@@ -20,7 +20,7 @@ and follow it with the remaining arguments.
 `<repo>` below is the basename of CHANGE_SET_ROOT. In a folder, prefer `validation-<repo>.md` over `validation.md`.
 
 - **With a change folder** — its report for the chosen repo; none in it → as **None found**.
-- **Without one** — among `<CHANGE_SET_ROOT>/.claude/plans/*/validation*.md`, the reports whose `**Branch:**` line
+- **Without one** — among `<CHANGE_SET_ROOT>/.claude/plans/*/validation-<repo>.md` and `…/validation.md`, the reports whose `**Branch:**` line
   names CURRENT_BRANCH; take the report in the folder with the highest number prefix. Remember that folder's path,
   relative to CHANGE_SET_ROOT: the Evidence section names it, so a reader can see which report was picked. A change
   spanning several repos keeps its folder outside them, so its report is found only when the change folder is passed.

@@ -31,8 +31,9 @@ for dir in "${DIRS[@]}"; do
   for source in "$REPO_DIR/$dir"/*; do
     is_git_ignored "$source" && continue
     entry="$dir/$(basename "$source")"
-    grep -qF "($entry" "$REPO_DIR/README.md" || not_in_readme+="$entry "
-    [ "$(readlink "$CLAUDE_DIR/$entry")" = "$source" ] || not_installed+="$entry "
+    grep -qE "\\(${entry}[/)]" "$REPO_DIR/README.md" || not_in_readme+="$entry "
+    # Ends in the entry rather than equals the source, so a worktree passes against the main checkout's install.
+    [[ "$(readlink "$CLAUDE_DIR/$entry")" == */"$entry" ]] || not_installed+="$entry "
   done
 done
 check "every linked entry is named in README.md" "$not_in_readme"

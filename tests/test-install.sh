@@ -42,6 +42,11 @@ check() {
 is_linked() { [ "$(readlink "$WORK/home/.claude/$1")" = "$REPO/$1" ]; }
 is_absent() { [ ! -e "$WORK/home/.claude/$1" ] && [ ! -L "$WORK/home/.claude/$1" ]; }
 are_kept() { local link; for link in "$@"; do [ -L "$WORK/home/.claude/$link" ] || return 1; done; }
+is_skipped_with_warning() {
+  [ -d "$WORK/home/.claude/$1" ] && [ ! -L "$WORK/home/.claude/$1" ] && [[ "$OUT" == *WARNING* ]]
+}
+is_private() { [ "$(stat -c %a "$REPO/$1" 2>/dev/null || stat -f %Lp "$REPO/$1")" = 700 ]; }
+is_uninstalled() { is_absent retros && is_absent skills/foo && [ -f "$REPO/retros/report.md" ]; }
 
 # --- behaviors ---
 
@@ -71,6 +76,25 @@ ln -s "$WORK/elsewhere/__pycache__" "$WORK/home/.claude/skills/__pycache__"
 ln -s "$WORK/nowhere" "$WORK/home/.claude/skills/mine"
 run_install
 check "links pointing outside the repo are left alone" are_kept skills/__pycache__ skills/mine
+
+new_case
+run_install
+check "a whole folder is linked" is_linked retros
+
+new_case
+mkdir -p "$WORK/home/.claude/retros"
+run_install
+check "a folder that already exists and is not a repo link is left alone" is_skipped_with_warning retros
+
+new_case
+run_install
+check "a linked folder is private to the user" is_private retros
+
+new_case
+touch "$REPO/retros/report.md"
+run_install
+OUT="$(HOME="$WORK/home" bash "$REPO/setup/uninstall.sh" 2>&1)" || STATUS=$?
+check "uninstall removes the links and keeps the folder's contents in the repo" is_uninstalled
 
 new_case
 rm -rf "$REPO/.git"

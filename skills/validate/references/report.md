@@ -20,7 +20,7 @@ One block per scenario, as the run check reported it:
 
 #### <scenario> — <Pass|Fail|Blocked>
 **How real:** <real app | command line | script through the interface>
-**Ran:** <command or steps>
+**Ran:** <command or steps, secrets and personal data `<redacted>`>
 **Output:** <trimmed output, secrets and personal data `<redacted>`>
 
 **Working tree:** <unchanged | the files the runs changed>

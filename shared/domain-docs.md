@@ -36,8 +36,8 @@ When multiple contexts exist, infer which one the current topic relates to. If u
 
 ### 2. When to write
 
-- **Ask once, at the start.** Before any other work in a session that may settle terms or decisions, ask one question: should this session record settled terms in the glossary and hard-to-reverse decisions as ADRs? Say which of the two the project already keeps (section 1), and recommend yes for each it keeps. The answer holds for the whole session — never ask about domain docs again mid-session, so the session can run to the end unattended.
-- **Yes** → update the glossary inline as each term settles (don't batch), and write an ADR for each decision that passes the test in section 4, creating `GLOSSARY.md` or `docs/adr/` when missing. **No** → write neither.
+- **Ask once, at the start.** Before any other work in a session that may settle terms or decisions, ask one question: should this session record settled terms in the glossary and hard-to-reverse decisions as ADRs? Say which of the two the project already keeps (section 1), recommend yes for each it keeps and no for each it doesn't, and take the answer per kind — a plain "yes" accepts those recommendations. The answer holds for the whole session — never ask about domain docs again mid-session, so the session can run to the end unattended.
+- **Glossary yes** → update it inline as each term settles (don't batch). **ADRs yes** → write one for each decision that passes the test in section 4. Create a missing `GLOSSARY.md` or `docs/adr/` only for a kind the user said yes to; write nothing for a kind they said no to.
 - **The glossary is a glossary and nothing else** — no implementation details, not a spec or a scratch pad.
 
 ### 3. Glossary format

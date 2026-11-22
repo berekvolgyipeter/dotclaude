@@ -26,8 +26,8 @@ area it touches, and whether it breaks an interface.
 
 - **Summary** — bullet points, one per topic the change touches: what changed there and why, in words a newcomer
   understands. Group related edits into one bullet; no file names.
-- **Files** — a tree of the changed files only, rooted at the repo, each file with a `←` note of a few words on what
-  changed in it. Mark added files `(new)`, deleted `(deleted)` and renamed `(from <old path>)`.
+- **Files** — a tree of the changed and untracked files only, rooted at the repo, each file with a `←` note of a few
+  words on what changed in it. Mark added and untracked files `(new)`, deleted `(deleted)` and renamed `(from <old path>)`.
 - **Commit message** — one line per the rules below.
 
 ### Commit message
@@ -71,23 +71,21 @@ instead.
 3. The commit message, in another fenced code block of its own.
 
 <example>
-- **Planning** — plans now say which folder each module lives in, so new code lands next to the code it changes
-  with instead of piling into an existing flat folder.
-- **Implementing** — the build step follows the plan's folder layout.
+- **Sign-in** — users can now sign in with their Google account instead of only a password.
+- **Settings** — the account page shows which sign-in methods are linked.
 
 ```
-dotclaude/
-└── skills/
-    ├── implement/
-    │   └── SKILL.md            ← reads the plan's folder tree
-    └── write-plan/
-        ├── SKILL.md            ← placement rule and a Layout self-check
-        └── references/
-            └── plan-template.md ← Location field, Output Structure section
+shop-app/
+└── src/
+    ├── auth/
+    │   ├── google.ts ← Google sign-in flow (new)
+    │   └── routes.ts ← adds the Google callback route
+    └── settings/
+        └── account-page.tsx ← lists linked sign-in methods
 ```
 
 ```
-feat(write-plan): design module folder layout with Location and Output Structure
+feat(auth): add google sign-in
 ```
 </example>
 

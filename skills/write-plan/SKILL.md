@@ -48,13 +48,7 @@ Then check in with the user once, in a single message: confirm a drafted goal, a
 
 ## Step 4 — Write
 
-Write the plan using the template in [plan-template.md](references/plan-template.md). Fold the research into it:
-
-- **Module Map** — each module by its interface (the test surface): operations, key types, invariants, error modes, its depth from the deletion test, and its location. Reference the real patterns you found.
-- **Key Decisions** — schema changes, API contracts and architectural decisions as `<decision>: <rationale>`, respecting ADRs. Code-level reasons belong here.
-- **Testing Strategy** — the seams and behaviors the user confirmed, verified through public interfaces, not implementation details. Cite prior-art tests to mirror, and say which modules warrant integration-style tests and why.
-- **Deferred to Implementation** — what only running code can answer, each with why it waits.
-- **Notes & Sources** — documentation URLs and library gotchas, with the *why*.
+Write the plan using the template in [plan-template.md](references/plan-template.md), folding the research into it: the real patterns you found go in Module Map, code-level reasons in Key Decisions, the seams and behaviors the user confirmed — and which modules warrant integration-style tests, and why — in Testing Strategy.
 
 With a design, follow the template's rule for plans that build on one.
 

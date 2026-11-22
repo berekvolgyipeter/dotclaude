@@ -87,7 +87,7 @@ class Session:
 
     def has_worked_in(self, root: str, branch: str) -> bool:
         return any(
-            is_under(str(entry.get("cwd", "")), root) and entry.get("gitBranch") == branch for entry in self.entries
+            entry.get("gitBranch") == branch and is_under(str(entry.get("cwd", "")), root) for entry in self.entries
         )
 
     def has_edited_under(self, folder: str) -> bool:
@@ -106,11 +106,11 @@ def subagent_transcripts(transcript: Path) -> list[Path]:
 
 
 def describe_subagent(subagent: Path) -> str:
-    meta_path = subagent.with_name(f"{subagent.stem}.meta.json")
-    meta = json.loads(meta_path.read_text()) if meta_path.exists() else {}
+    metadata_path = subagent.with_name(f"{subagent.stem}.meta.json")
+    metadata = json.loads(metadata_path.read_text()) if metadata_path.exists() else {}
     agent_id = subagent.stem.removeprefix("agent-")
-    description = single_line(meta.get("description", ""))
-    return f"## Subagent {agent_id}: {description} ({single_line(meta.get('agentType', 'unknown type'))})"
+    description = single_line(metadata.get("description", ""))
+    return f"## Subagent {agent_id}: {description} ({single_line(metadata.get('agentType', 'unknown type'))})"
 
 
 def outline_lines(transcript: Path, view: OutlineView) -> list[str]:
@@ -172,8 +172,11 @@ def load_sessions() -> list[Session]:
 
 
 def is_under(path: str, root: str) -> bool:
-    root = root.rstrip("/")
-    return path == root or path.startswith(f"{root}/")
+    # Resolving folds `..` segments and symlinks, such as `~/.claude/` links into the repo they point at.
+    if not Path(path).is_absolute():
+        return False
+    resolved_path, resolved_root = Path(path).resolve(), Path(root).resolve()
+    return resolved_path.is_relative_to(resolved_root)
 
 
 def parse_time(text: str) -> datetime:

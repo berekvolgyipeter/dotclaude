@@ -97,8 +97,8 @@ Placeholders — replace each with its value or text:
 > store that is not throwaway, sending messages, publishing, deploying, or calling paid or production services. Mark
 > it Blocked and say what safe target it would need.
 >
-> In Output, replace secrets, tokens, credentials, connection strings and personal data with `<redacted>`: the
-> output goes into a report that gets committed.
+> In Ran and Output, replace secrets, tokens, credentials, connection strings and personal data with `<redacted>`:
+> the run and its output go into a report that gets committed; name a secret by its variable, never its value.
 >
 > Reply first with one block per scenario:
 >
