@@ -23,17 +23,17 @@ Work through each. For every finding, cite `file:line`, quote the rule it breaks
 
 ### 1. Repo conventions (`.claude/CLAUDE.md` → Rules for Changes)
 
-- **README sync** — was `README.md` updated for every added/removed/changed rule, command, skill, agent, hook, output style, template, or script?
+- **README sync** — was `README.md` updated for every added/removed/changed rule, command, skill, agent, hook, output style, or script?
 - **Command frontmatter** — does every new or changed command file carry `disable-model-invocation: true`?
 - **Source acknowledgment** — if content was drawn from a `plugin-browser` source, is the repo listed under README *Acknowledgments*?
-- **Script placement** — are hook scripts in `hooks/` and helper scripts in `scripts/`?
+- **Script placement** — is each script next to its caller, like the existing ones?
 - **No irrelevant cross-references / no leaked internals** — is every artifact named one the reader actually reads, applies, or invokes? Is every env var, flag, or script detail one the reader actually sets or reacts to?
 
 ### 2. Engineering philosophy (only if an engineering-domain artifact changed)
 
-- Uses the exact vocabulary from `improve-codebase-architecture` (*module, interface, implementation, depth, seam, adapter, leverage, locality*) — not "component/service/boundary"?
+- Uses the exact vocabulary from `shared/codebase-design.md` (*module, interface, implementation, depth, seam, adapter, leverage, locality*) — not "component/service/boundary"?
 - Tests framed as behavior-through-interface, not implementation detail?
-- The `commands/plan/` pipeline still aligned with the skills it builds on?
+- The planning pipeline (`design-change`, `write-plan`, `implement`) still aligned with the skills it builds on?
 
 ### 3. Claude Code best practices
 
@@ -49,10 +49,12 @@ Work through each. For every finding, cite `file:line`, quote the rule it breaks
 
 **If there are no findings**, say so plainly and stop.
 
-Otherwise reply with **only the findings** — no preamble, no "what was checked" section, no per-check pass list, no summary of clean items. Number them, ordered by severity (CRITICAL → MAJOR → MINOR). For each: `file:line`, the quoted rule, and the concrete fix, using this format:
+Otherwise reply with **only the findings** — no preamble, no "what was checked" section, no per-check pass list, no summary of clean items. Write each in the shape `~/.claude/skills/review-changes/references/finding.md` defines, worst first, with the quoted rule in **Why**:
 
-1. **CRITICAL** | [README.md:120](README.md#L120) — New `foo` command not documented
-   **Rule:** `.claude/CLAUDE.md` → "Always update `README.md` when adding ... any ... command."
-   **Fix:** Add a `foo` row to the Commands table, matching the human-readable style of the neighboring entries.
+```
+### #1 MEDIUM | bug | README.md:120 — New `foo` command not documented
+**Why:** `.claude/CLAUDE.md` → "Always update `README.md` when adding ... any ... command."
+**Fix:** Add a `foo` row to the Commands table, matching the human-readable style of the neighboring entries.
+```
 
 Do not report functional bugs or unrelated style nits — keep the scope to consistency.

@@ -5,6 +5,7 @@
     "DISABLE_TELEMETRY": "1",
     "DISABLE_ERROR_REPORTING": "1",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "DOTCLAUDE_RETRO_REMINDER_DAYS": "7",
     "UV_CACHE_DIR": "/tmp/claude-501/uv-cache",
     "npm_config_cache": "/tmp/claude-501/npm-cache",
     "GOCACHE": "/tmp/claude-501/go-build",
@@ -15,15 +16,14 @@
     "pr": ""
   },
   "permissions": {
-    "blockWritesOutsideWorkingDirectories": true,
     "additionalDirectories": [
       "~/.claude/agents",
       "~/.claude/commands",
       "~/.claude/output-styles",
+      "~/.claude/retros",
       "~/.claude/rules",
       "~/.claude/shared",
       "~/.claude/skills",
-      "~/.claude/templates",
       "/tmp",
       "/private/tmp"
     ],
@@ -31,16 +31,19 @@
       "Bash(make lint)",
       "Bash(make test)",
       "Bash(make coverage)",
-      "Bash(make tree)",
+      "Bash(task lint)",
+      "Bash(task test)",
+      "Bash(task coverage)",
+      "Bash(bash ~/.claude/scripts/check-commands.sh *)",
       "Bash(source .venv/bin/activate)",
       "Bash(source venv/bin/activate)",
       "Bash(git status)",
       "Bash(git -C * status)",
+      "Bash(git stash create)",
       "Bash(git add *)",
       "Bash(git -C * add *)",
       "Bash(git fetch *)",
       "Bash(git -C * fetch *)",
-      "Bash(bash ~/.claude/scripts/git-fetch.sh *)",
       "Bash(git pull *)",
       "Bash(git -C * pull *)",
       "Bash(git worktree *)",
@@ -66,11 +69,11 @@
       "Read(~/.claude/commands/**)",
       "Read(~/.claude/hooks/**)",
       "Read(~/.claude/output-styles/**)",
+      "Read(~/.claude/retros/**)",
       "Read(~/.claude/rules/**)",
       "Read(~/.claude/scripts/**)",
       "Read(~/.claude/shared/**)",
       "Read(~/.claude/skills/**)",
-      "Read(~/.claude/templates/**)",
       "Skill",
       "WebSearch",
       "WebFetch(domain:github.com)",
@@ -79,10 +82,17 @@
       "WebFetch(domain:code.claude.com)",
       "WebFetch(domain:docs.claude.com)",
       "mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram",
-      "mcp__claude-context__get_indexing_status",
-      "mcp__claude-context__search_code",
       "mcp__context7__query-docs",
-      "mcp__context7__resolve-library-id"
+      "mcp__context7__resolve-library-id",
+      "Bash(docker info)",
+      "Bash(docker version)",
+      "Bash(docker ps*)",
+      "Bash(docker images*)",
+      "Bash(docker image ls*)",
+      "Bash(docker image inspect *)",
+      "Bash(docker compose ls*)",
+      "Bash(docker compose ps*)",
+      "Bash(docker compose logs *)"
     ],
     "deny": [
       "Bash(rm -rf *)",
@@ -165,44 +175,10 @@
       "Read(~/.netrc)"
     ],
     "ask": [
-      "Bash(git commit*)",
       "Bash(git push*)",
-      "Bash(git merge *)",
-      "Bash(git rebase*)",
-      "Bash(git reset*)",
-      "Bash(git cherry-pick *)",
-      "Bash(git revert *)",
-      "Bash(git tag *)",
-      "Bash(git branch -D *)",
-      "Bash(git remote add *)",
-      "Bash(git remote remove *)",
-      "Bash(git remote rm *)",
-      "Bash(git remote rename *)",
-      "Bash(git remote set-url *)",
-      "Bash(git remote set-head *)",
-      "Bash(git remote set-branches *)",
-      "Bash(git remote prune *)",
-      "Bash(git remote update*)",
       "Bash(git filter-branch *)",
       "Bash(git filter-repo *)",
-      "Bash(git -C * commit*)",
       "Bash(git -C * push*)",
-      "Bash(git -C * merge *)",
-      "Bash(git -C * rebase*)",
-      "Bash(git -C * reset*)",
-      "Bash(git -C * cherry-pick *)",
-      "Bash(git -C * revert *)",
-      "Bash(git -C * tag *)",
-      "Bash(git -C * branch -D *)",
-      "Bash(git -C * remote add *)",
-      "Bash(git -C * remote remove *)",
-      "Bash(git -C * remote rm *)",
-      "Bash(git -C * remote rename *)",
-      "Bash(git -C * remote set-url *)",
-      "Bash(git -C * remote set-head *)",
-      "Bash(git -C * remote set-branches *)",
-      "Bash(git -C * remote prune *)",
-      "Bash(git -C * remote update*)",
       "Bash(git -C * filter-branch *)",
       "Bash(git -C * filter-repo *)",
       "Bash(gh pr merge *)",
@@ -237,15 +213,6 @@
       "Bash(brew uninstall*)",
       "Bash(brew upgrade*)",
       "Bash(brew services *)",
-      "Bash(docker rm *)",
-      "Bash(docker container rm *)",
-      "Bash(docker rmi *)",
-      "Bash(docker image rm *)",
-      "Bash(docker push *)",
-      "Bash(docker login *)",
-      "Bash(docker *prune*)",
-      "Bash(docker volume rm *)",
-      "Bash(docker network rm *)",
       "Bash(ssh *)",
       "Bash(scp *)",
       "Bash(rsync *)",
@@ -257,9 +224,10 @@
       "Bash(pmset *)",
       "Bash(scutil *)",
       "Bash(osascript *)",
-      "mcp__claude-context__clear_index",
-      "Edit(//**/dotclaude/hooks/**)",
-      "Edit(//**/dotclaude/scripts/**)"
+      "Edit(**/settings.json)",
+      "Edit(**/settings.local.json)",
+      "Write(**/settings.json)",
+      "Write(**/settings.local.json)"
     ]
   },
   "autoMode": {
@@ -269,8 +237,10 @@
     ],
     "soft_deny": [
       "$defaults",
+      "Claude Code configuration changes from the shell: writing to any Claude Code settings file (settings.json, settings.local.json, managed settings) or otherwise changing its permissions, sandbox, hooks or auto mode rules through Bash, scripts or other tools. Reading settings files is not covered.",
       "Forge configuration changes: changing GitLab project or GitHub repo settings, protected branches or tags, members or permissions, webhooks, deploy keys, CI/CD variables or secrets, or pipeline schedules, via glab/gh or their APIs.",
-      "Destructive or outward Docker operations: removing or pruning containers, images, volumes or networks, pushing or tagging images for a registry, or logging in to a registry. Reading (ps, images, inspect, logs, manifest inspect) and building or running containers for local tests are not covered."
+      "Destructive or outward Docker operations: removing or pruning containers, images, volumes or networks, pushing or tagging images for a registry, or logging in to a registry. Reading (ps, images, inspect, logs, manifest inspect) and building or running containers for local tests are not covered.",
+      "Docker host escapes: running containers with --privileged, host network or PID namespaces, the Docker socket mounted, or bind mounts of paths outside the working directory (such as / or the home folder). Mounting the project directory or a temp directory for local tests is not covered."
     ]
   },
   "model": "opus",
@@ -282,6 +252,10 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/list-excluded-commands.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/retro-reminder.sh"
           }
         ]
       }
@@ -339,7 +313,8 @@
     },
     "filesystem": {
       "allowWrite": [
-        "~/.claude/skills-references"
+        "~/.claude/skills-references",
+        "~/.claude/retros"
       ],
       "allowRead": [
         "~/.ssh/known_hosts",
@@ -352,7 +327,7 @@
         "~/.claude/scripts",
         "~/.claude/shared",
         "~/.claude/skills",
-        "~/.claude/templates"
+        "~/.claude/retros"
       ]
     },
     "credentials": {
@@ -374,24 +349,17 @@
     "excludedCommands": [
       "make install",
       "git fetch *",
-      "bash ~/.claude/scripts/git-fetch.sh *",
-      "git pull *",
-      "git add *",
       "git merge *",
-      "git commit *",
+      "git pull *",
       "git push *",
       "git worktree *",
-      "git -C * add *",
-      "git -C * merge *",
-      "git -C * commit *",
-      "git -C * worktree *",
       "gh *",
       "glab *",
       "go mod download *",
       "go mod tidy *",
       "go get *",
       "agent-browser *",
-      "docker manifest inspect *"
+      "docker *"
     ]
   },
   "alwaysThinkingEnabled": true,

@@ -1,0 +1,71 @@
+---
+name: write-plan
+description: Write an implementation plan from a change folder's design, the current conversation, or a short prompt, and save it in its change folder, one plan per repo. Use when a design, a settled conversation or a clear feature request is ready to become a plan for how the change is built; not for designing a change (design-change) or building one (implement).
+argument-hint: "[feature description | @change-folder]"
+effort: max
+model: opus
+---
+
+# Write Plan
+
+Turn the input below into an implementation plan: how the change is built in code.
+
+<request>
+$ARGUMENTS
+</request>
+
+Read `~/.claude/shared/meet-the-user.md` and follow it whenever you ask the user something or report to them.
+
+## Step 1 — Pick the Input
+
+Use the first that applies:
+
+1. **A change folder with a design** — design docs plus evidence files, named in the request or written in this conversation. The design docs are the settled design: goals, background, decisions and what was set aside. The evidence file holds code facts to re-check, not settled fact.
+2. **The conversation** — a design discussed and settled in this session. Synthesize it; don't re-interview the user for details you already have.
+3. **The request alone** — a short, possibly vague feature description. Research the rest yourself.
+
+If there is no input at all, ask what to plan and stop.
+
+Plan one repo at a time. When the change spans several repos, plan only the repo the request names, or ask which one first, and work from that repo's design doc and evidence file.
+
+Whatever the input, name its goal — what the user wants to be true once the work ships. Take it from the design docs' Goal section or the conversation; for a bare request, draft it and confirm it in the Step 3 check-in. The plan is judged against it.
+
+## Step 2 — Research
+
+- Read `~/.claude/shared/planning-context.md` and follow its Glossary and ADRs and Rules sections.
+- Explore the area the change targets: similar features and patterns, the modules you'll build or modify, the conventions to follow, and the test patterns already in use.
+- With a design, re-check against the code every evidence fact the plan will rely on. The evidence is written mid-design; leave out any fact a later decision overtook.
+- When the change involves an external library or unfamiliar API, use WebSearch and Context7 for documentation, examples and pitfalls, and note the URLs. Skip this for changes confined to existing internal code.
+- Note what research cannot answer — e.g. which pattern to mirror, or product intent — for the Step 3 check-in rather than asking now.
+
+## Step 3 — Design
+
+ULTRATHINK about the design, in the vocabulary of `~/.claude/shared/codebase-design.md`. Sketch the modules to build or modify, looking actively for deep modules — a lot of behaviour behind a small interface that rarely changes. Apply the deletion test to each: if deleting it would make complexity reappear across its callers, it earns its keep; if complexity just vanishes, it was a pass-through. Name seams in the glossary's language and don't re-litigate ADRs. Decide where each module lives: keep what changes together in one folder (locality) — a layout that scatters a module makes every later change harder. Follow the repo's existing folder layout where it already does this; where it doesn't (a flat folder of many files, or one concept split across folders by type), give the new module its own folder rather than adding to the problem, and leave the existing files where they are.
+
+Unless the plan builds on a design (which already had its architecture review), invoke the `improve-codebase-architecture` skill in scoped mode on the sketch, and fold its findings into the module split.
+
+Then check in with the user once, in a single message: confirm a drafted goal, ask what research could not answer, confirm the module split matches their expectations, ask which seams (module interfaces) they want tests at, giving each proposed seam a one-line note on what it catches and what it misses, and for each one they pick confirm the main behaviors to test. These answers pin everything that follows.
+
+## Step 4 — Write
+
+Write the plan using the template in [plan-template.md](references/plan-template.md), folding the research into it: the real patterns you found go in Module Map, code-level reasons in Key Decisions, the seams and behaviors the user confirmed — and which modules warrant integration-style tests, and why — in Testing Strategy.
+
+With a design, follow the template's rule for plans that build on one.
+
+## Step 5 — Self-Review
+
+Check the draft and fix every issue in place before saving:
+
+1. **Goal** — the plan reaches the goal from the design or the conversation, not only the literal request.
+2. **Coverage** — every requirement maps to a module or decision.
+3. **Layout** — each module's location keeps its pieces together, following the repo's existing layout where that layout does; new folders appear in Output Structure.
+4. **Consistency** — TL;DR, Goal, Requirements, Module Map, Phases and Testing Strategy agree; the modules can be built in order without backtracking; nothing strays into Out of Scope.
+5. **References exist** — every module, test, pattern and URL the plan names exists; verify with `grep`/`find`/Read.
+6. **Rules** — nothing contradicts a rule, glossary term or ADR loaded in Step 2.
+7. **No speculation** — no feature, abstraction, flag or fallback the requirements don't need, and no error path that hides a failure behind a default or empty result.
+8. **Honest unknowns** — nothing only running code can answer is presented as settled; it sits in Deferred to Implementation.
+9. **No repetition** — nothing restates the design docs.
+
+## Step 6 — Save
+
+Save the plan with the Write tool as `plan.md`, or `plan-<repo>.md` when the change spans several repos: in the change folder of the design it builds on, or else in a new change folder named per the Change folder section of `~/.claude/shared/planning-context.md`. Report the saved path.

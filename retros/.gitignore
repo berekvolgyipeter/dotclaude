@@ -1,0 +1,3 @@
+# Retro reports and unapplied learnings are drawn from private sessions: keep them out of git.
+*
+!.gitignore
