@@ -8,33 +8,6 @@ Manage rules, skills, commands, agents, and hooks in one place instead of duplic
 >
 > **Platform:** Only tested and developed on macOS. Linux may work but is untested; Windows is not supported.
 
-## Why this design
-
-Symlinking into `~/.claude/` and version-controlling everything in git turns this repo into the substrate for the `learn` skill: when Claude updates a rule, skill, or command based on session feedback, the change goes live in every project immediately and shows up as a reviewable git diff — making self-improvement auditable rather than a black box.
-
-**Security-first defaults.** Claude runs smoothly inside a sandbox but can't read your secrets, change your machine, or touch remotes without asking — see [settings.json](#settingsjson).
-
-**Scope.** This repo configures Claude Code — it does not bundle a linter or test runner. The Stop hook delegates to whatever the host project uses (`make` or `task` targets `lint` and `test`); when neither defines a target, it reminds Claude to run the project's own command.
-
-**Engineering philosophy.** A single stance runs through the engineering artifacts here: deep modules behind simple interfaces, behavior-first testing, design grounded in the project's domain language, every step anchored to the user's goal and validated before hand-off, and sessions pitched at the user's level of understanding.
-
-## Runtime Flow
-
-```mermaid
-flowchart LR
-    Start([Session start]) --> Notice[SessionStart hook]
-    Notice -->|list excluded commands · retro due reminder| Claude
-    User([User prompt]) --> Claude
-    Claude -->|tool call| Pre[PreToolUse hook - Bash]
-    Pre -->|deny mixed excluded commands| Tool[Tool execution]
-    Tool --> Claude
-    Claude -.-> Stop[Stop hook<br/>lint + test]
-    Stop -->|pass| Done([Turn ends])
-    Stop -->|fail| Claude
-```
-
-*Excluded commands run outside the sandbox, but only when called alone.*
-
 ## SDLC Flow
 
 ```mermaid
@@ -108,6 +81,41 @@ flowchart LR
     Learn([/learn]) -->|background| Edits([uncommitted edits · unapplied learnings])
 ```
 
+## Runtime Flow
+
+```mermaid
+flowchart LR
+    Start([Session start]) --> Notice[SessionStart hook]
+    Notice -->|list excluded commands · retro due reminder| Claude
+    User([User prompt]) --> Claude
+    Claude -->|tool call| Pre[PreToolUse hook - Bash]
+    Pre -->|deny mixed excluded commands| Tool[Tool execution]
+    Tool --> Claude
+    Claude -.-> Stop[Stop hook<br/>lint + test]
+    Stop -->|pass| Done([Turn ends])
+    Stop -->|fail| Claude
+```
+
+*Excluded commands run outside the sandbox, but only when called alone.*
+
+## Principles
+
+**AI is the new layer above code.** Just as languages lifted us above machine instructions without making them irrelevant, AI now writes more code than a person can read, and the workflow around it has become the interface between the person and the code. This repo engineers that layer: the person stays in charge of goals and decisions, while the code is still held to the disciplines underneath — deep modules, behavior-first tests, the project's domain language.
+
+The engineering skills rest on these tenets:
+
+- **Deep modules** — small interfaces that hide a lot of functionality.
+- **Behavior-first testing** — tests through public interfaces, built one vertical slice at a time.
+- **Domain-grounded** — the project's glossary and recorded decisions.
+- **Evidence over speculation** — explore the code and research before designing.
+- **Goal-anchored** — every step serves the user's real goal, not only the literal request.
+- **Validate continuously** — no stage hands off unchecked work.
+- **Human-first** — every session pitched at the user's level of understanding.
+
+**Self-improving harness.** `retro` judges past sessions and proposes fixes to the harness, and `learn` leaves lessons as uncommitted edits — every change to the harness is a git diff you review.
+
+**Security-first defaults.** Claude runs smoothly inside a sandbox but can't read your secrets, change your machine, or touch remotes without asking — see [settings.json](#settingsjson).
+
 ## What's Included
 
 ### [Rules](rules/)
@@ -116,7 +124,7 @@ Rule files discovered automatically by Claude Code. A rule without `paths:` fron
 
 | File | Loaded when | Description |
 |------|-------------|-------------|
-| [general.md](rules/general.md) | Always | No-guessing policy, consistency, check-before-implementing, docs sync, rules awareness, settings-file changes |
+| [general.md](rules/general.md) | Always | Do only what is requested, no-guessing policy, consistency, dedicated file tools, check-before-implementing, docs sync, rules awareness, settings-file changes |
 | [py-code.md](rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
 | [py-test.md](rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
 | [ts-code.md](rules/ts-code.md) | TypeScript files | TypeScript style, typing, naming, error handling |
@@ -142,8 +150,6 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [/skill-review](commands/skill-review.md) | Review a skill or command file for best practices — structure, writing style, progressive disclosure, and prompt engineering |
 
 ### [Skills](skills/)
-
-Skills must live flat under `skills/` — Claude Code only discovers a skill whose `SKILL.md` is one level deep, so there are no subdirectories to group by.
 
 | Skill | Description |
 |-------|-------------|
@@ -220,24 +226,15 @@ Shared permissions, preferences, and security posture. Built for auto mode: the 
 
 Only a listed set of tools that can't work inside the sandbox run outside it — Claude can't take any other command out of the sandbox on its own — and Claude's package caches are kept separate from yours. This repo's linked config is readable without a prompt and from the sandbox in any project, and skill reference repos are writable from it too, so their maintenance scripts run anywhere.
 
-## How It Works
+## Setup
 
-Claude Code merges configuration from two levels:
-
-| Level | Location | Scope |
-|-------|----------|-------|
-| User-level | `~/.claude/` (this repo, via symlinks) | All projects |
-| Project-level | `project/.claude/` | That project only |
-
-Array settings (e.g. `permissions.allow`) concatenate across levels. Project-level wins for same-named items.
-
-## Prerequisites
+### Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed
-- A `Makefile` or `Taskfile` in each project with at least: `lint`, `test` targets
 - Project-level Claude memory lives at `.claude/CLAUDE.md` (not a root-level `CLAUDE.md`) — commands and agents that read or write project memory assume this path
+- Recommended: `lint` and `test` targets in each project's `Makefile` or `Taskfile`, which the Stop hook runs after edits; without them, Claude is asked to run the project's own commands
 
-## Installation
+### Installation
 
 ```bash
 make install
@@ -260,7 +257,7 @@ make mcp
 
 Registers the `context7` MCP server at user scope, so it is available in every project. Safe to re-run — an existing entry is replaced.
 
-## Uninstallation
+### Uninstallation
 
 ```bash
 make uninstall
@@ -268,26 +265,18 @@ make uninstall
 
 Removes only symlinks pointing into this repo, then any `~/.claude/<dir>/` left empty. Everything else is left untouched, including the retro reports in `retros/`. If a backup exists for a file, the most recent backup is restored.
 
-## Development Dependencies
+## Using It
 
-Linting requires Python dev dependencies, declared in `pyproject.toml` and managed with [uv](https://docs.astral.sh/uv/):
+### Configuration levels
 
-```bash
-uv sync
-```
+Claude Code merges configuration from two levels:
 
-`make lint` fails on any line longer than 120 characters in tracked or untracked (non-ignored) `.sh` and `.py` files.
-It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`, `python3`), and checks the repo's own rules: each command opts out of model invocation, and each linked entry is listed in this README and installed.
+| Level | Location | Scope |
+|-------|----------|-------|
+| User-level | `~/.claude/` (this repo, via symlinks) | All projects |
+| Project-level | `project/.claude/` | That project only |
 
-## Editing Workflow
-
-Because the entries in `~/.claude/` are symlinks into this repo, editing any file in `~/.claude/rules/`, `~/.claude/skills/`, etc. is editing the real file here. Changes are immediately visible in all projects.
-
-Create **new** top-level entries (a rule, skill, agent, hook, …) in this repo, not under `~/.claude/` — a file created there is not in the repo. Link them with `make install`.
-
-Commit and push from this repo to version-control shared config. No need to touch project repos when updating shared configuration.
-
-## Project-Level Layer
+Array settings (e.g. `permissions.allow`) concatenate across levels. Project-level wins for same-named items.
 
 After installing dotclaude, each project's `.claude/` should only contain project-specific overrides:
 
@@ -301,7 +290,28 @@ project/.claude/
 └── skills/                # project-specific skills only (if any)
 ```
 
-## Conventions
+### Editing workflow
+
+Because the entries in `~/.claude/` are symlinks into this repo, editing any file in `~/.claude/rules/`, `~/.claude/skills/`, etc. is editing the real file here. Changes are immediately visible in all projects.
+
+Create **new** top-level entries (a rule, skill, agent, hook, …) in this repo, not under `~/.claude/` — a file created there is not in the repo. Link them with `make install`.
+
+Commit and push from this repo to version-control shared config. No need to touch project repos when updating shared configuration.
+
+## Development
+
+### Dependencies
+
+Linting requires Python dev dependencies, declared in `pyproject.toml` and managed with [uv](https://docs.astral.sh/uv/):
+
+```bash
+uv sync
+```
+
+`make lint` fails on any line longer than 120 characters in tracked or untracked (non-ignored) `.sh` and `.py` files.
+It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which must be installed separately (e.g. `brew install shellcheck`). `make test` runs the behavior tests in `tests/` (needs `git`, `jq`, `make`, `python3`), and checks the repo's own rules: each command opts out of model invocation, and each linked entry is listed in this README and installed.
+
+### Conventions
 
 - **No project-specific content here.** Rules, commands, or skills referencing a specific project's paths belong in that project's `.claude/`.
 - **File-type rules** go in `rules/` with a `paths:` frontmatter listing the globs they apply to.
