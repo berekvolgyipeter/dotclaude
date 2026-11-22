@@ -5,8 +5,8 @@ none of the session that wrote the change, so judge the code on its own.
 ## Read-Only Guarantee
 
 This review must not modify anything under review — no file edits, and no working-tree or git-state mutations
-(`git stash/checkout/reset/commit`, but also `rm`, `mv`, in-place edits). One exception: the Step 2 `make lint` /
-`make test` runs, even when a lint target auto-fixes files.
+(`git stash/checkout/reset/commit`, but also `rm`, `mv`, in-place edits). One exception: the Step 2 lint and test
+runs, even when a lint command auto-fixes files.
 
 ## Step 0: Find the Change Set
 
@@ -40,10 +40,9 @@ rules (their `paths:` match only test files, e.g. `py-test.md`).
 
 ## Step 2: Run Automated Checks
 
-In CHANGE_SET_ROOT, check which of `lint` and `test` the Makefile defines (`make -C <root> -n <target>` succeeds), and
-run each defined one with `make -C <root> <target>`. Skip `lint` when the environment variable
-`DOTCLAUDE_DISABLE_AUTO_LINT` is `1`/`true`, and `test` when `DOTCLAUDE_DISABLE_AUTO_TEST` is. Note any failures —
-these are objective findings to include in the review. No Makefile or no such targets → not a finding; proceed.
+Run `bash ~/.claude/scripts/check-commands.sh <CHANGE_SET_ROOT>`. It prints a `lint:` and a `test:` line, each with
+the command to run or `none`. Run each command in CHANGE_SET_ROOT and note any failures — these are objective findings
+to include in the review. A `none` target is not a finding; proceed.
 
 ## Step 3: Plan the Review
 

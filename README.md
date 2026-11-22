@@ -209,6 +209,7 @@ Markdown files that modify Claude Code's system prompt to change its role, tone,
 | File | Description |
 |------|-------------|
 | [statusline-command.sh](scripts/statusline-command.sh) | Custom status line script |
+| [check-commands.sh](scripts/check-commands.sh) | Prints the command that runs a project's `lint` and `test` targets, or `none`, for the Stop hook and the engineering skills |
 | [sessions.py](scripts/sessions.py) | Finds the session transcripts for a scope, writes compact outlines of them (whole, or a human or harness view) and counts their friction signals, for `retro` and `learn` |
 | [transcript.py](scripts/transcript.py) | Reads one session transcript's entries into outline lines and permission outcomes, for `sessions.py` |
 
@@ -315,7 +316,7 @@ It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which 
 
 - **No project-specific content here.** Rules, commands, or skills referencing a specific project's paths belong in that project's `.claude/`.
 - **File-type rules** go in `rules/` with a `paths:` frontmatter listing the globs they apply to.
-- **`make lint` / `make test`** in shared commands are acceptable — all projects are assumed to use a Makefile.
+- **Lint and test commands** come from `check-commands.sh` — skills and hooks don't name a runner themselves.
 
 ## Acknowledgments
 

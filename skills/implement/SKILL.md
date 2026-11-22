@@ -75,8 +75,9 @@ Invoke the `tdd` skill and drive each seam to test through its red-green loop, o
 
 ## 5. Test and Lint
 
-- Run the full test suite — `make test` if the project defines it, otherwise its documented runner (`pytest`, `npm test`, `cargo test`, etc.). Fix failures by fixing code, never by weakening or deleting tests.
-- Run the linter — `make lint` if defined, otherwise the documented lint, format and type-check commands — and fix every error.
+- Get the commands with `bash ~/.claude/scripts/check-commands.sh <repo root>`: a `lint:` and a `test:` line, each with the command to run or `none`.
+- Run the full test suite — the `test` command, or for `none` the project's documented runner (`pytest`, `npm test`, `cargo test`, etc.). Fix failures by fixing code, never by weakening or deleting tests.
+- Run the linter — the `lint` command, or for `none` the documented lint, format and type-check commands — and fix every error.
 - Re-run until both pass clean.
 - A failure that also happens without your change is pre-existing: record it and leave it alone. Check it at the base in a separate worktree, or by confirming it touches nothing you changed — never stash, reset or switch branches, since the uncommitted work is the user's to review. The one exception is the review's `git stash create` snapshot: it only records the work and leaves the working tree and index untouched.
 - When the project has neither a test runner nor a linter, record that and carry it into the report.

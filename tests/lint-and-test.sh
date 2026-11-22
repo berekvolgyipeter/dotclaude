@@ -196,6 +196,44 @@ edit Edit "$WORK/app/main.py"
 run_hook true
 check "stop_hook_active runs nothing" 0 ""
 
+new_case
+new_repo "$WORK/app" lint test
+user_prompt "change it"
+edit Edit "$WORK/app/main.py"
+mkdir -p "$WORK/hooks"
+cp "$HOOK" "$WORK/hooks/"
+REAL_HOOK="$HOOK"
+HOOK="$WORK/hooks/$(basename "$REAL_HOOK")"
+run_hook
+HOOK="$REAL_HOOK"
+check "a missing check-commands.sh exits 2 with a reminder" 2 ""
+if [[ "$ERR" != *"no lint target"* ]] || [[ "$ERR" != *"no test target"* ]]; then
+  echo "FAIL - a missing check-commands.sh reminds to run both targets"
+  FAILS=$((FAILS + 1))
+fi
+if [[ "$ERR" != *"check-commands.sh"*"could not resolve"* ]]; then
+  echo "FAIL - a missing check-commands.sh shows the script's error and the cause"
+  FAILS=$((FAILS + 1))
+fi
+
+new_case
+new_repo "$WORK/app" lint test
+user_prompt "change it"
+edit Edit "$WORK/app/main.py"
+mkdir -p "$WORK/linked"
+ln -s "$REAL_HOOK" "$WORK/linked/$(basename "$REAL_HOOK")"
+HOOK="$WORK/linked/$(basename "$REAL_HOOK")"
+run_hook
+HOOK="$REAL_HOOK"
+check "a symlinked hook finds check-commands.sh beside its real file" 0 "app:lint app:test"
+
+new_case
+new_repo "$WORK/app" '!lint' '!test'
+user_prompt "change it"
+edit Edit "$WORK/app/main.py"
+DOTCLAUDE_DISABLE_AUTO_LINT=1 DOTCLAUDE_DISABLE_AUTO_TEST=1 run_hook
+check "both disable variables run nothing" 0 ""
+
 if [ "$FAILS" -ne 0 ]; then
   echo "$FAILS failed"
   exit 1

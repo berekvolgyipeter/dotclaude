@@ -90,8 +90,8 @@ One round fixes every fix-now finding:
 2. **Fix.** A behaviour change goes test-first through the `tdd` skill; anything else directly. Record each fix as
    you make it, as `<what> — <why> — <cost if wrong>`: in the plan's Execution Record when there is a plan — after
    its closing `Complete` entry, under a `Validation` entry — otherwise in the report.
-3. **Test.** Run the tests and the lint (`make test` and `make lint` when the project defines them, else its
-   documented commands).
+3. **Test.** Run the lint and test commands `bash ~/.claude/scripts/check-commands.sh <root>` prints; for a target it
+   prints as `none`, run the project's documented command.
 4. **Recheck.** Rerun once each check that raised a fixed finding, with the same prompt; the run check also gets its
    first-run scenario blocks, with the instruction to run those scenarios again, failed ones first, so the fix is
    proven on the scenario that failed. Evidence keeps each scenario's latest result. Then invoke the
