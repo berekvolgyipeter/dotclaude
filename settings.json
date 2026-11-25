@@ -16,17 +16,6 @@
     "pr": ""
   },
   "permissions": {
-    "additionalDirectories": [
-      "~/.claude/agents",
-      "~/.claude/commands",
-      "~/.claude/output-styles",
-      "~/.claude/retros",
-      "~/.claude/rules",
-      "~/.claude/shared",
-      "~/.claude/skills",
-      "/tmp",
-      "/private/tmp"
-    ],
     "allow": [
       "Bash(make lint)",
       "Bash(make test)",
@@ -228,19 +217,17 @@
       "Edit(**/settings.local.json)",
       "Write(**/settings.json)",
       "Write(**/settings.local.json)"
-    ]
-  },
-  "autoMode": {
-    "allow": [
-      "$defaults",
-      "Forge MR/PR collaboration: updating a merge request's or pull request's title or description, posting comments on it, replying to its review discussions, and resolving or unresolving those discussions, via glab/gh subcommands or glab api/gh api (REST or GraphQL). Does not cover merging, approving, closing, reopening, changing the target or base branch, or deleting anything."
     ],
-    "soft_deny": [
-      "$defaults",
-      "Claude Code configuration changes from the shell: writing to any Claude Code settings file (settings.json, settings.local.json, managed settings) or otherwise changing its permissions, sandbox, hooks or auto mode rules through Bash, scripts or other tools. Reading settings files is not covered.",
-      "Forge configuration changes: changing GitLab project or GitHub repo settings, protected branches or tags, members or permissions, webhooks, deploy keys, CI/CD variables or secrets, or pipeline schedules, via glab/gh or their APIs.",
-      "Destructive or outward Docker operations: removing or pruning containers, images, volumes or networks, pushing or tagging images for a registry, or logging in to a registry. Reading (ps, images, inspect, logs, manifest inspect) and building or running containers for local tests are not covered.",
-      "Docker host escapes: running containers with --privileged, host network or PID namespaces, the Docker socket mounted, or bind mounts of paths outside the working directory (such as / or the home folder). Mounting the project directory or a temp directory for local tests is not covered."
+    "additionalDirectories": [
+      "~/.claude/agents",
+      "~/.claude/commands",
+      "~/.claude/output-styles",
+      "~/.claude/retros",
+      "~/.claude/rules",
+      "~/.claude/shared",
+      "~/.claude/skills",
+      "/tmp",
+      "/private/tmp"
     ]
   },
   "model": "opus",
@@ -372,5 +359,19 @@
   "plansDirectory": ".claude/plans",
   "tui": "fullscreen",
   "autoMemoryEnabled": false,
-  "theme": "dark"
+  "theme": "dark",
+  "remoteControlAtStartup": false,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Forge MR/PR collaboration: updating a merge request's or pull request's title or description, posting comments on it, replying to its review discussions, and resolving or unresolving those discussions, via glab/gh subcommands or glab api/gh api (REST or GraphQL). Does not cover merging, approving, closing, reopening, changing the target or base branch, or deleting anything."
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Claude Code configuration changes from the shell: writing to any Claude Code settings file (settings.json, settings.local.json, managed settings) or otherwise changing its permissions, sandbox, hooks or auto mode rules through Bash, scripts or other tools. Reading settings files is not covered.",
+      "Forge configuration changes: changing GitLab project or GitHub repo settings, protected branches or tags, members or permissions, webhooks, deploy keys, CI/CD variables or secrets, or pipeline schedules, via glab/gh or their APIs.",
+      "Destructive or outward Docker operations: removing or pruning containers, images, volumes or networks, pushing or tagging images for a registry, or logging in to a registry. Reading (ps, images, inspect, logs, manifest inspect) and building or running containers for local tests are not covered.",
+      "Docker host escapes: running containers with --privileged, host network or PID namespaces, the Docker socket mounted, or bind mounts of paths outside the working directory (such as / or the home folder). Mounting the project directory or a temp directory for local tests is not covered."
+    ]
+  }
 }

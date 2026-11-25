@@ -7,6 +7,13 @@ Do exactly what was asked — no extra items, files, or changes. Quantity and sc
 ❌ BAD: Asked to "add a trivia", adding three related bullets
 ✅ GOOD: Adding the one bullet asked for; offering more in one line if useful
 
+## Record Requests Unambiguously
+
+When writing a request down for later — a TODO, plan item, task or skill description — keep the user's meaning exact: a later reader has no conversation to disambiguate it. Keep the user's own words. When you shorten them, reread the result as a stranger would and fix any second reading. For anything that moves money, deletes, publishes or is otherwise irreversible, state explicitly whether it only reads or also acts.
+
+❌ BAD: User asked for "a script that reports my account balances and transfers"; the TODO says "script that tracks balances and transfers" ("transfers" now reads as a verb)
+✅ GOOD: "Read-only script that reports account balances and past transfers; it never initiates a transfer"
+
 ## NO GUESSING — USE TOOLS TO FIND EVIDENCE
 
 Never respond with "likely causes", "probably", or speculative answers when the answer can be found with a tool call.
