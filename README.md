@@ -177,7 +177,13 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | Agent | Description |
 |-------|-------------|
 | [documentation-manager](agents/documentation-manager.md) | Keeps docs in sync with code changes |
-| [retro-helper](agents/retro-helper.md) | Read-only reader of past session outlines, dispatched by retro |
+
+**[retro/](agents/retro/)**
+
+| Agent | Description |
+|-------|-------------|
+| [retro-human](agents/retro/retro-human.md) | The developer's feedback, questions and skill usage in past sessions, dispatched by retro |
+| [retro-harness](agents/retro/retro-harness.md) | Friction, procedure, review misses, automation and security in past sessions, dispatched by retro |
 
 **[review/](agents/review/)**
 

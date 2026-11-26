@@ -59,19 +59,21 @@ python3 ~/.claude/scripts/sessions.py signals <transcript path>...
 ```
 
 This session's own retro turns are not evidence: leave out everything from the `/retro` message on — mark the cutoff
-in that outline's `{{OUTLINES}}` line.
+in that outline's line of the helpers' Outlines input, with `<n>` the last line before the `/retro` message in that
+view's outline (each view numbers its lines differently).
 
 For a full scope, tell the developer in one line before going on: the window (its start, or "every retained session",
 to now), the number of sessions, and the size of both views together in MB. They can stop the run there.
 
 ## 3. Run the Helpers
 
-Dispatch the helpers in `references/checks.md` in parallel, each as a `retro-helper` agent with no model override,
-and wait for all of them: a Human helper for the human view and a Harness helper for the harness view. When a view
-adds up to more than about 400 KB *(a guess — tune it once view sizes are known)*, split it into batches under that
-size and send one helper per batch; an outline over that size on its own is split by line range, one part per helper.
-Send each exactly its prompt with the placeholders filled in and nothing from this session — a helper that shares
-your view of the sessions shares your blind spots.
+Dispatch the helpers in parallel, with no model override, and wait for all of them: a `retro-human` agent for the
+human view and a `retro-harness` agent for the harness view. When a view adds up to more than about 400 KB *(a guess —
+tune it once view sizes are known)*, split it into batches under that size and send one helper per batch; an outline
+over that size on its own is split by line range, one part per helper. Send each only the inputs listed under Your
+Inputs in `references/helper-brief.md` — its Outlines, and the harness root for `retro-human` — and nothing from
+this session: no summary of the sessions, no hint of what you expect it to find. A helper that shares your view of
+the sessions shares your blind spots.
 
 ## 4. Sort and Check
 
