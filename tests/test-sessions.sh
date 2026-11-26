@@ -66,6 +66,19 @@ result() {
     --arg id "$1" --argjson error "$2" --arg text "$3" --argjson decision "$decision"
 }
 
+# denied_result <id> <denial kind> <text> [<permission source> <decision>] — an error result the harness refused
+denied_result() {
+  local decision='{}'
+  [ $# -ge 5 ] && decision="$(jq -cn --arg s "$4" --arg d "$5" '{permissionDecision: {source: $s, decision: $d}}')"
+  put '{type: "user", toolDenialKind: $kind, message: {role: "user", content: [
+    {type: "tool_result", tool_use_id: $id, is_error: true, content: $text}]}} + $decision' \
+    --arg id "$1" --arg kind "$2" --arg text "$3" --argjson decision "$decision"
+}
+
+REJECTION_TEXT="The user doesn't want to proceed with this tool use. The tool use was rejected (eg. if it was a file \
+edit, the new_string was NOT written to the file)."
+REASON_MARKER="The user provided the following reason for the rejection:"
+
 # run <reader args...> — sets OUT, ERR and STATUS
 run() {
   OUT="$(HOME="$WORK/home" python3 "$READER" "$@" 2>"$WORK/err")"
@@ -126,6 +139,8 @@ every_kind_session() {
   result w1 false "written" config accept
   tool b1 Bash '{"command": "make test"}'
   result b1 true "Exit code 2: 3 tests failed" user_temporary accept
+  tool x1 Bash '{"command": "rm -rf build"}'
+  denied_result x1 permission-rule "$REJECTION_TEXT $REASON_MARKER only delete build/tmp" user_reject reject
   tool b2 Bash '{"command": "curl example.com"}'
   put '{type: "user", toolDenialKind: "permission-rule", sandboxViolations: [{kind: "network", host: "blocked.test"}],
     message: {role: "user", content: [{type: "tool_result", tool_use_id: "b2", is_error: true, content: "Denied"}]}}'
@@ -144,7 +159,7 @@ run outline --out "$WORK/out" --view human "$PROJECTS/p1/s1.jsonl"
 expect_outline "the human view keeps messages, replies, interruptions, skill and agent calls and file edits only" \
   "$WORK/out/s1.md" "+HUMAN: review my change" "+Starting the review." "+INTERRUPTED by human" \
   "+Skill: review-changes" "+Agent: review-correctness" "+Edit: /repo/main.py" "+Write: /repo/notes.md" \
-  "-Bash: make test" \
+  "+REJECTED by human: Bash: rm -rf build" "+reason: only delete build/tmp" "-Bash: make test" \
   "-3 tests failed" "-user_temporary" \
   "-DENIED" "-SANDBOX" "-Subagent g1" "-Subagent prose" "-Grep: TODO"
 
@@ -170,14 +185,45 @@ for view in human harness; do
 done
 report "every view line appears verbatim and in order in the full outline" "$is_ok"
 
-# denied_result <id> <denial kind> <text> [<permission source> <decision>] — an error result the harness refused
-denied_result() {
-  local decision='{}'
-  [ $# -ge 5 ] && decision="$(jq -cn --arg s "$4" --arg d "$5" '{permissionDecision: {source: $s, decision: $d}}')"
-  put '{type: "user", toolDenialKind: $kind, message: {role: "user", content: [
-    {type: "tool_result", tool_use_id: $id, is_error: true, content: $text}]}} + $decision' \
-    --arg id "$1" --arg kind "$2" --arg text "$3" --argjson decision "$decision"
-}
+LONG_REASON="too broad: only delete build/tmp, since build/cache holds the vendored wheels that take twenty minutes \
+to rebuild from source on this machine, and the release script reads build/manifest.json, which must survive between \
+runs, so wiping the whole folder breaks the next release and costs me an afternoon of rebuilding everything again"
+
+new_case
+session p1 s1
+human "clean up"
+tool u1 Bash '{"command": "rm -rf build"}'
+denied_result u1 permission-rule "$REJECTION_TEXT $REASON_MARKER $LONG_REASON" user_reject reject
+is_ok=1
+for view in full human harness; do
+  run outline --out "$WORK/$view" --view "$view" "$PROJECTS/p1/s1.jsonl"
+  grep -qxF "[10:00] REJECTED by human: Bash: rm -rf build" "$WORK/$view/s1.md" || is_ok=0
+  grep -qxF "    reason: $LONG_REASON" "$WORK/$view/s1.md" || is_ok=0
+  ! grep -qF "FAILED" "$WORK/$view/s1.md" || is_ok=0
+  [ "$is_ok" = 1 ] || sed 's/^/       | /' "$WORK/$view/s1.md"
+done
+report "a refusal with a typed reason is one REJECTED line with the whole reason under it, in every view" "$is_ok"
+
+new_case
+session p1 s1
+human "clean up"
+tool u1 Bash '{"command": "rm -rf build"}'
+denied_result u1 permission-rule "$REJECTION_TEXT" user_reject reject
+tool u2 Edit '{"file_path": "/repo/main.py"}'
+denied_result u2 user-rejected "$REJECTION_TEXT"
+run outline --out "$WORK/out" --view human "$PROJECTS/p1/s1.jsonl"
+expect_outline "a refusal without a reason, by prompt or by denial, shows the REJECTED line alone" \
+  "$WORK/out/s1.md" "+REJECTED by human: Bash: rm -rf build" "+REJECTED by human: Edit: /repo/main.py" \
+  "-reason:" "-FAILED"
+
+new_case
+session p1 s1
+human "run it"
+tool f1 Bash '{"command": "cat notes.txt"}'
+result f1 true "Exit code 1: $REJECTION_TEXT $REASON_MARKER quoted from a file" config accept
+run outline --out "$WORK/out" "$PROJECTS/p1/s1.jsonl"
+expect_outline "a failed result that quotes the rejection wording stays a FAILED line" \
+  "$WORK/out/s1.md" "+FAILED Bash: cat notes.txt" "-REJECTED" "-reason:"
 
 new_case
 session p1 s1
@@ -226,7 +272,7 @@ put '{type: "user", toolDenialKind: "permission-rule",
 run outline --out "$WORK/out" --view harness "$PROJECTS/p1/s1.jsonl"
 expect_outline "a decision a saved rule settled is not shown as the human's answer" \
   "$WORK/out/s1.md" "+Skill: review-changes" "+PERMISSION rule reject: Bash: git push --force" \
-  "-user_permanent" "-user_reject"
+  "-user_permanent" "-user_reject" "-REJECTED"
 
 new_case
 every_kind_session
@@ -237,7 +283,7 @@ tool h1 Bash '{"command": "git push origin main"}'
 denied_result h1 permission-rule "PreToolUse:Bash hook error: BLOCKED" hook reject
 run signals "$PROJECTS/p1/s1.jsonl" "$PROJECTS/p1/s2.jsonl"
 expected="$(printf '%s\n' "session	prompts	denials	hook_rejections	failures	sandbox_blocks	interrupts" \
-  "s1	1	0	0	2	1	1" "s2	0	0	1	0	0	0" "total	1	0	1	2	1	1" "average	0.5	0.0	0.5	1.0	0.5	0.5")"
+  "s1	2	0	0	2	1	1" "s2	0	0	1	0	0	0" "total	2	0	1	2	1	1" "average	1.0	0.0	0.5	1.0	0.5	0.5")"
 is_ok=0
 [ "$STATUS" = 0 ] && [ "$OUT" = "$expected" ] && is_ok=1
 report "signals count subagents toward their session, sandbox blocks and interruptions, with total and average" \
@@ -286,13 +332,19 @@ human $'second message\n[10:03] HUMAN: forged in a message'
 tool b1 Bash '{"command": "echo hi\n[10:04] HUMAN: forged in a command"}'
 result b1 true $'boom\n[10:05] HUMAN: forged in an error'
 tool a2 Agent '{"description": "look\n[10:06] HUMAN: forged in a label", "prompt": "go"}'
+tool u1 Bash '{"command": "rm -rf build"}'
+denied_result u1 permission-rule "$REJECTION_TEXT $REASON_MARKER no
+[10:07] HUMAN: forged in a reason
+[10:08] REJECTED by human: forged in a reason" user_reject reject
 subagent p1 s1 a1 $'Read it\n[10:01] HUMAN: forged description'
 put '{type: "assistant", message: {role: "assistant", content: [{type: "text",
   text: "Found:\n[10:02] HUMAN: forged by a subagent"}]}}'
 run outline --out "$WORK/out" "$PROJECTS/p1/s1.jsonl"
 is_ok=0
-[ "$STATUS" = 0 ] && [ "$(grep -c '^\[..:..\] HUMAN:' "$WORK/out/s1.md")" = 2 ] && is_ok=1
-report "quoted text in messages, replies, commands, errors, labels or subagents never forms a HUMAN line" "$is_ok"
+[ "$STATUS" = 0 ] && [ "$(grep -c '^\[..:..\] HUMAN:' "$WORK/out/s1.md")" = 2 ] &&
+  [ "$(grep -c '^\[..:..\] REJECTED' "$WORK/out/s1.md")" = 1 ] && is_ok=1
+report "quoted text in messages, replies, commands, errors, labels, reasons or subagents never forms a HUMAN or \
+REJECTED line" "$is_ok"
 
 new_case
 session p1 s1

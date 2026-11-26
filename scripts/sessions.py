@@ -6,7 +6,8 @@ Usage:
       one "<id>\t<start time>\t<start folder>\t<transcript>" line per session, oldest first
   sessions.py outline --out DIR [--view full|human|harness] TRANSCRIPT...
       one "<outline path>\t<size in bytes>" line per transcript; human keeps the main session's messages, replies,
-      interruptions, skill and agent calls and file edits; harness keeps everything but the replies
+      interruptions, refused actions with their reasons, skill and agent calls and file edits; harness keeps
+      everything but the replies
   sessions.py signals TRANSCRIPT...
       a tab-separated header, one row per session (its subagents included), then total and average rows
 
@@ -55,7 +56,7 @@ class OutlineView(str, Enum):
 
     def keeps(self, line: OutlineLine) -> bool:
         if self is OutlineView.HUMAN:
-            is_human_side = line.kind in (LineKind.HUMAN, LineKind.REPLY, LineKind.INTERRUPTED)
+            is_human_side = line.kind in (LineKind.HUMAN, LineKind.REPLY, LineKind.INTERRUPTED, LineKind.REJECTED)
             return is_human_side or line.tool_name in HUMAN_VIEW_TOOLS
         return self is OutlineView.FULL or line.kind is not LineKind.REPLY
 

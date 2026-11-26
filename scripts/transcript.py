@@ -33,8 +33,10 @@ HOOK_SOURCE = "hook"
 CONFIG_SOURCE = "config"
 RULE_REASON = "rule"
 ROUTINE_PERMISSION = (CONFIG_SOURCE, ACCEPT_VERDICT)
-USER_PERMISSION_SOURCES = ("user_temporary", "user_permanent", "user_reject")
+USER_REJECT_SOURCE = "user_reject"
+USER_PERMISSION_SOURCES = ("user_temporary", "user_permanent", USER_REJECT_SOURCE)
 USER_REJECTED_DENIAL = "user-rejected"
+REJECTION_REASON_MARKER = "The user provided the following reason for the rejection:"
 
 
 class LineKind(str, Enum):
@@ -42,6 +44,7 @@ class LineKind(str, Enum):
     REPLY = "reply"
     TOOL = "tool"
     FAILED = "failed"
+    REJECTED = "rejected"
     PERMISSION = "permission"
     DENIED = "denied"
     SANDBOX = "sandbox"
@@ -64,6 +67,7 @@ class PermissionDecision:
     source: str
     verdict: str
     is_rule_match: bool
+    denial_kind: str
 
     @classmethod
     def from_entry(cls, entry: dict) -> PermissionDecision:
@@ -72,12 +76,23 @@ class PermissionDecision:
             source=decision.get("source", ""),
             verdict=decision.get("decision", ""),
             is_rule_match=decision.get("reasonType") == RULE_REASON,
+            denial_kind=entry.get("toolDenialKind") or "",
         )
 
     @property
     def is_shown(self) -> bool:
         is_routine = (self.source, self.verdict) == ROUTINE_PERMISSION
         return bool(self.source) and not is_routine and not (self.is_rule_match and self.verdict == ACCEPT_VERDICT)
+
+    @property
+    def is_human_answer(self) -> bool:
+        return self.source in USER_PERMISSION_SOURCES and not self.is_rule_match
+
+    @property
+    def is_human_refusal(self) -> bool:
+        """Whether the human refused the call when asked, read from who decided it, never from the result text."""
+        is_refused_prompt = self.source == USER_REJECT_SOURCE and not self.is_rule_match
+        return is_refused_prompt or self.denial_kind == USER_REJECTED_DENIAL
 
     @property
     def decider(self) -> str:
@@ -133,7 +148,9 @@ class SessionOutliner:
             if block.get("type") != TOOL_RESULT_BLOCK:
                 continue
             label = self.tool_labels.get(block.get("tool_use_id", ""), UNKNOWN_TOOL_LABEL)
-            if block.get("is_error"):
+            if PermissionDecision.from_entry(entry).is_human_refusal:
+                self._add_refusal(time, label, extract_text(block.get("content") or ""))
+            elif block.get("is_error"):
                 failure = shorten(single_line(extract_text(block.get("content") or "")), MAX_FAILURE_CHARS)
                 self.lines.append(OutlineLine(LineKind.FAILED, f"[{time}] FAILED {label}: {failure}"))
             self._add_permission(time, entry, label)
@@ -143,6 +160,13 @@ class SessionOutliner:
         if entry.get("sandboxViolations"):
             text = f"[{time}] SANDBOX: {json.dumps(entry['sandboxViolations'])}"
             self.lines.append(OutlineLine(LineKind.SANDBOX, text))
+
+    def _add_refusal(self, time: str, label: str, result_text: str) -> None:
+        text = f"[{time}] REJECTED by human: {label}"
+        reason = result_text.partition(REJECTION_REASON_MARKER)[2].strip()
+        if reason:
+            text += f"\n    reason: {indent_continuation(shorten(reason, MAX_HUMAN_CHARS))}"
+        self.lines.append(OutlineLine(LineKind.REJECTED, text))
 
     def _add_permission(self, time: str, entry: dict, label: str) -> None:
         decision = PermissionDecision.from_entry(entry)
@@ -161,8 +185,7 @@ def classify_tool_outcome(entry: dict, result_block: dict) -> ToolOutcome | None
         return ToolOutcome.HOOK_REJECTION
     if decision.verdict == REJECT_VERDICT and (decision.source == CONFIG_SOURCE or decision.is_rule_match):
         return ToolOutcome.DENIAL
-    is_human_answer = decision.source in USER_PERMISSION_SOURCES and not decision.is_rule_match
-    if is_human_answer or entry.get("toolDenialKind") == USER_REJECTED_DENIAL:
+    if decision.is_human_answer or decision.is_human_refusal:
         return ToolOutcome.PROMPT
     return ToolOutcome.FAILURE if result_block.get("is_error") else None
 

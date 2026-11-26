@@ -43,8 +43,8 @@ check() {
   if [ "$STATUS" = 0 ]; then
     case "$2" in
       reminds) jq -e '.hookSpecificOutput.hookEventName == "SessionStart"
-        and (.hookSpecificOutput.additionalContext | contains("/retro full"))
-        and (.systemMessage | contains("/retro full"))' <<<"$OUT" >/dev/null 2>&1 && is_ok=1 ;;
+        and (.hookSpecificOutput.additionalContext | endswith(": A harness retro is due: /retro full"))
+        and .systemMessage == "A harness retro is due: /retro full"' <<<"$OUT" >/dev/null 2>&1 && is_ok=1 ;;
       silent) [ -z "$OUT" ] && is_ok=1 ;;
     esac
   fi
@@ -62,7 +62,7 @@ check() {
 
 new_case
 run_hook startup
-check "a fresh start with no full report yet reminds" reminds
+check "a fresh start with no full report yet reminds, offering only /retro full" reminds
 
 new_case
 report_file "$(date +%F)-full.md"

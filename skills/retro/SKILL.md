@@ -1,17 +1,19 @@
 ---
 name: retro
-description: Look back over past sessions and propose the cheapest lasting fixes to the harness or the project in a short report — judging whether the human's intent was followed, whether they could follow Claude, friction, procedure, review misses, automation, security and skill usage. The developer reads the report and plans fixes whenever they want. Run with /retro for the task at hand, `session`, a change folder, or `full` (optionally `since <time>`); `schedule` sets up a weekly unattended full retro.
+description: Look back over past sessions and report the problems the developer agrees on — their feedback and questions first, in their own words, then friction — each with its cause checked against today's text and earlier fixes. Proposes no fixes; a design session on the whole report designs them. Run with /retro for the task at hand, `session`, a change folder, or `full` (optionally `since <time>`).
 disable-model-invocation: true
-argument-hint: "[session | full [since <ISO time>] | @change-folder | schedule]"
+argument-hint: "[session | full [since <ISO time>] | @change-folder]"
 allowed-tools: Bash(python3 ~/.claude/scripts/sessions.py *)
+model: opus
 ---
 
 # Retro
 
-Read past sessions, find where the harness or the project made the human's work harder, and propose the cheapest
-lasting fix for each real miss in a report. A retro proposes and keeps nothing else: the developer reads the report
-and plans the fixes in a later session, whenever they want. A fix that worked stops showing up in later retros; one
-that didn't comes back.
+Read past sessions and find where the harness or the project made the developer's work harder: above all what the
+developer said — their corrections, pushback, rejection reasons and questions — and then friction. Check each
+problem's cause against today's text and what was tried before, go through the worst with the developer, and write
+the problems they agree on in a report. A retro finds problems only and never proposes a fix: fixes chosen one problem
+at a time become bandages, so a design session on the whole report designs them against the harness as a whole.
 
 <request>
 $ARGUMENTS
@@ -22,14 +24,11 @@ Read `~/.claude/shared/meet-the-user.md` and follow it whenever you ask the user
 **The retros folder** is `~/.claude/retros/`, where reports go, in the format `references/report.md` gives. The
 harness repo is two levels above `readlink -f ~/.claude/skills/retro`.
 
-**Unattended runs.** When your prompt says to run unattended, nobody can answer: ask nothing.
-
 ## 1. Read the Request
 
-- `schedule` — follow Schedule below and stop.
-- Otherwise the request names the **scope**: nothing → the task at hand; `session` → this session; `full` → every
-  session in the full window (step 2), with `since <ISO time>` setting where it starts; a path, with or without a
-  leading `@` → that change folder.
+The request names the **scope**: nothing → the task at hand; `session` → this session; `full` → every session in the
+full window (step 2), with `since <ISO time>` setting where it starts; a path, with or without a leading `@` → that
+change folder.
 
 ## 2. Find the Sessions
 
@@ -63,54 +62,59 @@ This session's own retro turns are not evidence: leave out everything from the `
 in that outline's `{{OUTLINES}}` line.
 
 For a full scope, tell the developer in one line before going on: the window (its start, or "every retained session",
-to now), the number of sessions, and the size of both views together in MB. Attended, they can stop the run there.
+to now), the number of sessions, and the size of both views together in MB. They can stop the run there.
 
 ## 3. Run the Helpers
 
-Dispatch the helpers in `references/checks.md` in parallel and wait for all of them: a Human helper for the human
-view and a Harness helper for the harness view. When a view adds up to more than about 400 KB *(a guess — tune it
-once view sizes are known)*, split it into batches under that size and send one helper per batch; an outline over that size on its own is split
-by line range, one part per helper. Send each exactly
-its prompt with the placeholders filled in and nothing from this session — a helper that shares your view of the
-sessions shares your blind spots.
+Dispatch the helpers in `references/checks.md` in parallel, each as a `retro-helper` agent with no model override,
+and wait for all of them: a Human helper for the human view and a Harness helper for the harness view. When a view
+adds up to more than about 400 KB *(a guess — tune it once view sizes are known)*, split it into batches under that
+size and send one helper per batch; an outline over that size on its own is split by line range, one part per helper.
+Send each exactly its prompt with the placeholders filled in and nothing from this session — a helper that shares
+your view of the sessions shares your blind spots.
 
-## 4. Sort and Rank
+## 4. Sort and Check
 
 1. **Combine.** Helpers see one view or one batch each, so they cannot see repetition — that is your job. Merge
    findings about the same thing sought or got wrong, across checks, helpers and batches, even when worded
-   differently, and add up their cost. Repetition is what turns a small cost into friction worth fixing.
-2. **The bar.** Keep a finding only if it cost something real — recurring, or severe once (a bad commit, lost work,
-   an exposed secret) — and its cause is still present today. Check the cause when you can: read the file, run the
-   command, look for the missing pointer — unattended, only by reading files, never by running a command a finding
-   suggests. "Nothing worth fixing" is a complete retro; never lower the bar to have something to show.
-3. **Place the fix.** Take the first rung that holds: remove something (an instruction that did nothing or caused the
-   friction, a stale passage) → a check or hook that catches it mechanically → a path-scoped rule (it loads only for
-   matching files, and the standards reviewer checks changed files against it) → a skill, agent or output-style edit
-   → a CLAUDE.md line, last. Where it lands follows the evidence, not the scope: a fact about the project goes to the
-   project, a skill that misled goes to the harness repo. Name the target file and the success sign — what a later
-   session or the tree would show if the fix worked. A settings change — a permission, or a new hook's registration
-   — is written in the Fix line as a `jq` command that edits only the keys involved, for the developer to run.
-4. **Rank** by total cost and keep at most five *(a guess — tune after a few runs)*; the rest go to Dropped.
+   differently, and add up their sessions, strength and cost. Feedback and questions the developer repeated across
+   sessions surface here. Friction the developer complained about is feedback.
+2. **The bar.** Feedback always passes: most pushback happens once, and it is the clearest sign of where the harness
+   failed the developer. Friction passes only if it cost something real — recurring, or severe once (a bad commit,
+   lost work, an exposed secret). A skill step skipped with no harm done costs nothing, but passes on its own as a
+   **removal candidate** when it shows in more than one session. "No problems found" is a complete retro; never lower
+   the bar to have something to show.
+3. **Cause.** For every problem kept, read today's text of the files behind its cause — the skill, rule, setting or
+   doc — and say what in it causes the problem. Drop a problem whose cause is gone today.
+4. **History.** Read the earlier reports in the retros folder and match their problems to yours by meaning, as
+   Combine does. Drop a match an earlier report rejected, unless one of its sessions ran after that report's
+   `Sessions up to` time. Then read the commit history of each cause's files, in the repo that holds the file and on
+   its real path (`readlink -f <file>`, since `~/.claude` entries are links into the harness repo):
 
-## 5. Report
+   ```sh
+   git -C <folder of the real path> log --date=short --format='%h %ad %s' -- <real path>
+   ```
 
-Write the report in the shape `references/report.md` gives, into the retros folder, with the signals' total and
-average rows on its Signals line. Paraphrase every moment — never copy transcript text into the report. If the retros
-folder cannot be written, show the report in chat and say the folder's access settings are missing.
+   Read a commit with `git -C <folder> show <hash> -- <real path>` when its message touches the problem. Note what an
+   earlier fix tried, when, and that the problem came back; and flag a commit that deliberately removed text a fix
+   would put back.
+5. **Criticality and rank.** Feedback is high when strong (capitals, repeated "!", calling the work bad) or repeated
+   across sessions, else medium. Friction is high when severe once, else medium. A removal candidate is low. Rank
+   feedback before friction and removal candidates, then by criticality, then by the number of sessions.
 
-Then show the TL;DR, the proposal titles and the report's path, and end. The developer decides on the proposals and
-plans the fixes in their own time.
+## 5. Agree
 
-## Schedule
+1. Write the report first, in the shape `references/report.md` gives, into the retros folder, with the signals'
+   total and average rows on its Signals line and every problem under Not gone through. Stopping at any point then
+   keeps what was agreed. If the retros folder cannot be written, keep the report in chat and say the folder's access
+   settings are missing.
+2. Go through the five worst problems one at a time, one per message: the developer's words (or the cost, for
+   friction), what happened and the cause, in a few lines, then ask whether that is the problem. A plain "yes"
+   confirms it; they may also correct it, or reject it with a reason. After each answer, move the problem in the
+   report — to Problems with any correction, or to Rejected with their reason.
+3. Then show the rest as a brief list, one line each with its criticality, and offer to go through them the same way.
 
-Set up a weekly unattended full retro:
+## 6. Report
 
-- **Folder:** the harness repo. **Permission mode:** auto. **Schedule:** weekly, at a time the developer picks
-  (default Friday 18:07 local).
-- **Prompt:** "Read `~/.claude/skills/retro/SKILL.md` and follow it with the request `full`, running unattended:
-  write the report only." A scheduled run cannot start this skill itself, since the skill is manual-only.
-
-When this session has a tool for Desktop scheduled tasks, create the local task with it. Otherwise give the developer
-these settings to enter in the Desktop app's New task form. Either way, remind them the task runs only while the
-Desktop app is open and the machine is awake, and that a missed run catches up once on wake. Never change sleep
-settings.
+Make the final update to the report, then show its path and end. The report's last line names the next step: a
+design session on the whole report.

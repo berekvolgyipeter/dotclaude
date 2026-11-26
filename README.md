@@ -76,8 +76,10 @@ flowchart LR
     Due([SessionStart reminder]) -->|full| Retro[retro]
     Task([developer]) -->|task at hand · session · change folder| Retro
     Retro -->|human and harness views · signal counts| Helpers[human helper · harness helper]
-    Helpers -->|findings| Report([report in ~/.claude/retros])
-    Report -.->|whenever the developer wants| Fixes[plan the fixes]
+    Helpers -->|findings| Check[causes checked against today's text and history]
+    Check -->|worst problems, one at a time| Agree{developer: confirm · correct · reject}
+    Agree -->|agreed and rejected problems| Report([report in ~/.claude/retros])
+    Report -.->|whenever the developer wants| Design[design-change on the whole report]
     Learn([/learn]) -->|background| Edits([uncommitted edits · unapplied learnings])
 ```
 
@@ -112,7 +114,7 @@ The engineering skills rest on these tenets:
 - **Validate continuously** — no stage hands off unchecked work.
 - **Human-first** — every session pitched at the user's level of understanding.
 
-**Self-improving harness.** `retro` judges past sessions and proposes fixes to the harness, and `learn` leaves lessons as uncommitted edits — every change to the harness is a git diff you review.
+**Self-improving harness.** `retro` judges past sessions and reports the problems you agree on, in your own words, for a design session to fix, and `learn` leaves lessons as uncommitted edits — every change to the harness is a git diff you review.
 
 **Security-first defaults.** Claude runs smoothly inside a sandbox but can't read your secrets, change your machine, or touch remotes without asking — see [settings.json](#settingsjson).
 
@@ -162,7 +164,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | [implement](skills/implement/SKILL.md) | Implement a plan, a change settled in the conversation, or a short instruction test-first via the tdd loop, then test, review, and verify against the goal |
 | [review-changes](skills/review-changes/SKILL.md) | Independent background code review of uncommitted changes, a branch, or everything since a ref, sized to the change's risk; the session then judges and fixes the findings |
 | [validate](skills/validate/SKILL.md) | Check a finished change against its goal, plan and design, and run it for real, before the diff review |
-| [retro](skills/retro/SKILL.md) | Look back over past sessions and propose harness or project fixes in a short report the developer acts on whenever they want |
+| [retro](skills/retro/SKILL.md) | Look back over past sessions and report the problems the developer agrees on, feedback first, each with its cause checked — no fixes |
 | [pr-summary](skills/pr-summary/SKILL.md) | Brief, copyable PR summary grouped by feature/area, with evidence and risk when the change was validated |
 | [commit-summary](skills/commit-summary/SKILL.md) | Pre-commit digest of the uncommitted changes — a plain summary, a changed-files tree and a suggested conventional commit message |
 | [improve-codebase-architecture](skills/improve-codebase-architecture/SKILL.md) | Find module-deepening refactor opportunities, presented as an HTML report — or, in scoped mode, as a text review of what a design or plan touches |
@@ -175,6 +177,7 @@ Reference files explicitly read by commands and skills — not auto-loaded.
 | Agent | Description |
 |-------|-------------|
 | [documentation-manager](agents/documentation-manager.md) | Keeps docs in sync with code changes |
+| [retro-helper](agents/retro-helper.md) | Read-only reader of past session outlines, dispatched by retro |
 
 **[review/](agents/review/)**
 
@@ -323,15 +326,15 @@ It also lints `.sh` files with [ShellCheck](https://www.shellcheck.net/), which 
 
 - [coleam00/context-engineering-intro](https://github.com/coleam00/context-engineering-intro) — inspiration for some commands and rules
 - [trailofbits/claude-code-config](https://github.com/trailofbits/claude-code-config) — security and privacy focused settings
-- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions, code review, validation, planning and implementation practices; multi-session retro with generalist helpers batched by session, and unattended runs
+- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — naming conventions, code review, validation, planning and implementation practices; multi-session retro with generalist helpers batched by session; causes checked against git history, and problems agreed with reasons
 - [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) — planning and implementation practices; independent review that sees only the change and its contract
 - [wshobson/agents](https://github.com/wshobson/agents) — Python style and naming patterns; interface-as-contract documentation
-- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern; fix now, later or as-is triage; turning repeated corrections into hooks
+- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — multi-agent code review pattern; fix now, later or as-is triage; feedback signals in the developer's words
 - [coleam00/archon](https://github.com/coleam00/archon) — plugin-browser skill reference repo
 - [affaan-m/ECC](https://github.com/affaan-m/ECC) — plugin-browser skill reference repo; a verdict per learning before anything is written
-- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills, planning and implementation practices; code smell baseline and one-way-door risk in review; the retro's fix ladder
+- [mattpocock/skills](https://github.com/mattpocock/skills) — source of the engineering skills, planning and implementation practices; code smell baseline and one-way-door risk in review; steps that changed nothing, as removal candidates
 - [ghostsecurity/skills](https://github.com/ghostsecurity/skills) — codebase exploration heuristics
 - [trailofbits/skills](https://github.com/trailofbits/skills) — evidence-based code analysis patterns; walking the diff in reading order
 - [obra/superpowers](https://github.com/obra/superpowers) — planning and implementation practices; bounded fix loop; session analysis by independent checks citing session moments
-- [backnotprop/pstack](https://github.com/backnotprop/pstack) — blast-radius risk analysis around the one fact a change is safe because of; fixing a repeated mistake at the highest level that works
+- [backnotprop/pstack](https://github.com/backnotprop/pstack) — blast-radius risk analysis around the one fact a change is safe because of; context the developer handed over
 - [openai/plugins](https://github.com/openai/plugins) — story-anchored run-for-real verification and patch-risk analysis

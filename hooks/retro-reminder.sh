@@ -20,7 +20,7 @@ if [[ "$days" =~ ^[0-9]+$ ]]; then
   done
 fi
 
-REMINDER="A harness retro is due: /retro full · /retro schedule"
+REMINDER="A harness retro is due: /retro full"
 jq -cn --arg reminder "$REMINDER" '{
   hookSpecificOutput: {
     hookEventName: "SessionStart",
