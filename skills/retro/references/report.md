@@ -53,6 +53,7 @@ Next step: a design session on this whole report.
 
 Write **Window** only for a full scope. Write **Tried before** only when the history shows one, and **Developer's
 correction** only when they made one. Leave out Rejected, Not gone through or Dropped when it has nothing. "Below the
-bar" applies to friction only. With no problems, write "No problems found." under Problems and leave out the last
-line. A full retro whose window holds no sessions writes the header lines, with `Read: 0 sessions` and no Signals, and
+bar" applies to friction only. When the retro kept no problems at all — none agreed, rejected or not gone through —
+write "No problems found." under Problems and leave out the last line; otherwise leave Problems empty until one is
+agreed. A full retro whose window holds no sessions writes the header lines, with `Read: 0 sessions` and no Signals, and
 "No sessions in the window." in place of the sections.

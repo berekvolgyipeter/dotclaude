@@ -111,9 +111,10 @@ the sessions shares your blind spots.
    keeps what was agreed. If the retros folder cannot be written, keep the report in chat and say the folder's access
    settings are missing.
 2. Go through the five worst problems one at a time, one per message: the developer's words (or the cost, for
-   friction), what happened and the cause, in a few lines, then ask whether that is the problem. A plain "yes"
-   confirms it; they may also correct it, or reject it with a reason. After each answer, move the problem in the
-   report — to Problems with any correction, or to Rejected with their reason.
+   friction), what happened and the cause, in a few lines, then ask whether that is the problem. Quote only what
+   `references/report.md` lets the report quote, and paraphrase the rest. A plain "yes" confirms it; they may also
+   correct it, or reject it with a reason. After each answer, move the problem in the report — to Problems with any
+   correction, or to Rejected with their reason.
 3. Then show the rest as a brief list, one line each with its criticality, and offer to go through them the same way.
 
 ## 6. Report
