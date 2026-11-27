@@ -36,13 +36,6 @@ Before making any edit, read the surrounding context and match its style — for
 ❌ BAD: Adding a raw glob pattern (`**/*.py`) to a column that uses human-readable text ("Python files")
 ✅ GOOD: Reading nearby entries first, then writing new content that matches their style
 
-## Dedicated File Tools Over Bash
-
-Read, edit and create files with the Read, Edit and Write tools — never with `cat`, `head`, `tail`, `sed`, `awk`, `echo` or heredocs, even when the harness allows Bash for file work. Bash is for running commands and for searching with `grep` and `find`.
-
-❌ BAD: `cat notes.md` to read, `cat >> notes.md <<'EOF'` to append
-✅ GOOD: Read `notes.md`, then Edit it to add the line
-
 ## Fail-Safe Shell Commands
 
 Chain dependent steps with `&&`, or run them as separate calls, so a failure stops the rest, and run scratch experiments only in the scratchpad or `$TMPDIR`, never in the project.

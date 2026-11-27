@@ -126,7 +126,7 @@ Rule files discovered automatically by Claude Code. A rule without `paths:` fron
 
 | File | Loaded when | Description |
 |------|-------------|-------------|
-| [general.md](rules/general.md) | Always | Do only what is requested, no-guessing policy, consistency, dedicated file tools, fail-safe shell commands, check-before-implementing, docs sync, rules awareness |
+| [general.md](rules/general.md) | Always | Do only what is requested, no-guessing policy, consistency, fail-safe shell commands, check-before-implementing, docs sync, rules awareness |
 | [py-code.md](rules/py-code.md) | Python files | Python style, KISS/YAGNI, error handling, data models |
 | [py-test.md](rules/py-test.md) | Python test files | pytest conventions, parametrize patterns, test organization |
 | [ts-code.md](rules/ts-code.md) | TypeScript files | TypeScript style, typing, naming, error handling |
